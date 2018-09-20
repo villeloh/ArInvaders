@@ -108,12 +108,10 @@ class MainActivity : AppCompatActivity() {
     private fun generateRandomCoord(): Vector3 {
 
         // TODO: use the stored constants from Configuration.kt... I just made this work as quick as possible
-        // NOTE: while this seems to work ok'ish, the UFOs appear all clustered up in one 'corner'
-        // of the coordinate space -- not all around the Earth as you'd expect
         val randomGen = Random()
-        val x = randomGen.nextFloat() * 0.35
+        val x = (if (randomGen.nextBoolean() == true) 1 else -1) * randomGen.nextFloat() * 0.35
         val y = randomGen.nextFloat() * 0.35
-        val z = randomGen.nextFloat() * 0.35
+        val z = (if (randomGen.nextBoolean() == true) 1 else -1) * randomGen.nextFloat() * 0.35
         Log.d("XYZ", "$x $y $z")
 
         return Vector3(x.toFloat(), y.toFloat(), z.toFloat())

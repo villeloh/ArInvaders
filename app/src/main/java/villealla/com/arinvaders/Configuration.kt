@@ -6,7 +6,7 @@ class Configuration {
 
         const val UFO = "CUPIC_FYINGSAUCER"
 
-        const val NUM_OF_SHIPS_IN_WAVE_DEFAULT = 10
+        const val NUM_OF_SHIPS_IN_WAVE_DEFAULT = 30
         const val SECONDS_BETWEEN_WAVES_SHORT = 30
         const val SECONDS_BETWEEN_WAVES_MEDIUM = 60
         const val SECONDS_BETWEEN_WAVES_LONG = 90
