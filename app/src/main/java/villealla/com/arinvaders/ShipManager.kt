@@ -46,7 +46,7 @@ class ShipManager(val context: Context, val earthNode: Node) {
 
             // we'll need to make our own Node subclass for moving the ships...
             // for now let's just try to create them
-            val shipNode = Node()
+            val shipNode = AnimatableNode()
             shipNode.renderable = it
             shipNode.setParent(earthNode)
             shipNode.renderable.isShadowCaster = false
