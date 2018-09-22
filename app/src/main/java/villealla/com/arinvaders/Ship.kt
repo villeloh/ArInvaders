@@ -11,7 +11,7 @@ enum class ShipType(val modelName: String, val speed: Int, val hp: Int) {
 }
 
 class Ship(
-        // ships default to their type's hp and speed, but they can be varied manually if needed
+        // ships default to their type's hp and speed, but these can be varied manually if needed
         val type: ShipType = ShipType.UFO,
         val speed: Int = type.speed,
         val hp: Int = type.hp) {

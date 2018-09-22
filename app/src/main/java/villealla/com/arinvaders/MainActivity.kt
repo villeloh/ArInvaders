@@ -20,9 +20,8 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
 
     private lateinit var arFragment: ArFragment
-    private lateinit var earthRenderable: ModelRenderable
-    private lateinit var earthNode: Node
     private lateinit var sm: ShipManager
+    private lateinit var earth: Planet
     private var noPlaneAttached = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,10 +30,8 @@ class MainActivity : AppCompatActivity() {
 
         arFragment = supportFragmentManager.findFragmentById(R.id.custom_ar_fragment) as ArFragment
 
-        val renderable = ModelRenderable.builder()
-                .setSource(this, Uri.parse("earth_ball.sfb"))
-                .build()
-        renderable.thenAccept {  it -> earthRenderable = it }
+        earth = Planet()
+        earth.obtainRenderable(this)
 
         arFragment.arSceneView.scene.addOnUpdateListener{ frameTime ->
             onUpdate(frameTime)
@@ -46,27 +43,20 @@ class MainActivity : AppCompatActivity() {
 
                     override fun onTapPlane(hitResult: HitResult?, plane: Plane?, motionEvent: MotionEvent?) {
 
-                        // iirc, it can be null despite AS's reassurances
-                        if(earthRenderable == null) {
+                        // disabling this for now, to see if it's actually needed or not
+                    /*  if(earthRenderable == null) {
                             return@onTapPlane
-                        }
+                        }*/
 
                         if (noPlaneAttached) {
 
-                            // NOTE: spawning the Earth should be a function in Planet.kt;
-                            // I'll refactor this shortly
-                            val anchor = hitResult!!.createAnchor()
-                            earthNode = AnchorNode(anchor)
-                            earthNode.setParent(arFragment.arSceneView.scene)
-                            earthNode.renderable = earthRenderable
-                            earthNode.name = "earthNode" // not used for anything atm
+                            earth.renderInArSpace(arFragment, hitResult!!)
 
                             // in practice, the context here is MainActivity.
                             // not sure if this will cause problems, but it's the least
                             // cluttered solution to passing the proper context
-                            sm = ShipManager(applicationContext, earthNode)
-
-                            sm.spawnWaveOfShips(ShipManager.DEFAULT_NUM_OF_SHIPS_IN_WAVE, Ship())
+                            sm = ShipManager(applicationContext, earth.earthNode)
+                            sm.spawnWaveOfShips()
 
                             // there must be a better way to do this... but it works
                             val frag = arFragment as CustomArFragment
