@@ -1,11 +1,9 @@
 package villealla.com.arinvaders
 
 import android.content.Context
-import android.net.Uri
 import android.util.Log
 import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.math.Vector3
-import com.google.ar.sceneform.rendering.ModelRenderable
 import java.util.*
 
 /*
@@ -26,37 +24,35 @@ class ShipManager(private val context: Context, private val earthNode: Node) {
         const val DEFAULT_MAX_SPAWN_DIST = 2.5F
     }
 
+    val rGen = Random(System.currentTimeMillis())
+
     private val shipMap = mutableMapOf<String, Ship>()
 
-    fun spawnShip(ship: Ship) {
+    fun spawnShip(shipType: ShipType) {
 
-        val renderable = ModelRenderable.builder()
-                .setSource(context, Uri.parse(ship.type.modelName))
-                .build()
-        renderable.thenAccept { it ->
+        val ship = Ship(type = shipType, node = AnimatableNode())
 
-            val shipNode = AnimatableNode()
-            shipNode.renderable = it
-            shipNode.setParent(earthNode)
-            shipNode.renderable.isShadowCaster = false
-            shipNode.name = ship.id // can be used for destroying ships later
+        val spawnCoord = randomCoord()
 
-            val spawnCoord = randomCoord()
-            shipNode.localPosition = spawnCoord
+        ship.node.renderable = Ship.renderables[shipType]
+        ship.node.localPosition = spawnCoord
+        ship.node.renderable.isShadowCaster = false
+        ship.node.name = ship.id // can be used for destroying ships later
+        ship.node.setParent(earthNode)
 
-            shipNode.attack(Vector3(0f,0f,0f))
+        ship.attack(Vector3(0f, 0f, 0f))
 
-            // track the ship (for collective operations)
-            shipMap[ship.id] = ship
-        }
+        // track the ship (for collective operations)
+        shipMap[ship.id] = ship
+
     } // end spawnShip
 
     // we could add different spawn patterns (chosen by enum perhaps).
     //  without any arguments, spawns the default number of UFOs
-    fun spawnWaveOfShips(numOfShips: Int = DEFAULT_NUM_OF_SHIPS_IN_WAVE, ship: Ship = Ship()) {
+    fun spawnWaveOfShips(numOfShips: Int = DEFAULT_NUM_OF_SHIPS_IN_WAVE, shipType: ShipType) {
         for (item in 0..numOfShips) {
 
-            spawnShip(ship)
+            spawnShip(shipType)
         }
     }
 
@@ -69,21 +65,18 @@ class ShipManager(private val context: Context, private val earthNode: Node) {
 
     private fun randomCoord(minDist: Float = DEFAULT_MIN_SPAWN_DIST,
                             maxDist: Float = DEFAULT_MAX_SPAWN_DIST): Vector3 {
+        var sign = if (rGen.nextBoolean()) 1 else -1
 
-        val rGen = Random()
+        //this formula distributes coordinates more evenly
+        val x = (rGen.nextFloat() * (maxDist - minDist) + minDist) * sign
 
-        var sign = if (rGen.nextBoolean() == true) 1 else -1
+        sign = if (rGen.nextBoolean()) 1 else -1
 
-        var x =  rGen.nextFloat() * maxDist // 0 - maxDist
-        x = Math.max(x, minDist) * sign // -maxDist - +maxDist, excluding -minDist - +minDist
-
-        sign = if (rGen.nextBoolean() == true) 1 else -1
-        var z = rGen.nextFloat() * maxDist
-        z = Math.max(z, minDist) * sign
+        val z = (rGen.nextFloat() * (maxDist - minDist) + minDist) * sign
 
         val y = rGen.nextFloat() * maxDist
 
-        Log.d("XYZ", "$x $y $z")
+        Log.d(Configuration.DEBUG_TAG, "coordinates : x=$x, y=$y z=$z")
 
         return Vector3(x, y, z)
     }

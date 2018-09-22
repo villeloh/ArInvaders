@@ -1,21 +1,23 @@
 package villealla.com.arinvaders
 
 import android.animation.ObjectAnimator
+import android.util.Log
 import android.view.animation.LinearInterpolator
 import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.math.Vector3
 import java.util.concurrent.ThreadLocalRandom
+import kotlin.math.pow
 
 class AnimatableNode : Node() {
 
     val random = ThreadLocalRandom.current()
 
-    private fun localPositionAnimator(vararg values: Any?): ObjectAnimator {
+    private fun localPositionAnimator(dur: Long, vararg values: Any?): ObjectAnimator {
         return ObjectAnimator().apply {
             target = this@AnimatableNode
             propertyName = "localPosition"
             // Change animation duration(ms). Gave some randomness to it.
-            duration = 18000 + random.nextLong(1000)
+            duration = dur
             interpolator = LinearInterpolator()
 
             setAutoCancel(true)
@@ -28,9 +30,19 @@ class AnimatableNode : Node() {
 
     fun attack(earthPosition: Vector3) {
 
-        val animation = localPositionAnimator(localPosition, earthPosition)
+        val distanceFactor = calculateDistanceFactor(localPosition, earthPosition)
+
+        // With min=2F and max=2.5F duration range is: 3.1s to 5s (1s of randomness)
+        val duration = (4000 * distanceFactor).toLong() + random.nextLong() % 1000 + 1000
+        Log.d(Configuration.DEBUG_TAG, "factor: $distanceFactor, duration: $duration")
+
+        val animation = localPositionAnimator(duration, localPosition, earthPosition)
 
         animation.start()
+    }
+
+    private fun calculateDistanceFactor(start: Vector3, end: Vector3): Double {
+        return Math.sqrt((end.x - start.x).pow(2).toDouble() + (end.y - start.y).pow(2).toDouble() + (end.z - start.z).pow(2).toDouble())
     }
 
 }
