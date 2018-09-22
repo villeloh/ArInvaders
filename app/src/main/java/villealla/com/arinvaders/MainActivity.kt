@@ -22,8 +22,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var arFragment: ArFragment
     private lateinit var earthRenderable: ModelRenderable
     private lateinit var earthNode: Node
+    private lateinit var sm: ShipManager
     private var noPlaneAttached = true
-    private val planetHp = Configuration.INITIAL_PLANET_HP
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,15 +52,21 @@ class MainActivity : AppCompatActivity() {
                         }
 
                         if (noPlaneAttached) {
+
+                            // NOTE: spawning the Earth should be a function in Planet.kt;
+                            // I'll refactor this shortly
                             val anchor = hitResult!!.createAnchor()
                             earthNode = AnchorNode(anchor)
                             earthNode.setParent(arFragment.arSceneView.scene)
                             earthNode.renderable = earthRenderable
                             earthNode.name = "earthNode" // not used for anything atm
 
-                            // now that we have set earthNode, we can spawn the
-                            // initial wave of ships
-                            spawnWaveOfShips(Configuration.NUM_OF_SHIPS_IN_WAVE_DEFAULT, Ship())
+                            // in practice, the context here is MainActivity.
+                            // not sure if this will cause problems, but it's the least
+                            // cluttered solution to passing the proper context
+                            sm = ShipManager(applicationContext, earthNode)
+
+                            sm.spawnWaveOfShips(ShipManager.DEFAULT_NUM_OF_SHIPS_IN_WAVE, Ship())
 
                             // there must be a better way to do this... but it works
                             val frag = arFragment as CustomArFragment
@@ -71,51 +77,6 @@ class MainActivity : AppCompatActivity() {
                 }
         ) // end setOnTapArPlaneListener
     } // end onCreate
-
-    // should be moved to the Ship class I guess...
-    // moving it is problematic because of context and earthNode, though
-    private fun spawnShip(ship: Ship) {
-
-        val renderable = ModelRenderable.builder()
-                .setSource(this, Uri.parse(ship.type + ".sfb"))
-                .build()
-        renderable.thenAccept {  it ->
-
-            // we'll need to make our own Node subclass for moving the ships...
-            // for now let's just try to create them
-            val shipNode = Node()
-            shipNode.renderable = it
-            shipNode.setParent(earthNode)
-            shipNode.renderable.isShadowCaster = false
-
-            val spawnCoord = generateRandomCoord()
-            shipNode.localPosition = spawnCoord
-        }
-
-        // TODO: we could make each ship move here...
-        // or put a move method in the Ship class and call it
-        // for each ship by putting all ships in an array. if we want to alter ship behavior
-        // after spawning, we should ofc do the latter
-    } // end spawnShip
-
-    private fun spawnWaveOfShips(numOfShips: Int, ship: Ship) {
-        for (item in 0..numOfShips) {
-
-            spawnShip(ship)
-        }
-    }
-
-    private fun generateRandomCoord(): Vector3 {
-
-        // TODO: use the stored constants from Configuration.kt... I just made this work as quick as possible
-        val randomGen = Random()
-        val x = (if (randomGen.nextBoolean() == true) 1 else -1) * randomGen.nextFloat() * 0.35
-        val y = randomGen.nextFloat() * 0.35
-        val z = (if (randomGen.nextBoolean() == true) 1 else -1) * randomGen.nextFloat() * 0.35
-        Log.d("XYZ", "$x $y $z")
-
-        return Vector3(x.toFloat(), y.toFloat(), z.toFloat())
-    }
 
     // it was used to deal with the image as anchor point in the labs...
     // could be used for something later on I guess
