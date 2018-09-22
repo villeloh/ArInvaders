@@ -15,7 +15,7 @@ class AnimatableNode : Node() {
             target = this@AnimatableNode
             propertyName = "localPosition"
             // Change animation duration(ms). Gave some randomness to it.
-            duration = 1000 + random.nextLong(1000)
+            duration = 18000 + random.nextLong(1000)
             interpolator = LinearInterpolator()
 
             setAutoCancel(true)
@@ -32,6 +32,5 @@ class AnimatableNode : Node() {
 
         animation.start()
     }
-
 
 }

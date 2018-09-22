@@ -53,3 +53,8 @@ sceneform.asset('sampledata/earth_ball.obj',
         'default',
         'sampledata/earth_ball.sfa',
         'src/main/assets/earth_ball')
+
+sceneform.asset('sampledata/SciFi_Fighter_AK5.obj',
+        'default',
+        'sampledata/SciFi_Fighter_AK5.sfa',
+        'src/main/assets/SciFi_Fighter_AK5')

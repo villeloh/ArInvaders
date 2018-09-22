@@ -6,15 +6,16 @@ const val DEFAULT_MOVE_SPEED = 10
 const val DEFAULT_HP = 1
 
 enum class ShipType(val modelName: String, val speed: Int, val hp: Int) {
-    UFO("CUPIC_FYINGSAUCER.sfb", DEFAULT_MOVE_SPEED, DEFAULT_HP)
-    // add more ships as we get more models
+    UFO("CUPIC_FYINGSAUCER.sfb", DEFAULT_MOVE_SPEED, DEFAULT_HP),
+    FIGHTER("SciFi_Fighter_AK5.sfb", DEFAULT_MOVE_SPEED, DEFAULT_HP)
+    // TODO: add more ships as we get more models
 }
 
 class Ship(
         // ships default to their type's hp and speed, but these can be varied manually if needed
         val type: ShipType = ShipType.UFO,
         val speed: Int = type.speed,
-        val hp: Int = type.hp) {
+        var hp: Int = type.hp) {
 
     // each ship has a unique identifier, to enable easy tracking
     val id = java.util.UUID.randomUUID().toString()

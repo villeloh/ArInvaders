@@ -14,52 +14,44 @@ import java.util.*
 * @author Ville Lohkovuori
 * */
 
-// pass 'this' as the context from MainActivity
+// pass 'this' / applicationContext as the context from MainActivity
 // NOTE: ideally, this class would be a Singleton, but I could think of no good
 // way to refer to the right context and earthNode in that case
 class ShipManager(private val context: Context, private val earthNode: Node) {
 
     companion object {
-        const val DEFAULT_SPAWN_DISTANCE_MIN = 1
-        const val DEFAULT_SPAWN_DISTANCE_MAX = 2
+
         const val DEFAULT_NUM_OF_SHIPS_IN_WAVE = 15
+        const val DEFAULT_MIN_SPAWN_DIST = 2F
+        const val DEFAULT_MAX_SPAWN_DIST = 2.5F
     }
 
     private val shipMap = mutableMapOf<String, Ship>()
-
-    private fun trackShip(shipToTrack: Ship) {
-
-        shipMap[shipToTrack.id] = shipToTrack
-    }
-
-    private fun untrackShip(shipToRemove: Ship) {
-
-        shipMap.remove(shipToRemove.id)
-    }
 
     fun spawnShip(ship: Ship) {
 
         val renderable = ModelRenderable.builder()
                 .setSource(context, Uri.parse(ship.type.modelName))
                 .build()
-        renderable.thenAccept {  it ->
+        renderable.thenAccept { it ->
 
-            // we'll need to make our own Node subclass for moving the ships...
-            // for now let's just try to create them
             val shipNode = AnimatableNode()
             shipNode.renderable = it
             shipNode.setParent(earthNode)
             shipNode.renderable.isShadowCaster = false
             shipNode.name = ship.id // can be used for destroying ships later
 
-            val spawnCoord = generateRandomCoord()
+            val spawnCoord = randomCoord()
             shipNode.localPosition = spawnCoord
 
+            shipNode.attack(Vector3(0f,0f,0f))
+
+            // track the ship (for collective operations)
             shipMap[ship.id] = ship
         }
     } // end spawnShip
 
-    // we could add different spawn patterns (chosen by enum perhaps)
+    // we could add different spawn patterns (chosen by enum perhaps).
     //  without any arguments, spawns the default number of UFOs
     fun spawnWaveOfShips(numOfShips: Int = DEFAULT_NUM_OF_SHIPS_IN_WAVE, ship: Ship = Ship()) {
         for (item in 0..numOfShips) {
@@ -68,15 +60,32 @@ class ShipManager(private val context: Context, private val earthNode: Node) {
         }
     }
 
-    private fun generateRandomCoord(): Vector3 {
+    fun damageShip(dmg: Int, shipId: String) {
 
-        val randomGen = Random()
-        val x = (if (randomGen.nextBoolean() == true) 1 else -1) * randomGen.nextFloat() * 0.35
-        val y = randomGen.nextFloat() * 0.35
-        val z = (if (randomGen.nextBoolean() == true) 1 else -1) * randomGen.nextFloat() * 0.35
+        val ship = shipMap.get(shipId)!! // if it's been hit, it should always exist
+        ship.hp -= dmg
+        if (ship.hp < 0) ship.hp = 0
+    }
+
+    private fun randomCoord(minDist: Float = DEFAULT_MIN_SPAWN_DIST,
+                            maxDist: Float = DEFAULT_MAX_SPAWN_DIST): Vector3 {
+
+        val rGen = Random()
+
+        var sign = if (rGen.nextBoolean() == true) 1 else -1
+
+        var x =  rGen.nextFloat() * maxDist // 0 - maxDist
+        x = Math.max(x, minDist) * sign // -maxDist - +maxDist, excluding -minDist - +minDist
+
+        sign = if (rGen.nextBoolean() == true) 1 else -1
+        var z = rGen.nextFloat() * maxDist
+        z = Math.max(z, minDist) * sign
+
+        val y = rGen.nextFloat() * maxDist
+
         Log.d("XYZ", "$x $y $z")
 
-        return Vector3(x.toFloat(), y.toFloat(), z.toFloat())
+        return Vector3(x, y, z)
     }
 
 } // end class

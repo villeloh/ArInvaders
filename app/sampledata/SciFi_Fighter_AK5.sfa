@@ -1,0 +1,68 @@
+{
+   bound_relative_root: {
+      x: 0.5,
+      y: 0,
+      z: 0.5,
+   },
+   materials: [
+      {
+         name: "SciFi_Fighter_AK5",
+         parameters: [
+            {
+               baseColor: "SciFi_Fighter_AK5-diffuse",
+            },
+            {
+               baseColorTint: [
+                  0.58799999999999997,
+                  0.58799999999999997,
+                  0.58799999999999997,
+                  1,
+               ],
+            },
+            {
+               metallic: 1,
+            },
+            {
+               roughness: 0.18257399999999999,
+            },
+            {
+               opacity: null,
+            },
+         ],
+         source: "build/sceneform_sdk/default_materials/obj_material.sfm",
+      },
+   ],
+   model: {
+      attributes: [
+         "Position",
+         "TexCoord",
+         "Orientation",
+      ],
+      collision: {},
+      file: "sampledata/SciFi_Fighter_AK5.obj",
+      name: "SciFi_Fighter_AK5",
+      recenter: "root",
+      scale: 0.0000770000000000001,
+   },
+   samplers: [
+      {
+         file: "sampledata\\SciFi_Fighter_AK5-diffuse.jpg",
+         name: "SciFi_Fighter_AK5-diffuse",
+         pipeline_name: "SciFi_Fighter_AK5-diffuse.jpg",
+      },
+      {
+         file: "sampledata\\SciFi_Fighter_AK5-Lights.jpg",
+         name: "SciFi_Fighter_AK5-Lights",
+         pipeline_name: "SciFi_Fighter_AK5-Lights.jpg",
+      },
+      {
+         file: "sampledata\\SciFi_Fighter_AK5-Normal_Map.jpg",
+         name: "SciFi_Fighter_AK5-Normal_Map",
+         params: {
+            usage_type: "Data",
+         },
+         pipeline_name: "SciFi_Fighter_AK5-Normal_Map.jpg",
+      },
+   ],
+   version: "0.52:1",
+}
