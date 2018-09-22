@@ -17,7 +17,7 @@ import java.util.*
 // pass 'this' as the context from MainActivity
 // NOTE: ideally, this class would be a Singleton, but I could think of no good
 // way to refer to the right context and earthNode in that case
-class ShipManager(val context: Context, val earthNode: Node) {
+class ShipManager(private val context: Context, private val earthNode: Node) {
 
     companion object {
         const val DEFAULT_SPAWN_DISTANCE_MIN = 1
@@ -60,7 +60,8 @@ class ShipManager(val context: Context, val earthNode: Node) {
     } // end spawnShip
 
     // we could add different spawn patterns (chosen by enum perhaps)
-    fun spawnWaveOfShips(numOfShips: Int, ship: Ship) {
+    //  without any arguments, spawns the default number of UFOs
+    fun spawnWaveOfShips(numOfShips: Int = DEFAULT_NUM_OF_SHIPS_IN_WAVE, ship: Ship = Ship()) {
         for (item in 0..numOfShips) {
 
             spawnShip(ship)
