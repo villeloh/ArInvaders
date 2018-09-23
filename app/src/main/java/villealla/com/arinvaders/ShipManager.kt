@@ -15,7 +15,7 @@ import java.util.*
 // pass 'this' / applicationContext as the context from MainActivity
 // NOTE: ideally, this class would be a Singleton, but I could think of no good
 // way to refer to the right context and earthNode in that case
-class ShipManager(private val context: Context, private val earthNode: Node) {
+class ShipManager(private val earthNode: Node) {
 
     companion object {
 
@@ -24,13 +24,13 @@ class ShipManager(private val context: Context, private val earthNode: Node) {
         const val DEFAULT_MAX_SPAWN_DIST = 2.5F
     }
 
-    val rGen = Random(System.currentTimeMillis())
+    private val rGen = Random(System.currentTimeMillis())
 
     private val shipMap = mutableMapOf<String, Ship>()
 
     fun spawnShip(shipType: ShipType) {
 
-        val ship = Ship(type = shipType, node = AnimatableNode())
+        val ship = Ship(type = shipType)
 
         val spawnCoord = randomCoord()
 
@@ -40,7 +40,7 @@ class ShipManager(private val context: Context, private val earthNode: Node) {
         ship.node.name = ship.id // can be used for destroying ships later
         ship.node.setParent(earthNode)
 
-        ship.attack(Vector3(0f, 0f, 0f))
+        ship.attack(Vector3(0f, Planet.centerHeight, 0f))
 
         // track the ship (for collective operations)
         shipMap[ship.id] = ship

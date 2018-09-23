@@ -9,12 +9,16 @@ import com.google.ar.sceneform.rendering.ModelRenderable
 import com.google.ar.sceneform.ux.ArFragment
 
 /*
-* The planet probably won't have too many stats, but for the sake of consistency,
-* I added it as a class as well.
 * @author Ville Lohkovuori
 * */
 
 class Planet(private var hitPoints: Long = 7000000000) {
+
+    // determines the Y-coordinate that the ships will attack towards.
+    // if the model is rescaled, this should be changed as well
+    companion object {
+        const val centerHeight = 0.07F
+    }
 
     lateinit var earthNode: Node
     var earthRenderable: ModelRenderable? = null

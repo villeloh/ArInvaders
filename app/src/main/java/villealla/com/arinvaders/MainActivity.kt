@@ -12,7 +12,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var arFragment: CustomArFragment
     private lateinit var shipManager: ShipManager
     private lateinit var earth: Planet
-    private var noPlaneAttached = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,8 +25,6 @@ class MainActivity : AppCompatActivity() {
         loadShipRenderables()
 
         setFragmentListeners()
-
-        // end setOnTapArPlaneListener
     } // end onCreate
 
     private fun setFragmentListeners() {
@@ -43,17 +40,14 @@ class MainActivity : AppCompatActivity() {
                 return@setOnTapArPlaneListener
             }
 
-            if (noPlaneAttached) {
+            earth.renderInArSpace(arFragment, hitResult!!)
 
-                earth.renderInArSpace(arFragment, hitResult!!)
+            shipManager = ShipManager(earth.earthNode)
+            shipManager.spawnWaveOfShips(shipType = ShipType.UFO)
 
-                shipManager = ShipManager(this, earth.earthNode)
-                shipManager.spawnWaveOfShips(shipType = ShipType.UFO)
+            arFragment.disablePlaneDetection()
 
-                arFragment.disablePlaneDetection()
-
-                arFragment.setOnTapArPlaneListener(null)
-            }
+            arFragment.setOnTapArPlaneListener(null)
         }
     }
 
@@ -66,8 +60,6 @@ class MainActivity : AppCompatActivity() {
                     .build()
                     .thenAccept { it -> Ship.renderables[shipType] = it }
         }
-
-
     }
 
 

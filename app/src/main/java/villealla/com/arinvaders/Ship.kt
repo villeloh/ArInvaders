@@ -19,7 +19,7 @@ class Ship(
         val type: ShipType = ShipType.UFO,
         val speed: Int = type.speed,
         var hp: Int = type.hp,
-        val node: AnimatableNode) {
+        val node: AnimatableNode = AnimatableNode()) {
 
     companion object {
         val renderables = mutableMapOf<ShipType, ModelRenderable>()
