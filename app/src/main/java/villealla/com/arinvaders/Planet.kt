@@ -17,7 +17,7 @@ import com.google.ar.sceneform.ux.ArFragment
 class Planet(private var hitPoints: Long = 7000000000) {
 
     lateinit var earthNode: Node
-    private lateinit var earthRenderable: ModelRenderable
+    var earthRenderable: ModelRenderable? = null
 
     // needs to be its own function because of the delay in attaching
     // the renderable... feel free to refactor; I'm not very good at async stuffs

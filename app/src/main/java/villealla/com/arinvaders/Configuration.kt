@@ -19,5 +19,7 @@ class Configuration {
         const val MAX_SPAWN_Z = 2.0F
 
         const val DELAY_MS = 10L // just here to remind that delays have to be in ms (long)
+
+        const val DEBUG_TAG = "MYAPP"
     }
 } // end class

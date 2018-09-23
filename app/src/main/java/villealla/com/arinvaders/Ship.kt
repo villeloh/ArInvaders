@@ -1,5 +1,8 @@
 package villealla.com.arinvaders
 
+import com.google.ar.sceneform.math.Vector3
+import com.google.ar.sceneform.rendering.ModelRenderable
+
 // you only need a companion object if you want to refer to these
 // from outside the class (I guess... not sure if this is good code or not)
 const val DEFAULT_MOVE_SPEED = 10
@@ -15,8 +18,17 @@ class Ship(
         // ships default to their type's hp and speed, but these can be varied manually if needed
         val type: ShipType = ShipType.UFO,
         val speed: Int = type.speed,
-        var hp: Int = type.hp) {
+        var hp: Int = type.hp,
+        val node: AnimatableNode) {
+
+    companion object {
+        val renderables = mutableMapOf<ShipType, ModelRenderable>()
+    }
 
     // each ship has a unique identifier, to enable easy tracking
     val id = java.util.UUID.randomUUID().toString()
+
+    fun attack(earthPosition: Vector3) {
+        node.attack(earthPosition)
+    }
 } // end class
