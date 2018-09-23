@@ -3,9 +3,18 @@ package villealla.com.arinvaders
 import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.MotionEvent
+import android.view.View
 import com.google.ar.core.TrackingState
 import com.google.ar.sceneform.FrameTime
 import com.google.ar.sceneform.rendering.ModelRenderable
+import android.os.SystemClock
+import android.util.Log
+import com.google.ar.core.HitResult
+import com.google.ar.core.Plane
+import com.google.ar.sceneform.HitTestResult
+import com.google.ar.sceneform.Node
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -23,8 +32,8 @@ class MainActivity : AppCompatActivity() {
         earth.obtainRenderable(this)
 
         loadShipRenderables()
-
         setFragmentListeners()
+        setArViewTouchListener()
     } // end onCreate
 
     private fun setFragmentListeners() {
@@ -53,7 +62,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun loadShipRenderables() {
 
-        //Load all models that are present in ShipType enum
+        // Load all models that are present in ShipType enum
         ShipType.values().forEach { shipType ->
             ModelRenderable.builder()
                     .setSource(this, Uri.parse(shipType.modelName))
@@ -61,7 +70,6 @@ class MainActivity : AppCompatActivity() {
                     .thenAccept { it -> Ship.renderables[shipType] = it }
         }
     }
-
 
     // it was used to deal with the image as anchor point in the labs...
     // could be used for something later on I guess
@@ -73,4 +81,56 @@ class MainActivity : AppCompatActivity() {
             return
         }
     } // end onUpdate
+
+    private fun setArViewTouchListener() {
+
+        arFragment.arSceneView.scene.setOnTouchListener {
+            _, _ ->
+            // the 'real' HitTestResult and MotionEvent are not needed here
+
+            playerAttack()
+            true
+        }
+    }
+
+    private fun getScreenCenter(): android.graphics.Point {
+
+        val mainView = findViewById<View>(android.R.id.content)
+        return android.graphics.Point(mainView.width / 2, mainView.height / 2)
+    }
+
+    private fun playerAttack() {
+
+        val screenCenterMotionEvent = obtainScreenCenterMotionEvent()
+
+        val hitTestResult = arFragment.arSceneView.scene.hitTest(screenCenterMotionEvent)
+        val hitNode = hitTestResult.node
+
+        if (hitNode != null && hitNode.name != "earthNode") {
+
+            Log.d(Configuration.DEBUG_TAG, "node name: " + hitNode.name)
+            shipManager.damageShip(1, hitNode.name)
+        }
+    } // end playerAttack
+
+    // creates a 'fake' MotionEvent that 'touches' the center of the screen
+    private  fun obtainScreenCenterMotionEvent(): MotionEvent {
+
+        val screenCenter = getScreenCenter()
+
+        val downTime = SystemClock.uptimeMillis()
+        val eventTime = SystemClock.uptimeMillis() + 100
+        val x = screenCenter.x.toFloat()
+        val y = screenCenter.y.toFloat()
+
+        val metaState = 0
+        return MotionEvent.obtain(
+                downTime,
+                eventTime,
+                MotionEvent.ACTION_UP,
+                x,
+                y,
+                metaState)
+    } // end obtainMotionEvent
+
 } // end class

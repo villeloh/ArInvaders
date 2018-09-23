@@ -10,13 +10,13 @@ class CustomArFragment : ArFragment() {
 
     // private var listener: OnFragmentInteractionListener? = null
 
-    // disable the plane detection once a plane has been chosen
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
 
         return view
     }
 
+    // disable the plane detection once a plane has been chosen
     fun disablePlaneDetection() {
 
         planeDiscoveryController.hide()

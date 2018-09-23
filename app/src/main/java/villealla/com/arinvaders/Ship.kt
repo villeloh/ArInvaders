@@ -1,5 +1,8 @@
 package villealla.com.arinvaders
 
+import android.util.Log
+import android.view.MotionEvent
+import com.google.ar.sceneform.HitTestResult
 import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.rendering.ModelRenderable
 
@@ -27,6 +30,14 @@ class Ship(
 
     // each ship has a unique identifier, to enable easy tracking
     val id = java.util.UUID.randomUUID().toString()
+
+    // called when the laser hits the ship from the middle of the screen
+    fun onTouchNode(hitTestResult: HitTestResult, mEvent: MotionEvent) {
+
+        if (hitTestResult.node == null) return
+
+        Log.d(Configuration.DEBUG_TAG, "ship hit !")
+    }
 
     fun attack(earthPosition: Vector3) {
         node.attack(earthPosition)

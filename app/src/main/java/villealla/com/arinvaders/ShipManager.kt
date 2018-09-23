@@ -40,6 +40,13 @@ class ShipManager(private val earthNode: Node) {
         ship.node.name = ship.id // can be used for destroying ships later
         ship.node.setParent(earthNode)
 
+        ship.node.setOnTouchListener {
+            hitTestResult, mEvent ->
+
+            ship.onTouchNode(hitTestResult, mEvent)
+            true
+        }
+
         ship.attack(Vector3(0f, Planet.centerHeight, 0f))
 
         // track the ship (for collective operations)
@@ -49,7 +56,7 @@ class ShipManager(private val earthNode: Node) {
 
     // we could add different spawn patterns (chosen by enum perhaps).
     //  without any arguments, spawns the default number of UFOs
-    fun spawnWaveOfShips(numOfShips: Int = DEFAULT_NUM_OF_SHIPS_IN_WAVE, shipType: ShipType) {
+    fun spawnWaveOfShips(numOfShips: Int = DEFAULT_NUM_OF_SHIPS_IN_WAVE, shipType: ShipType = ShipType.UFO) {
         for (item in 0..numOfShips) {
 
             spawnShip(shipType)
@@ -60,7 +67,18 @@ class ShipManager(private val earthNode: Node) {
 
         val ship = shipMap.get(shipId)!! // if it's been hit, it should always exist
         ship.hp -= dmg
-        if (ship.hp < 0) ship.hp = 0
+        if (ship.hp <= 0) destroyShip(shipId)
+    }
+
+    private fun destroyShip(shipId: String) {
+
+        val ship = shipMap[shipId]!!
+
+        // I'm not sure if more is needed to remove the ship from
+        // physical existence... setting the Node to null is impossible (at least directly)
+        ship.node.renderable = null
+        // TODO: play explosion animation
+        shipMap.remove(shipId)
     }
 
     private fun randomCoord(minDist: Float = DEFAULT_MIN_SPAWN_DIST,
