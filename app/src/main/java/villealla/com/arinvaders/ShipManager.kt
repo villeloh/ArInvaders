@@ -9,16 +9,24 @@ import java.util.*
 /*
 * Controls the collective operations regarding Ships
 * (creation as waves, tracking, etc).
-* @author Ville Lohkovuori
+* @author Ville Lohkovuori, Sinan <just put your surname here>
 * */
 
-// pass 'this' / applicationContext as the context from MainActivity
 // NOTE: ideally, this class would be a Singleton, but I could think of no good
 // way to refer to the right context and earthNode in that case
-class ShipManager(private val earthNode: Node) {
+class ShipManager private constructor() {
+
+    private lateinit var earthNode: Node
+
+    init {
+        // do stuff when ShipManager.instance is assigned
+    }
+
+    private object Holder { val INSTANCE = ShipManager() }
 
     companion object {
 
+        val instance: ShipManager by lazy { Holder.INSTANCE }
         const val DEFAULT_NUM_OF_SHIPS_IN_WAVE = 15
         const val DEFAULT_MIN_SPAWN_DIST = 2F
         const val DEFAULT_MAX_SPAWN_DIST = 2.5F
@@ -27,6 +35,11 @@ class ShipManager(private val earthNode: Node) {
     private val rGen = Random(System.currentTimeMillis())
 
     private val shipMap = mutableMapOf<String, Ship>()
+
+    // ugly af, but whatever
+    fun setEarthNode(passedNode: Node) {
+        earthNode = passedNode
+    }
 
     fun spawnShip(shipType: ShipType) {
 

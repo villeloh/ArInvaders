@@ -10,16 +10,12 @@ import com.google.ar.sceneform.FrameTime
 import com.google.ar.sceneform.rendering.ModelRenderable
 import android.os.SystemClock
 import android.util.Log
-import com.google.ar.core.HitResult
-import com.google.ar.core.Plane
-import com.google.ar.sceneform.HitTestResult
-import com.google.ar.sceneform.Node
-
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var arFragment: CustomArFragment
     private lateinit var shipManager: ShipManager
+    private lateinit var gameManager: GameManager
     private lateinit var earth: Planet
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,6 +30,8 @@ class MainActivity : AppCompatActivity() {
         loadShipRenderables()
         setFragmentListeners()
         setArViewTouchListener()
+
+        gameManager = GameManager.instance
     } // end onCreate
 
     private fun setFragmentListeners() {
@@ -51,7 +49,8 @@ class MainActivity : AppCompatActivity() {
 
             earth.renderInArSpace(arFragment, hitResult!!)
 
-            shipManager = ShipManager(earth.earthNode)
+            shipManager = ShipManager.instance
+            shipManager.setEarthNode(earth.earthNode)
             shipManager.spawnWaveOfShips(shipType = ShipType.UFO)
 
             arFragment.disablePlaneDetection()
@@ -71,17 +70,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // it was used to deal with the image as anchor point in the labs...
-    // could be used for something later on I guess
-    private fun onUpdate(frameTime: FrameTime) {
-
-        arFragment.onUpdate(frameTime)
-        val arFrame = arFragment.arSceneView.arFrame
-        if (arFrame == null || arFrame.camera.trackingState != TrackingState.TRACKING) {
-            return
-        }
-    } // end onUpdate
-
     private fun setArViewTouchListener() {
 
         arFragment.arSceneView.scene.setOnTouchListener {
@@ -91,12 +79,6 @@ class MainActivity : AppCompatActivity() {
             playerAttack()
             true
         }
-    }
-
-    private fun getScreenCenter(): android.graphics.Point {
-
-        val mainView = findViewById<View>(android.R.id.content)
-        return android.graphics.Point(mainView.width / 2, mainView.height / 2)
     }
 
     private fun playerAttack() {
@@ -132,5 +114,22 @@ class MainActivity : AppCompatActivity() {
                 y,
                 metaState)
     } // end obtainMotionEvent
+
+    private fun getScreenCenter(): android.graphics.Point {
+
+        val mainView = findViewById<View>(android.R.id.content)
+        return android.graphics.Point(mainView.width / 2, mainView.height / 2)
+    }
+
+    // it was used to deal with the image as anchor point in the labs...
+    // could be used for something later on I guess
+    private fun onUpdate(frameTime: FrameTime) {
+
+        arFragment.onUpdate(frameTime)
+        val arFrame = arFragment.arSceneView.arFrame
+        if (arFrame == null || arFrame.camera.trackingState != TrackingState.TRACKING) {
+            return
+        }
+    } // end onUpdate
 
 } // end class
