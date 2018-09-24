@@ -14,7 +14,7 @@ import java.util.*
 class ShipManager private constructor() {
 
     private lateinit var earthNode: Node
-    lateinit var spawnLoop: SpawnLoop // set from MainActivity atm... I get a weird null object reference without that; fix asap!
+    val spawnLoop = SpawnLoop(this)
 
     init {
     }

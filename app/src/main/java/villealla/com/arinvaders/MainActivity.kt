@@ -50,16 +50,12 @@ class MainActivity : AppCompatActivity() {
             earth.renderInArSpace(arFragment, hitResult!!)
 
             shipManager = ShipManager.instance
-
-            // I get a null object reference without setting this here... meh, I'll fix it later
-            shipManager.spawnLoop = SpawnLoop()
             shipManager.setEarthNode(earth.earthNode)
 
             gameManager.startGameSession()
 
             arFragment.disablePlaneDetection()
             arFragment.setOnTapArPlaneListener(null)
-
         }
     }
 
@@ -117,7 +113,7 @@ class MainActivity : AppCompatActivity() {
                 x,
                 y,
                 metaState)
-    } // end obtainMotionEvent
+    } // end obtainScreenCenterMotionEvent
 
     private fun getScreenCenter(): android.graphics.Point {
 
