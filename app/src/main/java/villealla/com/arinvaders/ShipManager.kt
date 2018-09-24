@@ -1,6 +1,5 @@
 package villealla.com.arinvaders
 
-import android.util.Log
 import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.math.Vector3
 import java.util.*
@@ -89,6 +88,7 @@ class ShipManager private constructor() {
         // I'm not sure if more is needed to remove the ship from
         // physical existence... setting the Node to null is impossible (at least directly)
         ship.node.renderable = null
+        ship.node.setParent(null)
         // TODO: play explosion animation
         shipMap.remove(shipId)
     }

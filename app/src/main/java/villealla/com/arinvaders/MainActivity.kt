@@ -2,14 +2,14 @@ package villealla.com.arinvaders
 
 import android.net.Uri
 import android.os.Bundle
+import android.os.SystemClock
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import com.google.ar.core.TrackingState
 import com.google.ar.sceneform.FrameTime
 import com.google.ar.sceneform.rendering.ModelRenderable
-import android.os.SystemClock
-import android.util.Log
 
 class MainActivity : AppCompatActivity() {
 
@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.fragment_custom_ar)
 
         arFragment = supportFragmentManager.findFragmentById(R.id.custom_ar_fragment) as CustomArFragment
+        supportFragmentManager.beginTransaction().add(R.id.mainLayout, HudFragment()).commit()
 
         earth = Planet()
         earth.obtainRenderable(this)
