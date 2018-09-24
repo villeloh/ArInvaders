@@ -1,6 +1,5 @@
 package villealla.com.arinvaders
 
-import android.content.Context
 import android.util.Log
 import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.math.Vector3
@@ -12,17 +11,18 @@ import java.util.*
 * @author Ville Lohkovuori, Sinan <just put your surname here>
 * */
 
-// NOTE: ideally, this class would be a Singleton, but I could think of no good
-// way to refer to the right context and earthNode in that case
 class ShipManager private constructor() {
 
     private lateinit var earthNode: Node
+    lateinit var spawnLoop: SpawnLoop // set from MainActivity atm... I get a weird null object reference without that; fix asap!
 
     init {
-        // do stuff when ShipManager.instance is assigned
     }
 
-    private object Holder { val INSTANCE = ShipManager() }
+    private object Holder {
+
+        val INSTANCE = ShipManager()
+    }
 
     companion object {
 
@@ -30,6 +30,7 @@ class ShipManager private constructor() {
         const val DEFAULT_NUM_OF_SHIPS_IN_WAVE = 15
         const val DEFAULT_MIN_SPAWN_DIST = 2F
         const val DEFAULT_MAX_SPAWN_DIST = 2.5F
+        const val DEFAULT_WAVE_LENGTH_MS = 8000L
     }
 
     private val rGen = Random(System.currentTimeMillis())
@@ -59,12 +60,10 @@ class ShipManager private constructor() {
             ship.onTouchNode(hitTestResult, mEvent)
             true
         }
-
         ship.attack(Vector3(0f, Planet.centerHeight, 0f))
 
         // track the ship (for collective operations)
         shipMap[ship.id] = ship
-
     } // end spawnShip
 
     // we could add different spawn patterns (chosen by enum perhaps).
@@ -107,9 +106,8 @@ class ShipManager private constructor() {
 
         val y = rGen.nextFloat() * maxDist
 
-        Log.d(Configuration.DEBUG_TAG, "coordinates : x=$x, y=$y z=$z")
+        // Log.d(Configuration.DEBUG_TAG, "coordinates : x=$x, y=$y z=$z")
 
         return Vector3(x, y, z)
     }
-
 } // end class

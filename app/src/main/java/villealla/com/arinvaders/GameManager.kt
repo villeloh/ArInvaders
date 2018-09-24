@@ -1,7 +1,5 @@
 package villealla.com.arinvaders
 
-import android.content.Context
-
 /*
 * Class for managing the player and game-related operations.
 *
@@ -20,7 +18,18 @@ class GameManager private constructor() {
         val instance: GameManager by lazy { Holder.INSTANCE }
     }
 
-    // the amount of destroyed ships in this game session
-    var score = 0
+    private val shipManager = ShipManager.instance
+    private lateinit var gameSession: GameSession
+
+    fun startGameSession() {
+
+        gameSession = GameSession()
+        gameSession.start() // does nothing atm
+        shipManager.spawnLoop.start()
+    }
+
+    fun stopGameSession() {
+        shipManager.spawnLoop.stop()
+    }
 
 } // end class

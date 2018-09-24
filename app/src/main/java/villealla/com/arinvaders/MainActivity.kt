@@ -50,12 +50,16 @@ class MainActivity : AppCompatActivity() {
             earth.renderInArSpace(arFragment, hitResult!!)
 
             shipManager = ShipManager.instance
+
+            // I get a null object reference without setting this here... meh, I'll fix it later
+            shipManager.spawnLoop = SpawnLoop()
             shipManager.setEarthNode(earth.earthNode)
-            shipManager.spawnWaveOfShips(shipType = ShipType.UFO)
+
+            gameManager.startGameSession()
 
             arFragment.disablePlaneDetection()
-
             arFragment.setOnTapArPlaneListener(null)
+
         }
     }
 
