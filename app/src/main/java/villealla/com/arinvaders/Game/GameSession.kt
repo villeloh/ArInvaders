@@ -1,4 +1,4 @@
-package villealla.com.arinvaders
+package villealla.com.arinvaders.Game
 
 /*
 * Handles everything related to the current game session; score etc.

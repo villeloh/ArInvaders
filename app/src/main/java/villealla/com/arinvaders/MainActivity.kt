@@ -10,6 +10,17 @@ import android.view.View
 import com.google.ar.core.TrackingState
 import com.google.ar.sceneform.FrameTime
 import com.google.ar.sceneform.rendering.ModelRenderable
+import villealla.com.arinvaders.Fragments.CustomArFragment
+import villealla.com.arinvaders.Fragments.HudFragment
+import villealla.com.arinvaders.Game.GameManager
+import villealla.com.arinvaders.Sound.Maestro
+import villealla.com.arinvaders.Sound.Music
+import villealla.com.arinvaders.Sound.SoundEffectPlayer
+import villealla.com.arinvaders.Sound.SoundEffects
+import villealla.com.arinvaders.Static.Configuration
+import villealla.com.arinvaders.WorldEntities.Planet
+import villealla.com.arinvaders.WorldEntities.Ship
+import villealla.com.arinvaders.WorldEntities.ShipType
 
 class MainActivity : AppCompatActivity() {
 
@@ -29,10 +40,11 @@ class MainActivity : AppCompatActivity() {
         earth.obtainRenderable(this)
 
         loadShipRenderables()
+        SoundEffectPlayer.loadAllEffects(this)
         setFragmentListeners()
-        setArViewTouchListener()
 
         gameManager = GameManager.instance
+
     } // end onCreate
 
     private fun setFragmentListeners() {
@@ -56,6 +68,13 @@ class MainActivity : AppCompatActivity() {
             gameManager.startGameSession()
 
             arFragment.disablePlaneDetection()
+
+            //Play game music
+            Maestro.playMusic(this, Music.BATTLE, true)
+
+            //Starts attack/shooting listener
+            setArViewTouchListener()
+
             arFragment.setOnTapArPlaneListener(null)
         }
     }
@@ -73,10 +92,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun setArViewTouchListener() {
 
-        arFragment.arSceneView.scene.setOnTouchListener {
-            _, _ ->
+        arFragment.arSceneView.scene.setOnTouchListener { _, motionEvent ->
             // the 'real' HitTestResult and MotionEvent are not needed here
-
+            Log.d(Configuration.DEBUG_TAG, "Tap")
             playerAttack()
             true
         }
@@ -89,9 +107,11 @@ class MainActivity : AppCompatActivity() {
         val hitTestResult = arFragment.arSceneView.scene.hitTest(screenCenterMotionEvent)
         val hitNode = hitTestResult.node
 
+        SoundEffectPlayer.playEffect(SoundEffects.LASER)
+
         if (hitNode != null && hitNode.name != "earthNode") {
 
-            Log.d(Configuration.DEBUG_TAG, "node name: " + hitNode.name)
+            Log.d(Configuration.DEBUG_TAG, "Hit! node name: " + hitNode.name)
             shipManager.damageShip(1, hitNode.name)
         }
     } // end playerAttack

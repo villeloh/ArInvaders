@@ -2,6 +2,11 @@ package villealla.com.arinvaders
 
 import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.math.Vector3
+import villealla.com.arinvaders.Sound.SoundEffectPlayer
+import villealla.com.arinvaders.Sound.SoundEffects
+import villealla.com.arinvaders.WorldEntities.Planet
+import villealla.com.arinvaders.WorldEntities.Ship
+import villealla.com.arinvaders.WorldEntities.ShipType
 import java.util.*
 
 /*
@@ -90,6 +95,7 @@ class ShipManager private constructor() {
         ship.node.renderable = null
         ship.node.setParent(null)
         // TODO: play explosion animation
+        SoundEffectPlayer.playEffect(SoundEffects.EXPLOSION)
         shipMap.remove(shipId)
     }
 

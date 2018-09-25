@@ -1,4 +1,4 @@
-package villealla.com.arinvaders
+package villealla.com.arinvaders.Fragments
 
 
 import android.graphics.BitmapFactory
@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import kotlinx.android.synthetic.main.fragment_hud.*
+import villealla.com.arinvaders.R
 
 class HudFragment : Fragment() {
 
@@ -21,7 +22,7 @@ class HudFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        hud.setImageBitmap(BitmapFactory.decodeStream(resources.openRawResource(R.raw.hud)))
+        hud.setImageBitmap(BitmapFactory.decodeStream(resources.openRawResource(R.raw.hud_with_aim)))
         hud.scaleType = ImageView.ScaleType.FIT_XY
         hud.adjustViewBounds = true
     }

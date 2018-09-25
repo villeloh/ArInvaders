@@ -1,4 +1,4 @@
-package villealla.com.arinvaders
+package villealla.com.arinvaders.WorldEntities
 
 import android.content.Context
 import android.net.Uri

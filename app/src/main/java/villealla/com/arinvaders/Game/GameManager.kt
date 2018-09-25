@@ -1,4 +1,6 @@
-package villealla.com.arinvaders
+package villealla.com.arinvaders.Game
+
+import villealla.com.arinvaders.ShipManager
 
 /*
 * Class for managing the player and game-related operations.

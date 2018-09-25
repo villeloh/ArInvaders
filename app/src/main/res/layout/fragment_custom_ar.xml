@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/custom_ar_fragment"
-        android:name="villealla.com.arinvaders.CustomArFragment"
+        android:name="villealla.com.arinvaders.Fragments.CustomArFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

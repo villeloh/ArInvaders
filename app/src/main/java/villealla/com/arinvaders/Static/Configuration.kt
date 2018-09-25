@@ -1,4 +1,4 @@
-package villealla.com.arinvaders
+package villealla.com.arinvaders.Static
 
 // global config objects are supposedly a bad pattern...
 // I already moved some stuff out of here; we can probably get

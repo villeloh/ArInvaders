@@ -1,7 +1,6 @@
-package villealla.com.arinvaders
+package villealla.com.arinvaders.Movement
 
 import android.animation.ObjectAnimator
-import android.util.Log
 import android.view.animation.LinearInterpolator
 import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.math.Vector3
@@ -34,7 +33,7 @@ class AnimatableNode : Node() {
 
         // With min=2F and max=2.5F duration range is: 3.1s to 5s (1s of randomness)
         val duration = (4000 * distanceFactor).toLong() + random.nextLong() % 1000 + 1000
-        Log.d(Configuration.DEBUG_TAG, "factor: $distanceFactor, duration: $duration")
+        //Log.d(Configuration.DEBUG_TAG, "factor: $distanceFactor, duration: $duration")
 
         val animation = localPositionAnimator(duration, localPosition, earthPosition)
 

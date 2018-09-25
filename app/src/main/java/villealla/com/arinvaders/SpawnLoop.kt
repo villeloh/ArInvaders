@@ -1,6 +1,7 @@
 package villealla.com.arinvaders
 
 import android.os.Handler
+import villealla.com.arinvaders.WorldEntities.ShipType
 
 /*
 * Manages the lifecycle of the spawned space ships.

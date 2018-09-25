@@ -1,10 +1,12 @@
-package villealla.com.arinvaders
+package villealla.com.arinvaders.WorldEntities
 
 import android.util.Log
 import android.view.MotionEvent
 import com.google.ar.sceneform.HitTestResult
 import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.rendering.ModelRenderable
+import villealla.com.arinvaders.Movement.AnimatableNode
+import villealla.com.arinvaders.Static.Configuration
 
 // you only need a companion object if you want to refer to these
 // from outside the class (I guess... not sure if this is good code or not)
