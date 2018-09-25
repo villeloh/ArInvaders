@@ -84,19 +84,27 @@ class ShipManager private constructor() {
 
         val ship = shipMap.get(shipId)!! // if it's been hit, it should always exist
         ship.hp -= dmg
-        if (ship.hp <= 0) destroyShip(shipId)
+        if (ship.hp <= 0) {
+            destroyShip(shipId, false) }
     }
 
-    fun destroyShip(shipId: String) {
+    fun destroyShip(shipId: String, destroyedByTheEarth: Boolean) {
 
-        val ship = shipMap[shipId]!!
+        // if it's null, the ship has already been destroyed
+        val ship = shipMap[shipId] ?: return
 
         ship.node.renderable = null
         ship.node.setParent(null)
-        // TODO: play explosion animation
-        SoundEffectPlayer.playEffect(SoundEffects.EXPLOSION)
         shipMap.remove(shipId)
-    }
+
+        if (destroyedByTheEarth) {
+
+            // TODO: play nuke explosion sound / effect?
+        } else {
+            // TODO: play explosion animation
+            SoundEffectPlayer.playEffect(SoundEffects.EXPLOSION)
+        }
+    } // end destroyShip
 
     private fun randomCoord(minDist: Float = DEFAULT_MIN_SPAWN_DIST,
                             maxDist: Float = DEFAULT_MAX_SPAWN_DIST): Vector3 {
@@ -114,9 +122,5 @@ class ShipManager private constructor() {
         // Log.d(Configuration.DEBUG_TAG, "coordinates : x=$x, y=$y z=$z")
 
         return Vector3(x, y, z)
-    }
-
-    fun getMap(): MutableMap<String, Ship> {
-        return shipMap
     }
 } // end class

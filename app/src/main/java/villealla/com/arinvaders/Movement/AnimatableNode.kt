@@ -63,11 +63,7 @@ class AnimatableNode(ship: Ship) : Node() {
             SoundEffectPlayer.playEffect(SoundEffectPlayer.randomEarthEffect())
             // Log.d(Configuration.DEBUG_TAG, "People left: " + Planet.instance.people())
 
-            // it's not pretty, but since the animation doesn't stop until we 'reach' the Earth,
-            // we need to check whether the ship has technically been destroyed earlier (by our laser)
-            if (ShipManager.instance.getMap()[ship.id] != null) {
-                ShipManager.instance.destroyShip(ship.id)
-            }
+            ShipManager.instance.destroyShip(ship.id, true)
 
             animation?.removeListener(this)
         }
