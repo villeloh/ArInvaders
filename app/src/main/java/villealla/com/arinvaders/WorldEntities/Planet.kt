@@ -7,16 +7,28 @@ import com.google.ar.sceneform.AnchorNode
 import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.rendering.ModelRenderable
 import com.google.ar.sceneform.ux.ArFragment
+import villealla.com.arinvaders.Game.GameManager
 
 /*
 * @author Ville Lohkovuori
 * */
 
-class Planet(private var hitPoints: Long = 7000000000) {
+// needs to be a Singleton for easy reference...
+class Planet private constructor(private var hitPoints: Long = 7000000000) {
 
-    // determines the Y-coordinate that the ships will attack towards.
-    // if the model is rescaled, this should be changed as well
+    init {
+    }
+
+    private object Holder {
+
+        val INSTANCE = Planet()
+    }
+
     companion object {
+        val instance: Planet by lazy { Holder.INSTANCE }
+
+        // determines the Y-coordinate that the ships will attack towards.
+        // if the model is rescaled, this should be changed as well
         const val centerHeight = 0.07F
     }
 
@@ -48,7 +60,14 @@ class Planet(private var hitPoints: Long = 7000000000) {
     fun killPeople(damage: Long) {
 
         hitPoints -= damage
-        if (hitPoints < 0) hitPoints = 0
+        if (hitPoints < 0) {
+            hitPoints = 0
+            GameManager.instance.endGameSession()
+        }
+    }
+
+    fun people(): Long {
+        return hitPoints
     }
 
 } // end class

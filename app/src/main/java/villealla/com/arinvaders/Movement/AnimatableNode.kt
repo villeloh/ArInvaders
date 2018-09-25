@@ -1,13 +1,22 @@
 package villealla.com.arinvaders.Movement
 
+import android.animation.Animator
 import android.animation.ObjectAnimator
+import android.util.Log
 import android.view.animation.LinearInterpolator
 import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.math.Vector3
+import villealla.com.arinvaders.ShipManager
+import villealla.com.arinvaders.Sound.SoundEffectPlayer
+import villealla.com.arinvaders.Sound.SoundEffects
+import villealla.com.arinvaders.Static.Configuration
+import villealla.com.arinvaders.WorldEntities.Planet
+import villealla.com.arinvaders.WorldEntities.Ship
+import java.util.*
 import java.util.concurrent.ThreadLocalRandom
 import kotlin.math.pow
 
-class AnimatableNode : Node() {
+class AnimatableNode(ship: Ship) : Node() {
 
     val random = ThreadLocalRandom.current()
 
@@ -37,6 +46,8 @@ class AnimatableNode : Node() {
 
         val animation = localPositionAnimator(duration, localPosition, earthPosition)
 
+        animation.addListener( animationListener )
+
         animation.start()
     }
 
@@ -44,4 +55,24 @@ class AnimatableNode : Node() {
         return Math.sqrt((end.x - start.x).pow(2).toDouble() + (end.y - start.y).pow(2).toDouble() + (end.z - start.z).pow(2).toDouble())
     }
 
+    private val animationListener = object : Animator.AnimatorListener {
+
+        override fun onAnimationEnd(animation: Animator?) {
+
+            Planet.instance.killPeople(ship.dmg)
+            SoundEffectPlayer.playEffect(SoundEffectPlayer.randomEarthEffect())
+            // Log.d(Configuration.DEBUG_TAG, "People left: " + Planet.instance.people())
+            ShipManager.instance.destroyShip(ship.id)
+            animation?.removeListener(this)
+        }
+
+        override fun onAnimationStart(animation: Animator?) {
+        }
+
+        override fun onAnimationCancel(animation: Animator?) {
+        }
+
+        override fun onAnimationRepeat(animation: Animator?) {
+        }
+    }
 }

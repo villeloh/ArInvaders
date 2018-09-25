@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
         arFragment = supportFragmentManager.findFragmentById(R.id.custom_ar_fragment) as CustomArFragment
         supportFragmentManager.beginTransaction().add(R.id.mainLayout, HudFragment()).commit()
 
-        earth = Planet()
+        earth = Planet.instance
         earth.obtainRenderable(this)
 
         loadShipRenderables()
@@ -67,14 +67,13 @@ class MainActivity : AppCompatActivity() {
 
             gameManager.startGameSession()
 
-            arFragment.disablePlaneDetection()
-
             //Play game music
             Maestro.playMusic(this, Music.BATTLE, true)
 
             //Starts attack/shooting listener
             setArViewTouchListener()
 
+            arFragment.disablePlaneDetection()
             arFragment.setOnTapArPlaneListener(null)
         }
     }
@@ -92,9 +91,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun setArViewTouchListener() {
 
-        arFragment.arSceneView.scene.setOnTouchListener { _, motionEvent ->
+        arFragment.arSceneView.scene.setOnTouchListener { _, _ ->
             // the 'real' HitTestResult and MotionEvent are not needed here
-            Log.d(Configuration.DEBUG_TAG, "Tap")
+            // Log.d(Configuration.DEBUG_TAG, "Tap")
+
+            // TODO: we need to somehow fire only one event per finger tap here
             playerAttack()
             true
         }
@@ -111,7 +112,7 @@ class MainActivity : AppCompatActivity() {
 
         if (hitNode != null && hitNode.name != "earthNode") {
 
-            Log.d(Configuration.DEBUG_TAG, "Hit! node name: " + hitNode.name)
+            // Log.d(Configuration.DEBUG_TAG, "Hit! node name: " + hitNode.name)
             shipManager.damageShip(1, hitNode.name)
         }
     } // end playerAttack

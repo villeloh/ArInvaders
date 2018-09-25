@@ -4,15 +4,22 @@ import android.content.Context
 import android.media.AudioAttributes
 import android.media.SoundPool
 import villealla.com.arinvaders.R
+import java.util.concurrent.ThreadLocalRandom
 
-enum class SoundEffects(val effectName: Int, val volumeLevel: Float = 1f, var id: Int = 0) {
+enum class SoundEffects(val effectName: Int, val volumeLevel: Float = 1f, var id: Int = 0, val effectId: String = "") {
     LASER(R.raw.laser, 0.5f),
-    EXPLOSION(R.raw.bomb)
+    EXPLOSION(R.raw.bomb),
+    EARTH_HIT_1(R.raw.scream_1, 1.0f, 0, "planetEffect"),
+    EARTH_HIT_2(R.raw.scream_2, 1.0f, 0, "planetEffect"),
+    EARTH_HIT_3(R.raw.scream_3, 1.0f, 0, "planetEffect")
 }
 
 object SoundEffectPlayer {
 
     private val soundPool: SoundPool
+    private val random = ThreadLocalRandom.current()
+    private val earthEffects = mutableListOf<SoundEffects>()
+    private var earthEffectsSize = 0
 
     init {
 
@@ -26,6 +33,7 @@ object SoundEffectPlayer {
                 .setAudioAttributes(audioAttributes)
                 .build()
 
+        initEarthEffects()
     }
 
     fun loadAllEffects(context: Context) {
@@ -34,11 +42,28 @@ object SoundEffectPlayer {
         }
     }
 
-
     fun playEffect(soundEffect: SoundEffects) {
         if (soundEffect.id != 0)
             soundPool.play(soundEffect.id, soundEffect.volumeLevel, soundEffect.volumeLevel, 1, 0, 1f)
     }
 
+    // it seems a bit clumsy and unnecessary, as the effects enum is static.
+    // maybe you can think of a better solution
+    private fun initEarthEffects() {
+        var i = 0
+        SoundEffects.values().forEach {
+
+            if (it.effectId == "planetEffect") {
+                earthEffects.add(it)
+                i += 1
+            }
+        }
+        earthEffectsSize = earthEffects.size
+    }
+
+    fun randomEarthEffect(): SoundEffects {
+
+        return earthEffects[random.nextInt(earthEffectsSize)]
+    }
 
 }

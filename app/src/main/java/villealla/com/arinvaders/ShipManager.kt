@@ -86,12 +86,10 @@ class ShipManager private constructor() {
         if (ship.hp <= 0) destroyShip(shipId)
     }
 
-    private fun destroyShip(shipId: String) {
+    fun destroyShip(shipId: String) {
 
         val ship = shipMap[shipId]!!
 
-        // I'm not sure if more is needed to remove the ship from
-        // physical existence... setting the Node to null is impossible (at least directly)
         ship.node.renderable = null
         ship.node.setParent(null)
         // TODO: play explosion animation

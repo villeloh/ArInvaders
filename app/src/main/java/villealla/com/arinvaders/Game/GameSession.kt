@@ -1,15 +1,13 @@
 package villealla.com.arinvaders.Game
 
 /*
-* Handles everything related to the current game session; score etc.
-* (We could use GameManager for this, but I figure it can't hurt to
-* have some modularity in the classes)
+* Not sure if this class is needed, so I move the stuff from here into GameManager.
+* Let's keep this as a stub for now if we decide to refactor.
 * */
 
 class GameSession {
 
-    private var score = 0
-
+    // should not be used anywhere atm, no idea why it 'lights up'
     fun start() {
 
     }

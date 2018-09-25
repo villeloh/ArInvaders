@@ -1,6 +1,7 @@
 package villealla.com.arinvaders.Game
 
 import villealla.com.arinvaders.ShipManager
+import villealla.com.arinvaders.Sound.Maestro
 
 /*
 * Class for managing the player and game-related operations.
@@ -21,16 +22,16 @@ class GameManager private constructor() {
     }
 
     private val shipManager = ShipManager.instance
-    private lateinit var gameSession: GameSession
+    var score = 0
 
     fun startGameSession() {
 
-        gameSession = GameSession()
-        gameSession.start() // does nothing atm
         shipManager.spawnLoop.start()
     }
 
-    fun stopGameSession() {
+    fun endGameSession() {
+
+        Maestro.stopMusic() // we can do this here... need to start in MainActivity due to context issues though
         shipManager.spawnLoop.stop()
     }
 
