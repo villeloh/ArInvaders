@@ -65,7 +65,7 @@ class AnimatableNode(ship: Ship) : Node() {
 
             // it's not pretty, but since the animation doesn't stop until we 'reach' the Earth,
             // we need to check whether the ship has technically been destroyed earlier (by our laser)
-            if (ShipManager.instance.getMap().containsKey(ship.id)) {
+            if (ShipManager.instance.getMap()[ship.id] != null) {
                 ShipManager.instance.destroyShip(ship.id)
             }
 
