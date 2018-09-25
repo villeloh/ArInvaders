@@ -89,9 +89,7 @@ class ShipManager private constructor() {
 
     fun destroyShip(shipId: String) {
 
-        Log.d("SHIPID", "ID before map call: " + shipId)
         val ship = shipMap[shipId]!!
-        Log.d("SHIPID", "ID after map call: " + ship.id)
 
         ship.node.renderable = null
         ship.node.setParent(null)

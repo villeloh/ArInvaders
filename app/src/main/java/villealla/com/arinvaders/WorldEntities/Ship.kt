@@ -53,9 +53,11 @@ class Ship(
     // called when the laser hits the ship from the middle of the screen
     fun onTouchNode(hitTestResult: HitTestResult, mEvent: MotionEvent) {
 
-        if (hitTestResult.node == null) return
+        // since playerAttack in MainActivity already calls damageShip, this
+        // method is useless atm. but let's preserve it for now in case we want to
+        // use it for something (or refactor MainActivity)
 
-        Log.d(Configuration.DEBUG_TAG, "ship hit !")
+        if (hitTestResult.node == null) return
     }
 
     fun attack(earthPosition: Vector3) {
