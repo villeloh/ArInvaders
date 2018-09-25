@@ -1,5 +1,6 @@
 package villealla.com.arinvaders
 
+import android.util.Log
 import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.math.Vector3
 import villealla.com.arinvaders.Sound.SoundEffectPlayer
@@ -88,7 +89,9 @@ class ShipManager private constructor() {
 
     fun destroyShip(shipId: String) {
 
+        Log.d("SHIPID", "ID before map call: " + shipId)
         val ship = shipMap[shipId]!!
+        Log.d("SHIPID", "ID after map call: " + ship.id)
 
         ship.node.renderable = null
         ship.node.setParent(null)
@@ -113,5 +116,9 @@ class ShipManager private constructor() {
         // Log.d(Configuration.DEBUG_TAG, "coordinates : x=$x, y=$y z=$z")
 
         return Vector3(x, y, z)
+    }
+
+    fun getMap(): MutableMap<String, Ship> {
+        return shipMap
     }
 } // end class

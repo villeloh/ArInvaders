@@ -91,12 +91,17 @@ class MainActivity : AppCompatActivity() {
 
     private fun setArViewTouchListener() {
 
-        arFragment.arSceneView.scene.setOnTouchListener { _, _ ->
+        var attackSlowingCounter = 0
+
+        arFragment.arSceneView.scene.setOnTouchListener { _, motionEvent ->
             // the 'real' HitTestResult and MotionEvent are not needed here
             // Log.d(Configuration.DEBUG_TAG, "Tap")
 
-            // TODO: we need to somehow fire only one event per finger tap here
-            playerAttack()
+            //if (motionEvent.pointerCount == 1 && attackSlowingCounter % 3 == 0) {
+                // Log.d("HUUH", "attacking!")
+                playerAttack()
+            // }
+            // attackSlowingCounter += 1
             true
         }
     }
