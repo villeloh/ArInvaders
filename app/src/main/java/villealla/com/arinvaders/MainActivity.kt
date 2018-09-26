@@ -10,6 +10,7 @@ import android.view.View
 import com.google.ar.core.TrackingState
 import com.google.ar.sceneform.FrameTime
 import com.google.ar.sceneform.rendering.ModelRenderable
+import kotlinx.android.synthetic.main.fragment_custom_ar.*
 import villealla.com.arinvaders.Fragments.CustomArFragment
 import villealla.com.arinvaders.Fragments.HudFragment
 import villealla.com.arinvaders.Game.GameManager
@@ -44,7 +45,6 @@ class MainActivity : AppCompatActivity() {
         setFragmentListeners()
 
         gameManager = GameManager.instance
-
     } // end onCreate
 
     private fun setFragmentListeners() {

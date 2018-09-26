@@ -1,13 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mainLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:id="@+id/killTextView"
+        android:layout_width="85dp"
+        android:layout_height="39dp"
+        android:layout_marginEnd="35dp"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/horizontal_text_box"
+        android:elevation="1dp"
+        android:gravity="center_vertical"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:paddingBottom="3dp"
+        android:text="x    876"
+        android:textColor="@color/colorAccent"
+        android:textSize="17sp"
+        app:layout_constraintBottom_toBottomOf="@+id/ufoImage"
+        app:layout_constraintEnd_toStartOf="@+id/middleImage" />
+
+    <TextView
+        android:id="@+id/waveNumberTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="13dp"
+        android:elevation="2dp"
+        android:gravity="center"
+        android:text="WAVE 12"
+        android:textColor="@color/colorAccent"
+        android:textSize="17sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/waveKillTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:elevation="2dp"
+        android:gravity="center"
+        android:text="12 / 20"
+        android:textColor="@color/colorAccent"
+        android:textSize="17sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/waveNumberTextView" />
+
+    <ImageView
+        android:id="@+id/ufoImage"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="2dp"
+        android:elevation="1dp"
+        app:layout_constraintEnd_toStartOf="@+id/killTextView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ufo_icon" />
+
+    <ImageView
+        android:id="@+id/earthImage"
+        android:layout_width="104dp"
+        android:layout_height="104dp"
+        android:layout_marginStart="2dp"
+        android:elevation="1dp"
+        app:layout_constraintStart_toEndOf="@+id/peopleTextView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/earth_icon" />
+
+    <ImageView
+        android:id="@+id/middleImage"
+        android:layout_width="150dp"
+        android:layout_height="80dp"
+        android:elevation="1dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/custom_ar_fragment"
+        app:srcCompat="@drawable/middle_display_box" />
+
+    <TextView
+        android:id="@+id/peopleTextView"
+        android:layout_width="145dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/horizontal_text_box_flipped"
+        android:elevation="1dp"
+        android:gravity="center_vertical"
+        android:paddingStart="17dp"
+        android:paddingEnd="14dp"
+        android:text="7,000,000,000"
+        android:textColor="@color/colorAccent"
+        android:textSize="17sp"
+        app:layout_constraintBottom_toBottomOf="@+id/earthImage"
+        app:layout_constraintStart_toEndOf="@+id/middleImage" />
+
     <fragment
         android:id="@+id/custom_ar_fragment"
         android:name="villealla.com.arinvaders.Fragments.CustomArFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-</FrameLayout>
+</android.support.constraint.ConstraintLayout>

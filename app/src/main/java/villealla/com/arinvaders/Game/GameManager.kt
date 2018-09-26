@@ -1,5 +1,7 @@
 package villealla.com.arinvaders.Game
 
+import android.content.Context
+import android.view.View
 import villealla.com.arinvaders.ShipManager
 import villealla.com.arinvaders.Sound.Maestro
 

@@ -1,6 +1,5 @@
 package villealla.com.arinvaders.Fragments
 
-
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -8,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import kotlinx.android.synthetic.main.fragment_custom_ar.*
 import kotlinx.android.synthetic.main.fragment_hud.*
 import villealla.com.arinvaders.R
 
@@ -26,6 +26,5 @@ class HudFragment : Fragment() {
         hud.scaleType = ImageView.ScaleType.FIT_XY
         hud.adjustViewBounds = true
     }
-
 
 }
