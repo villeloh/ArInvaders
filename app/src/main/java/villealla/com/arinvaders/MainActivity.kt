@@ -22,8 +22,11 @@ import villealla.com.arinvaders.Static.Configuration
 import villealla.com.arinvaders.WorldEntities.Planet
 import villealla.com.arinvaders.WorldEntities.Ship
 import villealla.com.arinvaders.WorldEntities.ShipType
+import android.graphics.drawable.TransitionDrawable
 
-class MainActivity : AppCompatActivity() {
+
+
+class MainActivity : AppCompatActivity(), GameManager.BridgeActivity {
 
     private lateinit var arFragment: CustomArFragment
     private lateinit var shipManager: ShipManager
@@ -42,9 +45,9 @@ class MainActivity : AppCompatActivity() {
 
         loadShipRenderables()
         SoundEffectPlayer.loadAllEffects(this)
-        setFragmentListeners()
 
         gameManager = GameManager.instance
+        setFragmentListeners()
     } // end onCreate
 
     private fun setFragmentListeners() {
@@ -64,7 +67,9 @@ class MainActivity : AppCompatActivity() {
 
             shipManager = ShipManager.instance
             shipManager.setEarthNode(earth.earthNode)
+            shipManager.loadExplosionGraphics(this)
 
+            gameManager.setMainActivity(this)
             gameManager.startGameSession()
 
             //Play game music
@@ -110,7 +115,7 @@ class MainActivity : AppCompatActivity() {
 
         SoundEffectPlayer.playEffect(SoundEffects.LASER)
 
-        if (hitNode != null && hitNode.name != "earthNode") {
+        if (hitNode != null && hitNode.name != "earthNode" && hitNode.name != "cloud") {
 
             // Log.d(Configuration.DEBUG_TAG, "Hit! node name: " + hitNode.name)
             shipManager.damageShip(1, hitNode.name)
@@ -153,5 +158,36 @@ class MainActivity : AppCompatActivity() {
             return
         }
     } // end onUpdate
+
+    // these could be combined into one method (or two at most);
+    // I'll refactor later
+    override fun updateKillCount(newValue: Int) {
+        killTextView.text = newValue.toString()
+    }
+
+    override fun updateWaveNumber(newValue: Int){
+        waveNumberTextView.text = newValue.toString()
+    }
+
+    override fun updateNumberLeftInWave(newValue: Int) {
+        waveKillTextView.text = newValue.toString()
+    }
+
+    override fun updatePeopleLeftOnPlanet(newValue: Long) {
+        peopleTextView.text = newValue.toString()
+        val transition = peopleTextView.background as TransitionDrawable
+        transition.startTransition(500)
+        transition.reverseTransition(500)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Maestro.pauseMusic()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Maestro.resumeMusic()
+    }
 
 } // end class

@@ -88,7 +88,7 @@
         android:layout_width="145dp"
         android:layout_height="40dp"
         android:layout_marginBottom="32dp"
-        android:background="@drawable/horizontal_text_box_flipped"
+        android:background="@drawable/kill_people_transition"
         android:elevation="1dp"
         android:gravity="center_vertical"
         android:paddingStart="17dp"

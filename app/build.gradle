@@ -58,3 +58,9 @@ sceneform.asset('sampledata/SciFi_Fighter_AK5.obj',
         'default',
         'sampledata/SciFi_Fighter_AK5.sfa',
         'src/main/assets/SciFi_Fighter_AK5')
+
+
+sceneform.asset('sampledata/model.obj',
+        'default',
+        'sampledata/model.sfa',
+        'src/main/assets/model')

@@ -7,11 +7,11 @@ import villealla.com.arinvaders.R
 import java.util.concurrent.ThreadLocalRandom
 
 enum class SoundEffects(val effectName: Int, val volumeLevel: Float = 1f, var id: Int = 0, val effectId: String = "") {
-    LASER(R.raw.laser, 0.5f),
+    LASER(R.raw.laser, 0.75f),
     EXPLOSION(R.raw.bomb),
-    EARTH_HIT_1(R.raw.scream_1, 1.0f, 0, "planetEffect"),
-    EARTH_HIT_2(R.raw.scream_2, 1.0f, 0, "planetEffect"),
-    EARTH_HIT_3(R.raw.scream_3, 1.0f, 0, "planetEffect")
+    EARTH_HIT_1(R.raw.scream_1, 0.1f, 0, "planetEffect"),
+    EARTH_HIT_2(R.raw.scream_2, 0.4f, 0, "planetEffect"),
+    EARTH_HIT_3(R.raw.scream_3, 0.4f, 0, "planetEffect")
 }
 
 object SoundEffectPlayer {

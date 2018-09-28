@@ -1,6 +1,8 @@
 package villealla.com.arinvaders
 
 import android.os.Handler
+import android.util.Log
+import villealla.com.arinvaders.Game.GameManager
 import villealla.com.arinvaders.WorldEntities.ShipType
 
 /*
@@ -23,11 +25,19 @@ class SpawnLoop(private val shipManager: ShipManager) {
     // it needs to be an object literal in order to be able to refer to itself with 'this',
     // and for us to be able to stop it later with stop()
     private val shipSpawner = object : Runnable {
+
         override fun run() {
 
+            val gameManager = GameManager.instance
             waveNumber += 1
             shipManager.spawnWaveOfShips(numOfShipsInWave, shipTypeToSpawn)
             spawnHandler.postDelayed(this, ShipManager.DEFAULT_WAVE_LENGTH_MS)
+
+            Log.d("JOOH", "gameManager in shipSpawner: " + gameManager.toString())
+            Log.d("JOOH", "mainActRef in shipSpawner: " + gameManager.mainActRef.toString())
+
+            gameManager.mainActRef.updateWaveNumber(waveNumber) // spaghetti code... ugh -.-
+            gameManager.mainActRef.updateNumberLeftInWave(numOfShipsInWave)
         }
     }
 

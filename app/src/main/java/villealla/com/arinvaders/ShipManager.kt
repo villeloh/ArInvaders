@@ -1,8 +1,15 @@
 package villealla.com.arinvaders
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.util.Log
 import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.math.Vector3
+import com.google.ar.sceneform.rendering.ModelRenderable
+import com.google.ar.sceneform.rendering.Texture
+import villealla.com.arinvaders.Game.GameManager
 import villealla.com.arinvaders.Sound.SoundEffectPlayer
 import villealla.com.arinvaders.Sound.SoundEffects
 import villealla.com.arinvaders.WorldEntities.Planet
@@ -38,7 +45,10 @@ class ShipManager private constructor() {
         const val DEFAULT_WAVE_LENGTH_MS = 8000L
     }
 
+    private var gameManager = GameManager.instance
     private val rGen = Random(System.currentTimeMillis())
+    private lateinit var explosionRenderable: ModelRenderable
+    private lateinit var explosionTexture: Texture
 
     private val shipMap = mutableMapOf<String, Ship>()
 
@@ -85,7 +95,8 @@ class ShipManager private constructor() {
         val ship = shipMap.get(shipId)!! // if it's been hit, it should always exist
         ship.hp -= dmg
         if (ship.hp <= 0) {
-            destroyShip(shipId, false) }
+            destroyShip(shipId, false)
+        }
     }
 
     fun destroyShip(shipId: String, destroyedByTheEarth: Boolean) {
@@ -93,18 +104,50 @@ class ShipManager private constructor() {
         // if it's null, the ship has already been destroyed
         val ship = shipMap[shipId] ?: return
 
-        ship.node.renderable = null
-        ship.node.setParent(null)
-        shipMap.remove(shipId)
+
 
         if (destroyedByTheEarth) {
 
+            ship.node.renderable = null
+            ship.node.setParent(null)
+            shipMap.remove(shipId)
+
             // TODO: play nuke explosion sound / effect?
         } else {
-            // TODO: play explosion animation
+
+            explodeShip(ship)
+            // ship.node.renderable = null
+            // ship.node.setParent(null)
+            shipMap.remove(shipId)
+
             SoundEffectPlayer.playEffect(SoundEffects.EXPLOSION)
+            gameManager = GameManager.instance
+            gameManager.score += 1
+            gameManager.mainActRef.updateKillCount(gameManager.score)
         }
     } // end destroyShip
+
+
+    fun loadExplosionGraphics(context: Context) {
+
+        val bitMap = BitmapFactory.decodeResource(context.resources, R.drawable.smoke_tx)
+        Texture.builder().setSource(bitMap).build().thenAccept { it -> explosionTexture = it
+
+            val renderable = ModelRenderable.builder()
+                    .setSource(context, Uri.parse("model.sfb"))
+                    .build()
+            renderable.thenAccept { it2 ->
+
+                it2.material.setTexture("", explosionTexture)
+                explosionRenderable = it2 }
+        }
+    }
+
+    private fun explodeShip(ship: Ship) {
+
+        ship.node.name = "cloud"
+        ship.node.renderable = explosionRenderable
+    }
 
     private fun randomCoord(minDist: Float = DEFAULT_MIN_SPAWN_DIST,
                             maxDist: Float = DEFAULT_MAX_SPAWN_DIST): Vector3 {

@@ -8,6 +8,7 @@ import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.rendering.ModelRenderable
 import com.google.ar.sceneform.ux.ArFragment
 import villealla.com.arinvaders.Game.GameManager
+import villealla.com.arinvaders.MainActivity
 
 /*
 * @author Ville Lohkovuori
@@ -59,11 +60,13 @@ class Planet private constructor(private var hitPoints: Long = 7000000000) {
     // I've always wanted to write this :)
     fun killPeople(damage: Long) {
 
+        val gameManager = GameManager.instance
         hitPoints -= damage
         if (hitPoints < 0) {
             hitPoints = 0
             GameManager.instance.endGameSession()
         }
+        gameManager.mainActRef.updatePeopleLeftOnPlanet(hitPoints)
     }
 
     fun people(): Long {
