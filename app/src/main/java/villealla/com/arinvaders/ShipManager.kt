@@ -1,7 +1,6 @@
 package villealla.com.arinvaders
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
@@ -10,11 +9,10 @@ import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.rendering.ModelRenderable
 import com.google.ar.sceneform.rendering.Texture
 import villealla.com.arinvaders.Game.GameManager
-import villealla.com.arinvaders.Sound.SoundEffectPlayer
-import villealla.com.arinvaders.Sound.SoundEffects
+import villealla.com.arinvaders.Static.Configuration
+import villealla.com.arinvaders.Static.ShipType
 import villealla.com.arinvaders.WorldEntities.Planet
 import villealla.com.arinvaders.WorldEntities.Ship
-import villealla.com.arinvaders.WorldEntities.ShipType
 import java.util.*
 
 /*
@@ -43,12 +41,13 @@ class ShipManager private constructor() {
         const val DEFAULT_MIN_SPAWN_DIST = 2F
         const val DEFAULT_MAX_SPAWN_DIST = 2.5F
         const val DEFAULT_WAVE_LENGTH_MS = 8000L
+
+        lateinit var explosionRenderable: ModelRenderable
+        lateinit var explosionTexture: Texture
     }
 
     private var gameManager = GameManager.instance
     private val rGen = Random(System.currentTimeMillis())
-    private lateinit var explosionRenderable: ModelRenderable
-    private lateinit var explosionTexture: Texture
 
     private val shipMap = mutableMapOf<String, Ship>()
 
@@ -63,18 +62,13 @@ class ShipManager private constructor() {
 
         val spawnCoord = randomCoord()
 
-        ship.node.renderable = Ship.renderables[shipType]
-        ship.node.localPosition = spawnCoord
-        ship.node.renderable.isShadowCaster = false
-        ship.node.name = ship.id // can be used for destroying ships later
-        ship.node.setParent(earthNode)
+        ship.renderable = Ship.renderables[shipType]
+        ship.localPosition = spawnCoord
+        ship.renderable.isShadowCaster = false
+        ship.name = ship.id // can be used for destroying ships later
+        ship.setParent(earthNode)
 
-        ship.node.setOnTouchListener {
-            hitTestResult, mEvent ->
 
-            ship.onTouchNode(hitTestResult, mEvent)
-            true
-        }
         ship.attack(Vector3(0f, Planet.centerHeight, 0f))
 
         // track the ship (for collective operations)
@@ -90,43 +84,6 @@ class ShipManager private constructor() {
         }
     }
 
-    fun damageShip(dmg: Int, shipId: String) {
-
-        val ship = shipMap.get(shipId)!! // if it's been hit, it should always exist
-        ship.hp -= dmg
-        if (ship.hp <= 0) {
-            destroyShip(shipId, false)
-        }
-    }
-
-    fun destroyShip(shipId: String, destroyedByTheEarth: Boolean) {
-
-        // if it's null, the ship has already been destroyed
-        val ship = shipMap[shipId] ?: return
-
-
-
-        if (destroyedByTheEarth) {
-
-            ship.node.renderable = null
-            ship.node.setParent(null)
-            shipMap.remove(shipId)
-
-            // TODO: play nuke explosion sound / effect?
-        } else {
-
-            explodeShip(ship)
-            // ship.node.renderable = null
-            // ship.node.setParent(null)
-            shipMap.remove(shipId)
-
-            SoundEffectPlayer.playEffect(SoundEffects.EXPLOSION)
-            gameManager = GameManager.instance
-            gameManager.score += 1
-            gameManager.mainActRef.updateKillCount(gameManager.score)
-        }
-    } // end destroyShip
-
 
     fun loadExplosionGraphics(context: Context) {
 
@@ -139,14 +96,10 @@ class ShipManager private constructor() {
             renderable.thenAccept { it2 ->
 
                 it2.material.setTexture("", explosionTexture)
-                explosionRenderable = it2 }
+                explosionRenderable = it2
+                Log.d(Configuration.DEBUG_TAG, "explosion loaded")
+            }
         }
-    }
-
-    private fun explodeShip(ship: Ship) {
-
-        ship.node.name = "cloud"
-        ship.node.renderable = explosionRenderable
     }
 
     private fun randomCoord(minDist: Float = DEFAULT_MIN_SPAWN_DIST,

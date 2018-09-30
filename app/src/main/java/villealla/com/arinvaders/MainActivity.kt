@@ -1,10 +1,10 @@
 package villealla.com.arinvaders
 
+import android.graphics.drawable.TransitionDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.SystemClock
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import com.google.ar.core.TrackingState
@@ -18,12 +18,9 @@ import villealla.com.arinvaders.Sound.Maestro
 import villealla.com.arinvaders.Sound.Music
 import villealla.com.arinvaders.Sound.SoundEffectPlayer
 import villealla.com.arinvaders.Sound.SoundEffects
-import villealla.com.arinvaders.Static.Configuration
+import villealla.com.arinvaders.Static.ShipType
 import villealla.com.arinvaders.WorldEntities.Planet
 import villealla.com.arinvaders.WorldEntities.Ship
-import villealla.com.arinvaders.WorldEntities.ShipType
-import android.graphics.drawable.TransitionDrawable
-
 
 
 class MainActivity : AppCompatActivity(), GameManager.BridgeActivity {
@@ -40,13 +37,16 @@ class MainActivity : AppCompatActivity(), GameManager.BridgeActivity {
         arFragment = supportFragmentManager.findFragmentById(R.id.custom_ar_fragment) as CustomArFragment
         supportFragmentManager.beginTransaction().add(R.id.mainLayout, HudFragment()).commit()
 
+        gameManager = GameManager.instance
         earth = Planet.instance
-        earth.obtainRenderable(this)
+        shipManager = ShipManager.instance
+        earth.loadRenderable(this)
 
         loadShipRenderables()
+        shipManager.loadExplosionGraphics(this)
         SoundEffectPlayer.loadAllEffects(this)
 
-        gameManager = GameManager.instance
+
         setFragmentListeners()
     } // end onCreate
 
@@ -65,9 +65,8 @@ class MainActivity : AppCompatActivity(), GameManager.BridgeActivity {
 
             earth.renderInArSpace(arFragment, hitResult!!)
 
-            shipManager = ShipManager.instance
+
             shipManager.setEarthNode(earth.earthNode)
-            shipManager.loadExplosionGraphics(this)
 
             gameManager.setMainActivity(this)
             gameManager.startGameSession()
@@ -115,15 +114,16 @@ class MainActivity : AppCompatActivity(), GameManager.BridgeActivity {
 
         SoundEffectPlayer.playEffect(SoundEffects.LASER)
 
-        if (hitNode != null && hitNode.name != "earthNode" && hitNode.name != "cloud") {
 
-            // Log.d(Configuration.DEBUG_TAG, "Hit! node name: " + hitNode.name)
-            shipManager.damageShip(1, hitNode.name)
+        if (hitNode is Ship) {
+            hitNode.damageShip(1)
         }
+
+       
     } // end playerAttack
 
     // creates a 'fake' MotionEvent that 'touches' the center of the screen
-    private  fun obtainScreenCenterMotionEvent(): MotionEvent {
+    private fun obtainScreenCenterMotionEvent(): MotionEvent {
 
         val screenCenter = getScreenCenter()
 
@@ -165,7 +165,7 @@ class MainActivity : AppCompatActivity(), GameManager.BridgeActivity {
         killTextView.text = newValue.toString()
     }
 
-    override fun updateWaveNumber(newValue: Int){
+    override fun updateWaveNumber(newValue: Int) {
         waveNumberTextView.text = newValue.toString()
     }
 

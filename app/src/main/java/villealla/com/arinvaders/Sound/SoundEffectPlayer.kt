@@ -29,7 +29,7 @@ object SoundEffectPlayer {
                 .build()
 
         soundPool = SoundPool.Builder()
-                .setMaxStreams(20)
+                .setMaxStreams(5)
                 .setAudioAttributes(audioAttributes)
                 .build()
 

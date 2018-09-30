@@ -8,7 +8,6 @@ import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.rendering.ModelRenderable
 import com.google.ar.sceneform.ux.ArFragment
 import villealla.com.arinvaders.Game.GameManager
-import villealla.com.arinvaders.MainActivity
 
 /*
 * @author Ville Lohkovuori
@@ -38,7 +37,7 @@ class Planet private constructor(private var hitPoints: Long = 7000000000) {
 
     // needs to be its own function because of the delay in attaching
     // the renderable... feel free to refactor; I'm not very good at async stuffs
-    fun obtainRenderable(context: Context) {
+    fun loadRenderable(context: Context) {
 
         val renderable = ModelRenderable.builder()
                 .setSource(context, Uri.parse("earth_ball.sfb"))

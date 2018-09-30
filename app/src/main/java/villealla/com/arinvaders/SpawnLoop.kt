@@ -3,7 +3,7 @@ package villealla.com.arinvaders
 import android.os.Handler
 import android.util.Log
 import villealla.com.arinvaders.Game.GameManager
-import villealla.com.arinvaders.WorldEntities.ShipType
+import villealla.com.arinvaders.Static.ShipType
 
 /*
 * Manages the lifecycle of the spawned space ships.
@@ -54,4 +54,4 @@ class SpawnLoop(private val shipManager: ShipManager) {
 
         spawnHandler.removeCallbacks(shipSpawner)
     }
-} // end class
+}
