@@ -37,16 +37,40 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
 
     private var shipsInScene = mutableMapOf<String, Ship>()
 
-    private var killCount = 0
+    private var totalKillCount = 0
+    private var waveKillCount = 0
+
+    private var pausedwaveKillCount = -1
+    private var pausedspawnedShipCount = -1
 
     private lateinit var sessionThread: Thread
+    private lateinit var waveThread: Thread
     private var isSessionRunning = false
+
+    private var spawnedShipCount = 0
+    private var totalShipsToSpawn = 0
 
     //responsible for starting a wave
     private fun startWave(wave: Int) {
-        Thread(Runnable {
-            var spawnedShipCount = 0
-            val totalShipsToSpawn = wave * 2 + 5
+
+        //reset wave variables
+        spawnedShipCount = 0
+        waveKillCount = 0
+
+        //restore saved variables if they exist
+        if (pausedspawnedShipCount != -1) {
+            spawnedShipCount = pausedspawnedShipCount
+            pausedspawnedShipCount = -1
+        }
+        if (pausedwaveKillCount != -1) {
+            waveKillCount = pausedwaveKillCount
+            pausedspawnedShipCount = -1
+        }
+
+        waveThread = Thread(Runnable {
+
+            calculateTotalShipsToSpawn(wave)
+
             while (isSessionRunning && spawnedShipCount != totalShipsToSpawn) {
 
                 //adding the ship to the scene must be done in the ui thread because thats what the jvm wants
@@ -63,7 +87,20 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
                 }
 
             }
-        }).start()
+        })
+        waveThread.start()
+    }
+
+    private fun calculateTotalShipsToSpawn(wave: Int) {
+        totalShipsToSpawn = wave * 2 + 5
+        updateUIShipsInWave(totalShipsToSpawn, totalShipsToSpawn)
+    }
+
+    private fun updateUIShipsInWave(shipsLeft: Int, totalShipsToSpawn: Int) {
+        val message = mainHandler.obtainMessage()
+        message.what = Configuration.MESSAGE_SHIPS_LEFT_IN_WAVE
+        message.data.putString(Configuration.MESSAGE_SHIPS_LEFT_IN_WAVE.toString(), "$shipsLeft / $totalShipsToSpawn")
+        mainHandler.sendMessage(message)
     }
 
     //responsible for starting and ending all waves
@@ -85,6 +122,7 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
 
                     //Update ui & notify user about new wave
                     waveNumber++
+                    updateUIWaveNum(waveNumber)
 
                     Log.d(Configuration.DEBUG_TAG, "Starting wave: $waveNumber")
                     startWave(waveNumber)
@@ -100,8 +138,17 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
         })
     }
 
+    private fun updateUIWaveNum(num: Int) {
+        val message = mainHandler.obtainMessage()
+        message.what = Configuration.MESSAGE_WAVE_NUMBER
+        message.data.putString(Configuration.MESSAGE_WAVE_NUMBER.toString(), num.toString())
+        mainHandler.sendMessage(message)
+    }
+
     fun start() {
         isSessionRunning = true
+
+        sessionThread.join()
         sessionThread.start()
     }
 
@@ -119,8 +166,15 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
 
     fun pause() {
         isSessionRunning = false
-        //stop all attack animations
 
+        sessionThread.interrupt()
+        waveThread.interrupt()
+
+        //save variables/state
+        pausedspawnedShipCount = spawnedShipCount
+        pausedwaveKillCount = waveKillCount
+
+        //stop all attack animations
         shipsInScene.forEach { name, ship ->
             ship.pauseAttack()
         }
@@ -128,9 +182,11 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
     }
 
     fun resume() {
-        //resume all attack animations
         isSessionRunning = true
 
+        start()
+
+        //resume all attack animations
         shipsInScene.forEach { name, ship ->
             ship.resumeAttack()
         }
@@ -154,18 +210,20 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
             } else {
                 //ship killed by player
 
-                killCount++
+                totalKillCount++
 
                 //notify ui thread about this change
 
                 val message = mainHandler.obtainMessage()
                 message.what = Configuration.MESSAGE_KILL_COUNT
-                message.data.putString(Configuration.MESSAGE_KILL_COUNT.toString(), killCount.toString())
+                message.data.putString(Configuration.MESSAGE_KILL_COUNT.toString(), totalKillCount.toString())
                 mainHandler.sendMessage(message)
 
             }
 
+            waveKillCount++
 
+            updateUIShipsInWave(totalShipsToSpawn - waveKillCount, totalShipsToSpawn)
 
             shipsInScene.remove(ship.name)
         }

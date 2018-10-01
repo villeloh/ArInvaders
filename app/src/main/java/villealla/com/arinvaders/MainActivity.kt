@@ -16,6 +16,7 @@ import kotlinx.android.synthetic.main.fragment_custom_ar.*
 import villealla.com.arinvaders.Fragments.CustomArFragment
 import villealla.com.arinvaders.Fragments.HudFragment
 import villealla.com.arinvaders.Game.GameManager
+import villealla.com.arinvaders.Game.GameState
 import villealla.com.arinvaders.Sound.Maestro
 import villealla.com.arinvaders.Sound.Music
 import villealla.com.arinvaders.Sound.SoundEffectPlayer
@@ -198,7 +199,6 @@ class MainActivity : AppCompatActivity() {
                         transition.startTransition(500)
                         transition.reverseTransition(500)
                     }
-
                     Configuration.MESSAGE_KILL_COUNT -> {
                         killTextView.text = newValue
                     }
@@ -206,7 +206,7 @@ class MainActivity : AppCompatActivity() {
                         waveKillTextView.text = newValue
                     }
                     Configuration.MESSAGE_WAVE_NUMBER -> {
-                        waveNumberTextView.text = newValue
+                        waveNumberTextView.text = "WAVE " + newValue
                     }
 
 
@@ -218,12 +218,14 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        Maestro.pauseMusic()
+        if (gameManager.gameState == GameState.RUNNING)
+            gameManager.pauseGameSession()
     }
 
     override fun onResume() {
         super.onResume()
-        Maestro.resumeMusic()
+        if (gameManager.gameState == GameState.PAUSED)
+            gameManager.resumeGameSession()
     }
 
 } // end class

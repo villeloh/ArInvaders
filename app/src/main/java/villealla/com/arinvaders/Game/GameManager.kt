@@ -13,6 +13,13 @@ import villealla.com.arinvaders.WorldEntities.Planet
 *
 * */
 
+enum class GameState {
+    UNINITIALIZED(),
+    RUNNING(),
+    PAUSED(),
+    STOPPED(),
+}
+
 class GameManager private constructor() {
 
 
@@ -32,6 +39,7 @@ class GameManager private constructor() {
 
     lateinit var gameLoop: SpawnLoop
     var mainHandler = Handler(Looper.getMainLooper())
+    var gameState = GameState.UNINITIALIZED
 
     fun startGameSession() {
         gameLoop = SpawnLoop(earthNode = earthNode, mainHandler = mainHandler)
@@ -39,6 +47,20 @@ class GameManager private constructor() {
         resetUI()
 
         gameLoop.start()
+
+        gameState = GameState.RUNNING
+    }
+
+    fun pauseGameSession() {
+        gameLoop.pause()
+        Maestro.pauseMusic()
+        gameState = GameState.PAUSED
+    }
+
+    fun resumeGameSession() {
+        gameLoop.resume()
+        Maestro.resumeMusic()
+        gameState = GameState.RUNNING
     }
 
     fun resetUI() {
@@ -60,6 +82,7 @@ class GameManager private constructor() {
         Maestro.stopMusic() // we can do this here... need to start in MainActivity due to context issues though
         //shipManager.spawnLoop.stop()
         gameLoop.stop()
+        gameState = GameState.STOPPED
     }
 
 } // end class
