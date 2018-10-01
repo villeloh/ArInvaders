@@ -10,7 +10,7 @@ import villealla.com.arinvaders.WorldEntities.Planet
 
 /*
 * Class for managing the player and game-related operations.
-*
+* @author Sinan Sakaoğlu
 * */
 
 enum class GameState {
@@ -29,35 +29,36 @@ class GameManager private constructor() {
 
     private object Holder { val INSTANCE = GameManager() }
 
-    // I don't claim to understand this, but it makes this class a Singleton
+    // makes the class into a singleton
     companion object {
         val instance: GameManager by lazy { Holder.INSTANCE }
     }
 
     lateinit var earthNode: Node
 
-
     lateinit var gameLoop: SpawnLoop
     var mainHandler = Handler(Looper.getMainLooper())
     var gameState = GameState.UNINITIALIZED
 
     fun startGameSession() {
+
         gameLoop = SpawnLoop(earthNode = earthNode, mainHandler = mainHandler)
 
         resetUI()
 
         gameLoop.start()
-
         gameState = GameState.RUNNING
     }
 
     fun pauseGameSession() {
+
         gameLoop.pause()
         Maestro.pauseMusic()
         gameState = GameState.PAUSED
     }
 
     fun resumeGameSession() {
+
         gameLoop.resume()
         Maestro.resumeMusic()
         gameState = GameState.RUNNING
@@ -74,13 +75,11 @@ class GameManager private constructor() {
         message.what = Configuration.MESSAGE_KILL_COUNT
         message.data.putString(Configuration.MESSAGE_KILL_COUNT.toString(), "0")
         mainHandler.sendMessage(message)
-
     }
 
     fun endGameSession() {
 
-        Maestro.stopMusic() // we can do this here... need to start in MainActivity due to context issues though
-        //shipManager.spawnLoop.stop()
+        Maestro.stopMusic()
         gameLoop.stop()
         gameState = GameState.STOPPED
     }

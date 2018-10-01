@@ -3,6 +3,11 @@ package villealla.com.arinvaders.Movement
 import android.animation.TypeEvaluator
 import com.google.ar.sceneform.math.Vector3
 
+/*
+* A class that... evaluates Vectors. Simple as can be, eh?
+* @author cool guys on the internet
+* */
+
 class VectorEvaluator : TypeEvaluator<Vector3> {
 
     override fun evaluate(fraction: Float, startValue: Vector3, endValue: Vector3): Vector3? {
@@ -17,4 +22,4 @@ class VectorEvaluator : TypeEvaluator<Vector3> {
 
         return Vector3(x, y, z)
     }
-}
+} // end class

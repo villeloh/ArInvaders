@@ -20,6 +20,7 @@ import kotlin.math.abs
 * should give the game ability to stop, pause, restart and continue controls
 * minimum coupling
 * should be a concrete class
+* @author Sinan Sakaoğlu
 * */
 class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: Handler) {
 
@@ -73,30 +74,31 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
 
             while (isSessionRunning && spawnedShipCount != totalShipsToSpawn) {
 
-                //adding the ship to the scene must be done in the ui thread because thats what the jvm wants
+                // adding the ship to the scene must be done in the ui thread because thats what the jvm wants
                 mainHandler.post {
                     val newShip = Ship(localPosition = randomCoord(), earthNode = earthNode, observer = onShipDeath)
                     shipsInScene[newShip.name] = newShip
                     spawnedShipCount++
                 }
 
-                //delay between each ship spawn
+                // delay between each ship spawn
                 try {
                     Thread.sleep(abs(rGen.nextLong() % 500))
                 } catch (ex: InterruptedException) {
                 }
-
             }
         })
         waveThread.start()
-    }
+    } // end startWave
 
     private fun calculateTotalShipsToSpawn(wave: Int) {
+
         totalShipsToSpawn = wave * 2 + 5
         updateUIShipsInWave(totalShipsToSpawn, totalShipsToSpawn)
     }
 
     private fun updateUIShipsInWave(shipsLeft: Int, totalShipsToSpawn: Int) {
+
         val message = mainHandler.obtainMessage()
         message.what = Configuration.MESSAGE_SHIPS_LEFT_IN_WAVE
         message.data.putString(Configuration.MESSAGE_SHIPS_LEFT_IN_WAVE.toString(), "$shipsLeft / $totalShipsToSpawn")
@@ -132,11 +134,9 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
                     Thread.sleep(1000)
                 } catch (ex: InterruptedException) {
                 }
-
-            }
-
-        })
-    }
+            } // end while-loop
+        }) // end sessionThread
+    } // end initSession
 
     private fun updateUIWaveNum(num: Int) {
         val message = mainHandler.obtainMessage()
@@ -162,7 +162,7 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
         }
 
         shipsInScene.clear()
-    }
+    } // end stop
 
     fun pause() {
         isSessionRunning = false
@@ -178,8 +178,7 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
         shipsInScene.forEach { name, ship ->
             ship.pauseAttack()
         }
-
-    }
+    } // end pause
 
     fun resume() {
         isSessionRunning = true
@@ -190,11 +189,12 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
         shipsInScene.forEach { name, ship ->
             ship.resumeAttack()
         }
-    }
-
+    } // end resume
 
     val onShipDeath = object : Ship.IonDeath {
+
         override fun onDeath(ship: Ship, reachedEarth: Boolean) {
+
             //do damage to earth, update ui, update ship list/wave thread
             if (reachedEarth) {
                 SoundEffectPlayer.playEffect(SoundEffectPlayer.randomEarthEffect())
@@ -218,7 +218,6 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
                 message.what = Configuration.MESSAGE_KILL_COUNT
                 message.data.putString(Configuration.MESSAGE_KILL_COUNT.toString(), totalKillCount.toString())
                 mainHandler.sendMessage(message)
-
             }
 
             waveKillCount++
@@ -226,15 +225,14 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
             updateUIShipsInWave(totalShipsToSpawn - waveKillCount, totalShipsToSpawn)
 
             shipsInScene.remove(ship.name)
-        }
-
-    }
+        } // end onDeath
+    } // end onShipDeath
 
     private fun randomCoord(minDist: Float = DEFAULT_MIN_SPAWN_DIST,
                             maxDist: Float = DEFAULT_MAX_SPAWN_DIST): Vector3 {
         var sign = if (rGen.nextBoolean()) 1 else -1
 
-        //this formula distributes coordinates more evenly
+        //this formula distributes coordinates evenly
         val x = (rGen.nextFloat() * (maxDist - minDist) + minDist) * sign
 
         sign = if (rGen.nextBoolean()) 1 else -1
@@ -246,7 +244,6 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
         // Log.d(Configuration.DEBUG_TAG, "coordinates : x=$x, y=$y z=$z")
 
         return Vector3(x, y, z)
-    }
+    } // end randomCoord
 
-
-}
+} // end class

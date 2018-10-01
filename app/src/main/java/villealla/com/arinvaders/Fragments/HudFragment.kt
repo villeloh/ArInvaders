@@ -7,9 +7,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import kotlinx.android.synthetic.main.fragment_custom_ar.*
 import kotlinx.android.synthetic.main.fragment_hud.*
 import villealla.com.arinvaders.R
+
+/*
+* Places the hud overlay over the main game view.
+* @author Sinan Sakaoğlu
+* */
 
 class HudFragment : Fragment() {
 
@@ -27,4 +31,4 @@ class HudFragment : Fragment() {
         hud.adjustViewBounds = true
     }
 
-}
+} // end class

@@ -4,17 +4,20 @@ import android.content.Context
 import android.media.MediaPlayer
 import villealla.com.arinvaders.R
 
+
+/* Responsible for background music.
+* @author Sinan Sakaoğlu
+* */
+
 enum class Music(val musicName: Int) {
     BATTLE(R.raw.arcade_war)
 }
 
-//Responsible for background music
 object Maestro {
 
     private var mediaPlayer: MediaPlayer? = null
 
     init {
-
     }
 
     fun playMusic(context: Context, music: Music, loop: Boolean) {
@@ -37,5 +40,4 @@ object Maestro {
         mediaPlayer?.start()
     }
 
-
-}
+} // end class

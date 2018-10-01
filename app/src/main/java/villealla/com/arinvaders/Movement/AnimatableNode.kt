@@ -7,8 +7,13 @@ import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.math.Vector3
 import kotlin.math.pow
 
-open class AnimatableNode : Node() {
+/*
+* Inheritable base class for entities that need to be physically
+* present in the game space.
+* @author Sinan Sakaoğlu
+* */
 
+open class AnimatableNode : Node() {
 
     protected fun createAttackAnimator(dur: Long, vararg values: Any?): ObjectAnimator {
         return ObjectAnimator().apply {
@@ -24,12 +29,7 @@ open class AnimatableNode : Node() {
             // Always apply evaluator AFTER object values or it will be overwritten by a default one
             setEvaluator(VectorEvaluator())
         }
-    }
-
-    protected fun calculateDistanceFactor(start: Vector3, end: Vector3): Double {
-        return Math.sqrt((end.x - start.x).pow(2).toDouble() + (end.y - start.y).pow(2).toDouble() + (end.z - start.z).pow(2).toDouble())
-    }
-
+    } // end createAttackAnimator
 
     protected fun createDeathAnimator(vararg values: Any?): ObjectAnimator {
         return ObjectAnimator().apply {
@@ -44,6 +44,23 @@ open class AnimatableNode : Node() {
 
             setEvaluator(VectorEvaluator())
         }
+    } // end createDeathAnimator
+
+    protected fun createLaserAnimator(dur: Long, vararg values: Any?): ObjectAnimator {
+        return ObjectAnimator().apply {
+            target = this@AnimatableNode
+            propertyName = "localPosition"
+            duration = dur
+            interpolator = AccelerateInterpolator()
+
+            setAutoCancel(true)
+            setObjectValues(*values)
+            setEvaluator(VectorEvaluator())
+        }
+    } // end createLaserAnimator
+
+    protected fun calculateDistanceFactor(start: Vector3, end: Vector3): Double {
+        return Math.sqrt((end.x - start.x).pow(2).toDouble() + (end.y - start.y).pow(2).toDouble() + (end.z - start.z).pow(2).toDouble())
     }
 
-}
+} // end class

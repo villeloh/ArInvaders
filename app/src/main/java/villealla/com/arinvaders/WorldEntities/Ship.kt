@@ -11,11 +11,17 @@ import villealla.com.arinvaders.Movement.AnimatableNode
 import villealla.com.arinvaders.Sound.SoundEffectPlayer
 import villealla.com.arinvaders.Sound.SoundEffects
 import villealla.com.arinvaders.Static.Configuration
-import villealla.com.arinvaders.Static.Configuration.Companion.DEFAULT_UNSCALED_MAX_DMG
-import villealla.com.arinvaders.Static.Configuration.Companion.DEFAULT_UNSCALED_MIN_DMG
 import villealla.com.arinvaders.Static.ShipType
 import java.util.*
 import kotlin.math.absoluteValue
+
+/*
+* Controls all Ship-related operations.
+* @author Sinan Sakaoğlu, Ville Lohkovuori
+* */
+
+private const val DEFAULT_UNSCALED_MIN_DMG = 100000000L
+private const val DEFAULT_UNSCALED_MAX_DMG = 200000000L
 
 class Ship(
         val type: ShipType = ShipType.UFO,
@@ -28,6 +34,7 @@ class Ship(
 ) : AnimatableNode() {
 
     init {
+        // ships need a unique identifier
         this.name = java.util.UUID.randomUUID().toString()
         this.renderable = renderables[type]
         renderable.isShadowCaster = false
@@ -36,8 +43,8 @@ class Ship(
         this.attack(Vector3(0f, Planet.centerHeight, 0f))
     }
 
-
     companion object {
+
         val renderables = mutableMapOf<ShipType, ModelRenderable>()
         val rGen = Random(System.currentTimeMillis())
 
@@ -47,18 +54,12 @@ class Ship(
             val max = DEFAULT_UNSCALED_MAX_DMG
 
             // with the default scale value (1.0), dmg will be between 100 - 200 million ppl per ufo hit.
-            // the formula is pretty clunky atm, but we don't really need something more elaborate
+            // the formula is pretty clunky atm, but we don't really need anything more elaborate
             return (rGen.nextFloat() * (max - min) + min * dmgScaleValue).toLong()
         }
-    }
-
+    } // end companion object
 
     lateinit var attackAnimation: Animator
-
-    fun dispose() {
-        renderable = null
-        setParent(null)
-    }
 
     fun attack(earthPosition: Vector3) {
 
@@ -70,6 +71,7 @@ class Ship(
         attackAnimation = createAttackAnimator(duration.toLong(), this.localPosition, earthPosition)
 
         attackAnimation.addListener(object : AnimatorListenerAdapter() {
+
             override fun onAnimationEnd(animation: Animator?) {
 
                 //Ship has reached the earth
@@ -82,19 +84,13 @@ class Ship(
 
                 //broadcast ships death to any one that cares
                 observer.onDeath(this@Ship, true)
-            }
-
-            override fun onAnimationCancel(animation: Animator?) {
-
-            }
+            } // end onAnimationEnd
         })
-
-
         attackAnimation.start()
-    }
+    } // end attack
 
     private fun die() {
-        Log.d(Configuration.DEBUG_TAG, "Dying started")
+        // Log.d(Configuration.DEBUG_TAG, "Dying started")
 
         //cancel() and end() functions both call same callback function, so pause has to be called instead
         attackAnimation.pause()
@@ -102,12 +98,12 @@ class Ship(
         val deathAnimation = createDeathAnimator(this.localScale, this.localScale.scaled(2f))
 
         deathAnimation.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator?) {
 
+            override fun onAnimationEnd(animation: Animator?) {
 
                 //Kill this ship
                 dispose()
-                Log.d(Configuration.DEBUG_TAG, "Death by laser $name")
+                // Log.d(Configuration.DEBUG_TAG, "Death by laser $name")
                 observer.onDeath(this@Ship, false)
             }
         })
@@ -137,10 +133,17 @@ class Ship(
                 die()
             }
         }
+    } // end damageShip
+
+    fun dispose() {
+        renderable = null
+        setParent(null)
     }
 
+    // enables callback in the registered Observer (in practice, an object in SpawnLoop)
     interface IonDeath {
+
         fun onDeath(ship: Ship, reachedEarth: Boolean)
     }
 
-}
+} // end class

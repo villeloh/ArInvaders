@@ -10,6 +10,7 @@ import com.google.ar.sceneform.ux.ArFragment
 import villealla.com.arinvaders.Game.GameManager
 
 /*
+* Manages the planet Earth and the people on it.
 * @author Ville Lohkovuori
 * */
 
@@ -53,19 +54,17 @@ class Planet private constructor(private var hitPoints: Long = 7000000000) {
         earthNode = AnchorNode(anchor)
         earthNode.setParent(arFragment.arSceneView.scene)
         earthNode.renderable = earthRenderable
-        earthNode.name = "earthNode" // not used for anything atm
+        earthNode.name = "earthNode"
     } // end renderInArSpace
 
     // I've always wanted to write this :)
     fun killPeople(damage: Long) {
 
-        val gameManager = GameManager.instance
         hitPoints -= damage
         if (hitPoints < 0) {
             hitPoints = 0
             GameManager.instance.endGameSession()
         }
-        //gameManager.mainActRef.updatePeopleLeftOnPlanet(hitPoints)
     }
 
     fun people(): Long {
