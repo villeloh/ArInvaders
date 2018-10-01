@@ -65,7 +65,7 @@ class Planet private constructor(private var hitPoints: Long = 7000000000) {
             hitPoints = 0
             GameManager.instance.endGameSession()
         }
-        gameManager.mainActRef.updatePeopleLeftOnPlanet(hitPoints)
+        //gameManager.mainActRef.updatePeopleLeftOnPlanet(hitPoints)
     }
 
     fun people(): Long {
