@@ -1,32 +1,22 @@
 package villealla.com.arinvaders.Movement
 
-import android.animation.Animator
 import android.animation.ObjectAnimator
-import android.util.Log
-import android.view.animation.LinearInterpolator
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.DecelerateInterpolator
 import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.math.Vector3
-import villealla.com.arinvaders.ShipManager
-import villealla.com.arinvaders.Sound.SoundEffectPlayer
-import villealla.com.arinvaders.Sound.SoundEffects
-import villealla.com.arinvaders.Static.Configuration
-import villealla.com.arinvaders.WorldEntities.Planet
-import villealla.com.arinvaders.WorldEntities.Ship
-import java.util.*
-import java.util.concurrent.ThreadLocalRandom
 import kotlin.math.pow
 
-class AnimatableNode(ship: Ship) : Node() {
+open class AnimatableNode : Node() {
 
-    val random = ThreadLocalRandom.current()
 
-    private fun localPositionAnimator(dur: Long, vararg values: Any?): ObjectAnimator {
+    protected fun createAttackAnimator(dur: Long, vararg values: Any?): ObjectAnimator {
         return ObjectAnimator().apply {
             target = this@AnimatableNode
             propertyName = "localPosition"
             // Change animation duration(ms). Gave some randomness to it.
             duration = dur
-            interpolator = LinearInterpolator()
+            interpolator = DecelerateInterpolator()
 
             setAutoCancel(true)
             // * = Spread operator, this will pass N `Any?` values instead of a single list `List<Any?>`
@@ -36,45 +26,24 @@ class AnimatableNode(ship: Ship) : Node() {
         }
     }
 
-    fun attack(earthPosition: Vector3) {
-
-        val distanceFactor = calculateDistanceFactor(localPosition, earthPosition)
-
-        // With min=2F and max=2.5F duration range is: 3.1s to 5s (1s of randomness)
-        val duration = (4000 * distanceFactor).toLong() + random.nextLong() % 1000 + 1000
-        //Log.d(Configuration.DEBUG_TAG, "factor: $distanceFactor, duration: $duration")
-
-        val animation = localPositionAnimator(duration, localPosition, earthPosition)
-
-        animation.addListener( animationListener )
-
-        animation.start()
-    }
-
-    private fun calculateDistanceFactor(start: Vector3, end: Vector3): Double {
+    protected fun calculateDistanceFactor(start: Vector3, end: Vector3): Double {
         return Math.sqrt((end.x - start.x).pow(2).toDouble() + (end.y - start.y).pow(2).toDouble() + (end.z - start.z).pow(2).toDouble())
     }
 
-    private val animationListener = object : Animator.AnimatorListener {
 
-        override fun onAnimationEnd(animation: Animator?) {
+    protected fun createDeathAnimator(vararg values: Any?): ObjectAnimator {
+        return ObjectAnimator().apply {
+            target = this@AnimatableNode
+            propertyName = "localScale"
+            duration = 1000
+            interpolator = AccelerateInterpolator()
 
-            Planet.instance.killPeople(ship.dmg)
-            SoundEffectPlayer.playEffect(SoundEffectPlayer.randomEarthEffect())
-            // Log.d(Configuration.DEBUG_TAG, "People left: " + Planet.instance.people())
+            setAutoCancel(false)
 
-            ShipManager.instance.destroyShip(ship.id, true)
+            setObjectValues(*values)
 
-            animation?.removeListener(this)
-        }
-
-        override fun onAnimationStart(animation: Animator?) {
-        }
-
-        override fun onAnimationCancel(animation: Animator?) {
-        }
-
-        override fun onAnimationRepeat(animation: Animator?) {
+            setEvaluator(VectorEvaluator())
         }
     }
+
 }

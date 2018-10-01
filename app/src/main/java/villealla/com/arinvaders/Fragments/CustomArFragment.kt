@@ -65,8 +65,8 @@ class CustomArFragment : ArFragment() {
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
          *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
+         * @observer param1 Parameter 1.
+         * @observer param2 Parameter 2.
          * @return A new instance of fragment AugmentedImageFragment.
          */
         @JvmStatic

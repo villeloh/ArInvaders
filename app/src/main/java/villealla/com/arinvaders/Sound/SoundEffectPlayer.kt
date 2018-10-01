@@ -29,7 +29,7 @@ object SoundEffectPlayer {
                 .build()
 
         soundPool = SoundPool.Builder()
-                .setMaxStreams(20)
+                .setMaxStreams(5)
                 .setAudioAttributes(audioAttributes)
                 .build()
 
@@ -45,6 +45,8 @@ object SoundEffectPlayer {
     fun playEffect(soundEffect: SoundEffects) {
         if (soundEffect.id != 0)
             soundPool.play(soundEffect.id, soundEffect.volumeLevel, soundEffect.volumeLevel, 1, 0, 1f)
+
+
     }
 
     // it seems a bit clumsy and unnecessary, as the effects enum is static.
