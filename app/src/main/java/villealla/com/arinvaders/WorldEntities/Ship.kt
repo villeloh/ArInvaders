@@ -90,7 +90,6 @@ class Ship(
     } // end attack
 
     private fun die() {
-        // Log.d(Configuration.DEBUG_TAG, "Dying started")
 
         //cancel() and end() functions both call same callback function, so pause has to be called instead
         attackAnimation.pause()

@@ -9,7 +9,6 @@ import villealla.com.arinvaders.Static.Configuration
 import villealla.com.arinvaders.WorldEntities.Planet
 import villealla.com.arinvaders.WorldEntities.Ship
 import java.util.*
-import kotlin.math.abs
 
 /*
 * What is expected of this class:
@@ -31,10 +30,6 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
     }
 
     private val rGen = Random(System.currentTimeMillis())
-
-    init {
-        initSession()
-    }
 
     private var shipsInScene = mutableMapOf<String, Ship>()
 
@@ -58,35 +53,20 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
         spawnedShipCount = 0
         waveKillCount = 0
 
-        //restore saved variables if they exist
-        if (pausedspawnedShipCount != -1) {
-            spawnedShipCount = pausedspawnedShipCount
-            pausedspawnedShipCount = -1
-        }
-        if (pausedwaveKillCount != -1) {
-            waveKillCount = pausedwaveKillCount
-            pausedspawnedShipCount = -1
-        }
-
         waveThread = Thread(Runnable {
 
             calculateTotalShipsToSpawn(wave)
-
-            while (isSessionRunning && spawnedShipCount != totalShipsToSpawn) {
+            while (isSessionRunning && spawnedShipCount < totalShipsToSpawn) {
 
                 // adding the ship to the scene must be done in the ui thread because thats what the jvm wants
                 mainHandler.post {
-                    val newShip = Ship(localPosition = randomCoord(), earthNode = earthNode, observer = onShipDeath)
+                    val newShip = Ship(localPosition = randomCoord(), earthNode = earthNode, observer = onShipDeath, speed = rGen.nextInt(20) + 10)
                     shipsInScene[newShip.name] = newShip
-                    spawnedShipCount++
                 }
+                spawnedShipCount++
 
-                // delay between each ship spawn
-                try {
-                    Thread.sleep(abs(rGen.nextLong() % 500))
-                } catch (ex: InterruptedException) {
-                }
             }
+
         })
         waveThread.start()
     } // end startWave
@@ -106,7 +86,7 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
     }
 
     //responsible for starting and ending all waves
-    private fun initSession() {
+    private fun createSessionThread() {
 
         sessionThread = Thread(Runnable {
 
@@ -136,7 +116,7 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
                 }
             } // end while-loop
         }) // end sessionThread
-    } // end initSession
+    } // end createSessionThread
 
     private fun updateUIWaveNum(num: Int) {
         val message = mainHandler.obtainMessage()
@@ -148,7 +128,8 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
     fun start() {
         isSessionRunning = true
 
-        sessionThread.join()
+        createSessionThread()
+
         sessionThread.start()
     }
 
@@ -170,14 +151,11 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
         sessionThread.interrupt()
         waveThread.interrupt()
 
-        //save variables/state
-        pausedspawnedShipCount = spawnedShipCount
-        pausedwaveKillCount = waveKillCount
-
         //stop all attack animations
         shipsInScene.forEach { name, ship ->
             ship.pauseAttack()
         }
+        Log.d(Configuration.DEBUG_TAG, "All animations paused")
     } // end pause
 
     fun resume() {
@@ -189,6 +167,7 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
         shipsInScene.forEach { name, ship ->
             ship.resumeAttack()
         }
+        Log.d(Configuration.DEBUG_TAG, "All animations resumed")
     } // end resume
 
     val onShipDeath = object : Ship.IonDeath {
@@ -221,6 +200,7 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
             }
 
             waveKillCount++
+
 
             updateUIShipsInWave(totalShipsToSpawn - waveKillCount, totalShipsToSpawn)
 

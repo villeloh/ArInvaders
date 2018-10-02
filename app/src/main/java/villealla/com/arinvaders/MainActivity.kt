@@ -5,7 +5,6 @@ import android.graphics.drawable.TransitionDrawable
 import android.net.Uri
 import android.os.*
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import com.google.ar.sceneform.math.Quaternion
@@ -164,11 +163,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun playerAttack() {
 
+        fireLaser()
         val screenCenterMEvent = obtainScreenCenterMotionEvent()
 
         val hitTestResult = arFragment.arSceneView.scene.hitTest(screenCenterMEvent)
         val hitNode = hitTestResult.node
-        fireLaser()
+
 
         if (hitNode is Ship) {
             hitNode.damageShip(1)
@@ -205,13 +205,11 @@ class MainActivity : AppCompatActivity() {
     private val handler = object : Handler(Looper.getMainLooper()) {
 
         override fun handleMessage(message: Message?) {
-            //Log.d(Configuration.DEBUG_TAG,"Handle message ${message?.what}")
             if (message != null) {
                 val newValue = message.data.getString(message.what.toString())
                 when (message.what) {
 
                     Configuration.MESSAGE_PEOPLE_ALIVE -> {
-                        Log.d(Configuration.DEBUG_TAG, "alive: $newValue")
                         peopleTextView.text = newValue
                         val transition = peopleTextView.background as TransitionDrawable
                         transition.startTransition(500)
