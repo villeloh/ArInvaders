@@ -54,12 +54,6 @@ sceneform.asset('sampledata/earth_ball.obj',
         'sampledata/earth_ball.sfa',
         'src/main/assets/earth_ball')
 
-sceneform.asset('sampledata/SciFi_Fighter_AK5.obj',
-        'default',
-        'sampledata/SciFi_Fighter_AK5.sfa',
-        'src/main/assets/SciFi_Fighter_AK5')
-
-
 sceneform.asset('sampledata/model.obj',
         'default',
         'sampledata/model.sfa',
@@ -69,3 +63,33 @@ sceneform.asset('sampledata/laser_2.obj',
         'default',
         'sampledata/laser_2.sfa',
         'src/main/assets/laser_2')
+
+sceneform.asset('sampledata/ufo_small_red.obj',
+        'default',
+        'sampledata/ufo_small_red.sfa',
+        'src/main/assets/ufo_small_red')
+
+sceneform.asset('sampledata/ufo_medium_red.obj',
+        'default',
+        'sampledata/ufo_medium_red.sfa',
+        'src/main/assets/ufo_medium_red')
+
+sceneform.asset('sampledata/ufo_medium_yellow.obj',
+        'default',
+        'sampledata/ufo_medium_yellow.sfa',
+        'src/main/assets/ufo_medium_yellow')
+
+sceneform.asset('sampledata/ufo_large_red.obj',
+        'default',
+        'sampledata/ufo_large_red.sfa',
+        'src/main/assets/ufo_large_red')
+
+sceneform.asset('sampledata/ufo_large_yellow.obj',
+        'default',
+        'sampledata/ufo_large_yellow.sfa',
+        'src/main/assets/ufo_large_yellow')
+
+sceneform.asset('sampledata/ufo_large_green.obj',
+        'default',
+        'sampledata/ufo_large_green.sfa',
+        'src/main/assets/ufo_large_green')
