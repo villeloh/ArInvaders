@@ -1,4 +1,4 @@
-package villealla.com.arinvaders
+package villealla.com.arinvaders.Game
 
 import android.os.Handler
 import android.util.Log

@@ -3,6 +3,8 @@ package villealla.com.arinvaders.WorldEntities
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.util.Log
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.DecelerateInterpolator
 import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.rendering.ModelRenderable
@@ -68,7 +70,7 @@ class Ship(
         val duration = (4000 * distanceFactor) + rGen.nextLong().absoluteValue % 1000 + (2000 * 1 / this.speed)
         //Log.d(Configuration.DEBUG_TAG, "factor: $distanceFactor, duration: $duration")
 
-        attackAnimation = createAttackAnimator(duration.toLong(), this.localPosition, earthPosition)
+        attackAnimation = createVector3Animator(duration.toLong(), "localPosition", DecelerateInterpolator(), this.localPosition, earthPosition)
 
         attackAnimation.addListener(object : AnimatorListenerAdapter() {
 
@@ -86,7 +88,13 @@ class Ship(
                 observer.onDeath(this@Ship, true)
             } // end onAnimationEnd
         })
+
+        //create spin/hover animation
+        val spinAnimation = createSpinAnimator(3000, this.localRotation)
+
+        spinAnimation.start()
         attackAnimation.start()
+
     } // end attack
 
     private fun die() {
@@ -94,7 +102,7 @@ class Ship(
         //cancel() and end() functions both call same callback function, so pause has to be called instead
         attackAnimation.pause()
 
-        val deathAnimation = createDeathAnimator(this.localScale, this.localScale.scaled(2f))
+        val deathAnimation = createVector3Animator(1000, "localScale", AccelerateInterpolator(), this.localScale, this.localScale.scaled(2f))
 
         deathAnimation.addListener(object : AnimatorListenerAdapter() {
 

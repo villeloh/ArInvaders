@@ -2,12 +2,10 @@ package villealla.com.arinvaders.WorldEntities
 
 import android.content.Context
 import android.net.Uri
-import com.google.ar.core.HitResult
 import com.google.ar.sceneform.AnchorNode
-import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.rendering.ModelRenderable
-import com.google.ar.sceneform.ux.ArFragment
 import villealla.com.arinvaders.Game.GameManager
+import villealla.com.arinvaders.Movement.AnimatableNode
 
 /*
 * Manages the planet Earth and the people on it.
@@ -15,7 +13,7 @@ import villealla.com.arinvaders.Game.GameManager
 * */
 
 // needs to be a Singleton for easy reference...
-class Planet private constructor(private var hitPoints: Long = 7000000000) {
+class Planet private constructor(private var hitPoints: Long = 7000000000) : AnimatableNode() {
 
     init {
     }
@@ -33,7 +31,6 @@ class Planet private constructor(private var hitPoints: Long = 7000000000) {
         const val centerHeight = 0.07F
     }
 
-    lateinit var earthNode: Node
     var earthRenderable: ModelRenderable? = null
 
     // needs to be its own function because of the delay in attaching
@@ -48,14 +45,22 @@ class Planet private constructor(private var hitPoints: Long = 7000000000) {
 
     // we could have a PlanetManager to do all this, to mimic the pattern with ships,
     // but since only one planet is needed, I think that's overkill
-    fun renderInArSpace(arFragment: ArFragment, hitResult: HitResult) {
+    fun renderInArSpace(anchorNode: AnchorNode) {
 
-        val anchor = hitResult.createAnchor()
-        earthNode = AnchorNode(anchor)
-        earthNode.setParent(arFragment.arSceneView.scene)
-        earthNode.renderable = earthRenderable
-        earthNode.name = "earthNode"
+        this.renderable = earthRenderable
+        this.name = "earthNode"
+        this.setParent(anchorNode)
+        startRotating()
+
     } // end renderInArSpace
+
+    fun startRotating() {
+
+        //Creates two rotation animations, one for half way of spin, then loops.
+
+        createSpinAnimator(5000, this.localRotation).start()
+
+    }
 
     // I've always wanted to write this :)
     fun killPeople(damage: Long) {
@@ -71,4 +76,4 @@ class Planet private constructor(private var hitPoints: Long = 7000000000) {
         return hitPoints
     }
 
-} // end class
+} // end class1

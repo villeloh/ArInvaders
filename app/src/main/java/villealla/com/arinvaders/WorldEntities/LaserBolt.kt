@@ -3,6 +3,7 @@ package villealla.com.arinvaders.WorldEntities
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
+import android.view.animation.AccelerateInterpolator
 import com.google.ar.sceneform.math.Vector3
 import villealla.com.arinvaders.Movement.AnimatableNode
 
@@ -12,28 +13,29 @@ import villealla.com.arinvaders.Movement.AnimatableNode
 * @author Ville Lohkovuori
 * */
 
-class LaserBolt: AnimatableNode() {
+class LaserBolt : AnimatableNode() {
 
     lateinit var animation: ObjectAnimator
 
-    fun fire(shootPosition: Vector3) {
+    fun fire(shootPosition: Vector3, fireCallback: IFireCallback) {
 
         val distanceFactor = calculateDistanceFactor(localPosition, shootPosition)
         val duration = (350 * distanceFactor).toLong() // ms
 
-        animation = createLaserAnimator(duration, localPosition, shootPosition)
-        animation.addListener( animationListener )
+        animation = createVector3Animator(duration, "localPosition", AccelerateInterpolator(), localPosition, shootPosition)
+        animation.addListener(object : AnimatorListenerAdapter() {
+
+            override fun onAnimationEnd(animation: Animator?) {
+                dispose()
+                fireCallback.fireFinished()
+
+            }
+        })
 
         animation.start()
+
     } // end fire
 
-    private val animationListener = object : AnimatorListenerAdapter() {
-
-        override fun onAnimationEnd(animation: Animator?) {
-
-            dispose()
-        }
-    }
 
     private fun dispose() {
         renderable = null
@@ -41,3 +43,7 @@ class LaserBolt: AnimatableNode() {
     }
 
 } // end class
+
+interface IFireCallback {
+    fun fireFinished()
+}

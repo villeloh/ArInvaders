@@ -7,6 +7,7 @@ import android.os.*
 import android.support.v7.app.AppCompatActivity
 import android.view.MotionEvent
 import android.view.View
+import com.google.ar.sceneform.AnchorNode
 import com.google.ar.sceneform.math.Quaternion
 import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.rendering.ModelRenderable
@@ -22,6 +23,7 @@ import villealla.com.arinvaders.Sound.SoundEffectPlayer
 import villealla.com.arinvaders.Sound.SoundEffects
 import villealla.com.arinvaders.Static.Configuration
 import villealla.com.arinvaders.Static.ShipType
+import villealla.com.arinvaders.WorldEntities.IFireCallback
 import villealla.com.arinvaders.WorldEntities.LaserBolt
 import villealla.com.arinvaders.WorldEntities.Planet
 import villealla.com.arinvaders.WorldEntities.Ship
@@ -39,6 +41,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var laserRenderable: ModelRenderable
     private lateinit var laserTexture: Texture
+
+    private lateinit var anchorNode: AnchorNode
 
     companion object {
 
@@ -75,10 +79,14 @@ class MainActivity : AppCompatActivity() {
                 return@setOnTapArPlaneListener
             }
 
-            earth.renderInArSpace(arFragment, hitResult!!)
+            val anchor = hitResult.createAnchor()
+            anchorNode = AnchorNode(anchor)
+            anchorNode.setParent(arFragment.arSceneView.scene)
+
+            earth.renderInArSpace(anchorNode)
 
             gameManager.mainHandler = handler
-            gameManager.earthNode = earth.earthNode
+            gameManager.earthNode = earth
             gameManager.startGameSession()
 
             // Play game music
@@ -109,7 +117,7 @@ class MainActivity : AppCompatActivity() {
 
             // this ensures that we only get one attack per finger tap
             if (motionEvent.action == MotionEvent.ACTION_DOWN) {
-                playerAttack()
+                fireLaser()
             }
             true
         }
@@ -158,17 +166,18 @@ class MainActivity : AppCompatActivity() {
         laserBolt.localRotation = Quaternion.axisAngle(Vector3(1f, 0f, 0f), 40f) // ditto
         laserBolt.name = "laser"
 
-        laserBolt.fire(Vector3(0.0f, 0.0f, -1.0f)) // to the center of the screen
+        laserBolt.fire(Vector3(0.0f, 0.0f, -1.0f), object : IFireCallback {
+            override fun fireFinished() {
+                playerAttack()
+            }
+        }) // to the center of the screen
     } // end fireLaser
 
     private fun playerAttack() {
-
-        fireLaser()
         val screenCenterMEvent = obtainScreenCenterMotionEvent()
 
         val hitTestResult = arFragment.arSceneView.scene.hitTest(screenCenterMEvent)
         val hitNode = hitTestResult.node
-
 
         if (hitNode is Ship) {
             hitNode.damageShip(1)
