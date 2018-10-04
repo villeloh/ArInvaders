@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity
 import android.view.MotionEvent
 import android.view.View
 import com.google.ar.sceneform.AnchorNode
+import com.google.ar.sceneform.collision.Box
+import com.google.ar.sceneform.collision.CollisionShape
 import com.google.ar.sceneform.math.Quaternion
 import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.rendering.ModelRenderable
@@ -23,10 +25,7 @@ import villealla.com.arinvaders.Sound.SoundEffectPlayer
 import villealla.com.arinvaders.Sound.SoundEffects
 import villealla.com.arinvaders.Static.Configuration
 import villealla.com.arinvaders.Static.ShipType
-import villealla.com.arinvaders.WorldEntities.IFireCallback
-import villealla.com.arinvaders.WorldEntities.LaserBolt
-import villealla.com.arinvaders.WorldEntities.Planet
-import villealla.com.arinvaders.WorldEntities.Ship
+import villealla.com.arinvaders.WorldEntities.*
 
 /*
 * Manages UI and ties together most other parts of the app.
@@ -41,6 +40,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var laserRenderable: ModelRenderable
     private lateinit var laserTexture: Texture
+    private lateinit var gunRenderable: ModelRenderable
+    private lateinit var gun: Gun
 
     private lateinit var anchorNode: AnchorNode
 
@@ -68,6 +69,9 @@ class MainActivity : AppCompatActivity() {
         SoundEffectPlayer.loadAllEffects(this)
 
         setFragmentListeners()
+
+
+
     } // end onCreate
 
     private fun setFragmentListeners() {
@@ -84,6 +88,8 @@ class MainActivity : AppCompatActivity() {
             anchorNode.setParent(arFragment.arSceneView.scene)
 
             earth.renderInArSpace(anchorNode)
+
+            setupGun() // it's in the way when choosing the plane, so let's call it here
 
             gameManager.mainHandler = handler
             gameManager.earthNode = earth
@@ -151,13 +157,36 @@ class MainActivity : AppCompatActivity() {
                     .thenAccept { it2 -> laserRenderable = it2
                         laserRenderable.material.setTexture("", laserTexture)
                         laserRenderable.isShadowCaster = false
+                        laserRenderable.isShadowReceiver = false
                     }
         }
     } // end loadLaserGraphics
 
+    private fun setupGun() {
+
+        ModelRenderable.builder()
+                .setSource(this, Uri.parse("Gun.sfb"))
+                .build()
+                .thenAccept { it ->
+
+                    gunRenderable = it
+                    gunRenderable.isShadowCaster = false
+                    gunRenderable.isShadowReceiver = false
+                    gunRenderable.collisionShape = Box(Vector3(0.001f, 0.001f, 0.001f)) // so that we don't hit the model
+                    gun = Gun()
+                    gun.setParent(arFragment.arSceneView.scene.camera)
+                    gun.renderable = gunRenderable
+                    gun.localPosition = Vector3(0.015f, -0.065f, -0.2f) // simply what's needed for it to look right
+                    gun.localRotation = Quaternion.axisAngle(Vector3(1f, 0.34f, 0f), 40f) // ditto
+                    gun.name = "gun"
+                    gun.setupAnimation() // must be called last due to needing the updated localposition!
+                }
+    } // end setupGun
+
     private fun fireLaser() {
 
         SoundEffectPlayer.playEffect(SoundEffects.LASER)
+        gun.kickback()
 
         val laserBolt = LaserBolt()
         laserBolt.setParent(arFragment.arSceneView.scene.camera)

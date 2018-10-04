@@ -31,9 +31,7 @@ class LaserBolt : AnimatableNode() {
 
             }
         })
-
         animation.start()
-
     } // end fire
 
 

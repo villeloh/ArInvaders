@@ -93,3 +93,8 @@ sceneform.asset('sampledata/ufo_large_green.obj',
         'default',
         'sampledata/ufo_large_green.sfa',
         'src/main/assets/ufo_large_green')
+
+sceneform.asset('sampledata/Gun.obj',
+        'default',
+        'sampledata/Gun.sfa',
+        'src/main/assets/Gun')
