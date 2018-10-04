@@ -8,10 +8,13 @@ import android.support.v7.app.AppCompatActivity
 import android.view.MotionEvent
 import android.view.View
 import com.google.ar.sceneform.AnchorNode
+import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.collision.Box
 import com.google.ar.sceneform.collision.CollisionShape
 import com.google.ar.sceneform.math.Quaternion
 import com.google.ar.sceneform.math.Vector3
+import com.google.ar.sceneform.rendering.Color
+import com.google.ar.sceneform.rendering.Light
 import com.google.ar.sceneform.rendering.ModelRenderable
 import com.google.ar.sceneform.rendering.Texture
 import kotlinx.android.synthetic.main.fragment_custom_ar.*
@@ -40,6 +43,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var laserRenderable: ModelRenderable
     private lateinit var laserTexture: Texture
+    private lateinit var laserLight: Light
     private lateinit var gunRenderable: ModelRenderable
     private lateinit var gun: Gun
 
@@ -69,9 +73,6 @@ class MainActivity : AppCompatActivity() {
         SoundEffectPlayer.loadAllEffects(this)
 
         setFragmentListeners()
-
-
-
     } // end onCreate
 
     private fun setFragmentListeners() {
@@ -88,8 +89,8 @@ class MainActivity : AppCompatActivity() {
             anchorNode.setParent(arFragment.arSceneView.scene)
 
             earth.renderInArSpace(anchorNode)
-
-            setupGun() // it's in the way when choosing the plane, so let's call it here
+            
+            setupGun()
 
             gameManager.mainHandler = handler
             gameManager.earthNode = earth
@@ -180,6 +181,15 @@ class MainActivity : AppCompatActivity() {
                     gun.localRotation = Quaternion.axisAngle(Vector3(1f, 0.34f, 0f), 40f) // ditto
                     gun.name = "gun"
                     gun.setupAnimation() // must be called last due to needing the updated localposition!
+
+                    // it's an awkward place for it, but meh, it's still static and gun-related
+                    laserLight = Light.builder(Light.Type.POINT)
+                            .setIntensity(10000f)
+                            .setFalloffRadius(500f)
+                            .setShadowCastingEnabled(false)
+                            .setColorTemperature(10000f)
+                            .setColor(Color(1f,0f,0f))
+                            .build()
                 }
     } // end setupGun
 
@@ -194,6 +204,11 @@ class MainActivity : AppCompatActivity() {
         laserBolt.localPosition = Vector3(0.0f, -0.07f, -0.2f) // simply what's needed for it to look right
         laserBolt.localRotation = Quaternion.axisAngle(Vector3(1f, 0f, 0f), 40f) // ditto
         laserBolt.name = "laser"
+
+        val lightNode = Node()
+        lightNode.setParent(laserBolt)
+        lightNode.localPosition = Vector3(0f, 0.1f, 0f) // lift it up so the light can be seen
+        lightNode.light = laserLight
 
         laserBolt.fire(Vector3(0.0f, 0.0f, -1.0f), object : IFireCallback {
             override fun fireFinished() {
