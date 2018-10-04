@@ -51,7 +51,6 @@ class Planet private constructor(private var hitPoints: Long = 7000000000) : Ani
         this.name = "earthNode"
         this.setParent(anchorNode)
         startRotating()
-
     } // end renderInArSpace
 
     fun startRotating() {
@@ -59,7 +58,6 @@ class Planet private constructor(private var hitPoints: Long = 7000000000) : Ani
         //Creates two rotation animations, one for half way of spin, then loops.
 
         createSpinAnimator(5000, this.localRotation).start()
-
     }
 
     // I've always wanted to write this :)

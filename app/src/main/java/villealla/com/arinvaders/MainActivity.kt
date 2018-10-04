@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity() {
             anchorNode.setParent(arFragment.arSceneView.scene)
 
             earth.renderInArSpace(anchorNode)
-            
+
             setupGun()
 
             gameManager.mainHandler = handler
@@ -184,8 +184,8 @@ class MainActivity : AppCompatActivity() {
 
                     // it's an awkward place for it, but meh, it's still static and gun-related
                     laserLight = Light.builder(Light.Type.POINT)
-                            .setIntensity(10000f)
-                            .setFalloffRadius(500f)
+                            .setIntensity(4000f)
+                            .setFalloffRadius(200f)
                             .setShadowCastingEnabled(false)
                             .setColorTemperature(10000f)
                             .setColor(Color(1f,0f,0f))
@@ -264,9 +264,12 @@ class MainActivity : AppCompatActivity() {
 
                     Configuration.MESSAGE_PEOPLE_ALIVE -> {
                         peopleTextView.text = newValue
-                        val transition = peopleTextView.background as TransitionDrawable
-                        transition.startTransition(500)
-                        transition.reverseTransition(500)
+
+                        if (Planet.instance.people() < 7000000000L) {
+                            val transition = peopleTextView.background as TransitionDrawable
+                            transition.startTransition(500)
+                            transition.reverseTransition(500)
+                        }
                     }
                     Configuration.MESSAGE_KILL_COUNT -> {
                         killTextView.text = newValue
