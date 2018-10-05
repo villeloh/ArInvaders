@@ -2,10 +2,14 @@ package villealla.com.arinvaders.Game
 
 import android.os.Handler
 import android.util.Log
+import com.google.ar.sceneform.AnchorNode
 import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.math.Vector3
 import villealla.com.arinvaders.Sound.SoundEffectPlayer
 import villealla.com.arinvaders.Static.Configuration
+import villealla.com.arinvaders.Static.ShipType
+import villealla.com.arinvaders.WorldEntities.IMinionSpawner
+import villealla.com.arinvaders.WorldEntities.Mothership
 import villealla.com.arinvaders.WorldEntities.Planet
 import villealla.com.arinvaders.WorldEntities.Ship
 import java.util.*
@@ -21,12 +25,12 @@ import java.util.*
 * should be a concrete class
 * @author Sinan Sakaoğlu
 * */
-class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: Handler) {
+class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: Handler, val anchorNode: AnchorNode) {
 
     companion object {
         const val DELAY_BETWEEN_WAVES_SEC: Long = 2
         const val DEFAULT_MIN_SPAWN_DIST = 2F
-        const val DEFAULT_MAX_SPAWN_DIST = 2.5F
+        const val DEFAULT_MAX_SPAWN_DIST = 3F
     }
 
     private val rGen = Random(System.currentTimeMillis())
@@ -36,44 +40,48 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
     private var totalKillCount = 0
     private var waveKillCount = 0
 
-    private var pausedwaveKillCount = -1
-    private var pausedspawnedShipCount = -1
-
     private lateinit var sessionThread: Thread
-    private lateinit var waveThread: Thread
     private var isSessionRunning = false
 
-    private var spawnedShipCount = 0
     private var totalShipsToSpawn = 0
 
-    //responsible for starting a wave
+    //responsible for spawning next wave
     private fun startWave(wave: Int) {
 
         //reset wave variables
-        spawnedShipCount = 0
         waveKillCount = 0
 
-        waveThread = Thread(Runnable {
+        calculateTotalShipsToSpawn(wave)
 
-            calculateTotalShipsToSpawn(wave)
-            while (isSessionRunning && spawnedShipCount < totalShipsToSpawn) {
+        // adding the ship to the scene must be done in the ui thread
 
-                // adding the ship to the scene must be done in the ui thread because thats what the jvm wants
-                mainHandler.post {
-                    val newShip = Ship(localPosition = randomCoord(), earthNode = earthNode, observer = onShipDeath, speed = rGen.nextInt(20) + 10)
-                    shipsInScene[newShip.name] = newShip
-                }
-                spawnedShipCount++
-
+        //spawn ships in a balanced and formulated manner
+        for (i in 1..(5 + wave - 1)) {
+            mainHandler.post {
+                val newShip = Ship(type = ShipType.UFO, localPosition = randomCoord(), earthNode = earthNode, observer = onShipDeath, speed = rGen.nextInt(8) + 1)
+                shipsInScene[newShip.name] = newShip
             }
+        }
 
-        })
-        waveThread.start()
+        for (i in 1..(wave / 2)) {
+            mainHandler.post {
+                val newShip = Ship(type = ShipType.THRALL, localPosition = randomCoord(), earthNode = earthNode, observer = onShipDeath, speed = rGen.nextInt(10) + 5)
+                shipsInScene[newShip.name] = newShip
+            }
+        }
+
+        for (i in 1..((wave - 2) / 3)) {
+            mainHandler.post {
+                val newShip = Mothership(type = ShipType.MOTHERSHIP, localPosition = randomCoord(), earthNode = anchorNode, observer = onShipDeath, speed = 1, iMinionSpawner = iMinionSpawner)
+                shipsInScene[newShip.name] = newShip
+            }
+        }
+
     } // end startWave
 
     private fun calculateTotalShipsToSpawn(wave: Int) {
 
-        totalShipsToSpawn = wave * 2 + 5
+        totalShipsToSpawn = (5 + wave - 1) + (wave / 2) + ((wave - 2) / 3)
         updateUIShipsInWave(totalShipsToSpawn, totalShipsToSpawn)
     }
 
@@ -149,7 +157,6 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
         isSessionRunning = false
 
         sessionThread.interrupt()
-        waveThread.interrupt()
 
         //stop all attack animations
         shipsInScene.forEach { name, ship ->
@@ -225,5 +232,19 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
 
         return Vector3(x, y, z)
     } // end randomCoord
+
+    val iMinionSpawner = object : IMinionSpawner {
+        // This method is used by the mothership to spawn more ships
+        override fun spawnMinion(localPosition: Vector3) {
+            mainHandler.post {
+                val newShip = Ship(type = ShipType.UFO, localPosition = localPosition, earthNode = earthNode, observer = onShipDeath, speed = rGen.nextInt(20) + 10)
+                shipsInScene[newShip.name] = newShip
+            }
+
+            totalShipsToSpawn++
+
+            updateUIShipsInWave(totalShipsToSpawn - waveKillCount, totalShipsToSpawn)
+        }
+    }
 
 } // end class

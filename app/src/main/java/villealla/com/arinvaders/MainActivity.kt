@@ -94,6 +94,7 @@ class MainActivity : AppCompatActivity() {
 
             gameManager.mainHandler = handler
             gameManager.earthNode = earth
+            gameManager.anchorNode = anchorNode
             gameManager.startGameSession()
 
             // Play game music

@@ -2,9 +2,11 @@ package villealla.com.arinvaders.WorldEntities
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.animation.TimeInterpolator
 import android.util.Log
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
+import android.view.animation.LinearInterpolator
 import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.rendering.ModelRenderable
@@ -25,7 +27,7 @@ import kotlin.math.absoluteValue
 private const val DEFAULT_UNSCALED_MIN_DMG = 100000000L
 private const val DEFAULT_UNSCALED_MAX_DMG = 200000000L
 
-class Ship(
+open class Ship(
         val type: ShipType = ShipType.UFO,
         val speed: Int = type.speed,
         var hp: Int = type.hp,
@@ -35,6 +37,8 @@ class Ship(
         val observer: IonDeath
 ) : AnimatableNode() {
 
+    lateinit var attackInterpolator: TimeInterpolator
+
     init {
         // ships need a unique identifier
         this.name = java.util.UUID.randomUUID().toString()
@@ -42,6 +46,16 @@ class Ship(
         renderable.isShadowCaster = false
         this.localPosition = localPosition
         this.setParent(earthNode)
+
+        //Change attack animation behaviour depending on the ship type
+        attackInterpolator = when (type) {
+            ShipType.UFO -> DecelerateInterpolator()
+            ShipType.THRALL -> AccelerateInterpolator()
+            ShipType.MOTHERSHIP -> LinearInterpolator()
+        }
+
+
+
         this.attack(Vector3(0f, Planet.centerHeight, 0f))
     }
 
@@ -63,14 +77,14 @@ class Ship(
 
     lateinit var attackAnimation: Animator
 
-    fun attack(earthPosition: Vector3) {
+    open fun attack(earthPosition: Vector3) {
 
         val distanceFactor = calculateDistanceFactor(this.localPosition, earthPosition)
 
-        val duration = (4000 * distanceFactor) + rGen.nextLong().absoluteValue % 1000 + (2000 * 1 / this.speed)
+        val duration = (4000 * distanceFactor) + rGen.nextLong().absoluteValue % 2000 + (4000 * 1 / this.speed)
         //Log.d(Configuration.DEBUG_TAG, "factor: $distanceFactor, duration: $duration")
 
-        attackAnimation = createVector3Animator(duration.toLong(), "localPosition", DecelerateInterpolator(), this.localPosition, earthPosition)
+        attackAnimation = createVector3Animator(duration.toLong(), "localPosition", attackInterpolator, this.localPosition, earthPosition)
 
         attackAnimation.addListener(object : AnimatorListenerAdapter() {
 
@@ -97,7 +111,7 @@ class Ship(
 
     } // end attack
 
-    private fun die() {
+    protected open fun die() {
 
         //cancel() and end() functions both call same callback function, so pause has to be called instead
         attackAnimation.pause()

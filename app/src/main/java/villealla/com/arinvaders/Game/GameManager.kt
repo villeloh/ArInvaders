@@ -2,6 +2,7 @@ package villealla.com.arinvaders.Game
 
 import android.os.Handler
 import android.os.Looper
+import com.google.ar.sceneform.AnchorNode
 import com.google.ar.sceneform.Node
 import villealla.com.arinvaders.Sound.Maestro
 import villealla.com.arinvaders.Static.Configuration
@@ -34,6 +35,7 @@ class GameManager private constructor() {
     }
 
     lateinit var earthNode: Node
+    lateinit var anchorNode: AnchorNode
 
     lateinit var gameLoop: SpawnLoop
     var mainHandler = Handler(Looper.getMainLooper())
@@ -41,7 +43,7 @@ class GameManager private constructor() {
 
     fun startGameSession() {
 
-        gameLoop = SpawnLoop(earthNode = earthNode, mainHandler = mainHandler)
+        gameLoop = SpawnLoop(earthNode = earthNode, mainHandler = mainHandler, anchorNode = anchorNode)
 
         resetUI()
 
