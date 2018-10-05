@@ -10,7 +10,6 @@ import android.view.View
 import com.google.ar.sceneform.AnchorNode
 import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.collision.Box
-import com.google.ar.sceneform.collision.CollisionShape
 import com.google.ar.sceneform.math.Quaternion
 import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.rendering.Color
@@ -73,6 +72,7 @@ class MainActivity : AppCompatActivity() {
         SoundEffectPlayer.loadAllEffects(this)
 
         setFragmentListeners()
+
     } // end onCreate
 
     private fun setFragmentListeners() {
