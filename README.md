@@ -25,4 +25,4 @@ Download the project, open it in Android Studio, plug in your phone to a USB por
 
 ## Project Specs
 
-Done with Android ArCore and ViroMedia ViroCore.
+Done with Google's ArCore library.

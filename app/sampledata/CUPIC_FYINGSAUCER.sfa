@@ -46,7 +46,7 @@
    },
    samplers: [
       {
-         file: "sampledata\\fying_saucerSurface_Color.png",
+         file: "sampledata/fying_saucerSurface_Color.png",
          name: "fying_saucerSurface_Color",
          pipeline_name: "fying_saucerSurface_Color.png",
       },

@@ -46,7 +46,7 @@
    },
    samplers: [
       {
-         file: "sampledata\\earth_ball.jpg",
+         file: "sampledata/earth_ball.jpg",
          name: "earth_ball",
          pipeline_name: "earth_ball.jpg",
       },
