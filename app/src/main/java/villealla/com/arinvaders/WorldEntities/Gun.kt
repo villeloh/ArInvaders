@@ -1,7 +1,9 @@
 package villealla.com.arinvaders.WorldEntities
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
-import android.view.animation.BounceInterpolator
+import android.view.animation.AccelerateInterpolator
 import com.google.ar.sceneform.math.Vector3
 import villealla.com.arinvaders.Movement.AnimatableNode
 
@@ -12,19 +14,27 @@ import villealla.com.arinvaders.Movement.AnimatableNode
 
 class Gun : AnimatableNode() {
 
-    private lateinit var shootingAnimation: ObjectAnimator
+    private lateinit var animation_1: ObjectAnimator
 
     fun setupAnimation() {
 
         val startPosition = localPosition
         val movePosition = Vector3(localPosition.x, localPosition.y - 0.008f, localPosition.z)
-        val duration = 200L
-        shootingAnimation = createVector3Animator(duration, "localPosition", BounceInterpolator(), startPosition, movePosition)
+        val duration = 100L
+        animation_1 = createVector3Animator(duration, "localPosition", AccelerateInterpolator(), startPosition, movePosition)
+        val animation_2 = createVector3Animator(duration, "localPosition", AccelerateInterpolator(), movePosition, startPosition)
+
+        animation_1.addListener(object : AnimatorListenerAdapter() {
+
+            override fun onAnimationEnd(animation: Animator?) {
+                animation_2.start()
+            }
+        })
     }
 
     fun kickback() {
 
-        shootingAnimation.start()
+        animation_1.start()
     }
 
 
