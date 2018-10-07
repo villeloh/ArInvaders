@@ -13,6 +13,8 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import com.google.ar.sceneform.AnchorNode
 import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.collision.Box
@@ -72,6 +74,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // hide the top UI bar of the app
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        this.window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        supportActionBar?.hide()
         setContentView(R.layout.fragment_custom_ar)
 
         arFragment = supportFragmentManager.findFragmentById(R.id.custom_ar_fragment) as CustomArFragment
@@ -196,10 +202,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                     gun = Gun()
                     gun.setParent(arFragment.arSceneView.scene.camera)
                     gun.renderable = gunRenderable
-                    gun.localPosition = Vector3(0.015f, -0.065f, -0.2f) // simply what's needed for it to look right
-                    gun.localRotation = Quaternion.axisAngle(Vector3(1f, 0.34f, 0f), 40f) // ditto
+                    gun.localPosition = Vector3(0.0155f, -0.065f, -0.2f) // simply what's needed for it to look right
+                    gun.localRotation = Quaternion.axisAngle(Vector3(0.8f, 0.3340f, 0f), 40f) // ditto
                     gun.name = "gun"
-                    gun.setupAnimation() // must be called last due to needing the updated localposition!
+                    gun.setupAnimation() // must be called last due to needing the updated localPosition!
 
                     // it's an awkward place for it, but meh, it's still static and gun-related
                     laserLight = Light.builder(Light.Type.POINT)
@@ -327,6 +333,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
     } // end onResume
 
+    // monitor sensor events and update the speedometer value based on them
     override fun onSensorChanged(event: SensorEvent?) {
 
         if (event == null) return

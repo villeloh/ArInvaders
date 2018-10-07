@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
 import android.support.v7.app.AppCompatActivity
 import android.view.Window
 import android.view.WindowManager
@@ -37,11 +38,21 @@ class MenuActivity : AppCompatActivity(), DataPassListener {
 
         if (playerName == DEFAULT_PLAYER_NAME) {
 
-            supportFragmentManager.beginTransaction().replace(R.id.mainMenuLayout, NamePromptFragment()).commit()
+            supportFragmentManager.beginTransaction().replace(R.id.mainMenuLayout, NamePromptFragment()).addToBackStack("namePrompt").commit()
         } else {
             createMenuFragment(playerName)
         }
     } // end onCreate
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+
+        // God alone knows why this works to close the app
+        // with no lingering empty Activity, but it does
+        if (supportFragmentManager.fragments.size == 0) {
+            this.finish()
+        }
+    }
 
     // pass the entered player name from the NamePromptFragment
     override fun passData(data: String, createMenu: Boolean) {
@@ -60,6 +71,7 @@ class MenuActivity : AppCompatActivity(), DataPassListener {
 
     private fun createMenuFragment(playerName: String) {
 
+        supportFragmentManager.popBackStack("namePrompt", FragmentManager.POP_BACK_STACK_INCLUSIVE)
         val menuFragment = MenuFragment()
         val args = Bundle()
         args.putString("player_name", playerName)
