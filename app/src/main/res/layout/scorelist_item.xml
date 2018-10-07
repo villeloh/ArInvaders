@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/listItem"
+    android:textColor="@color/colorAccent"
+    android:textSize="@dimen/top_level_btn_font_size"
+    android:padding="4dp"
+    android:gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="28dp"
+    tools:layout_editor_absoluteX="101dp"
+    tools:layout_editor_absoluteY="133dp" />

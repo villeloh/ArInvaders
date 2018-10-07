@@ -1,7 +1,13 @@
 <resources>
     <string name="app_name">ArInvaders</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="killTextViewDefaultText">No kills</string>
+    <string name="volume_text">Volume</string>
+    <string name="newgame_text">New Game</string>
+    <string name="score_text">Scores</string>
+    <string name="diff_1_text">EASY</string>
+    <string name="diff_2_text">NORMAL</string>
+    <string name="diff_3_text">HARD</string>
+    <string name="first_time_playing_welcome">Welcome to AR Invaders!</string>
+    <string name="first_time_playing_msg">Since this is your first time playing, please enter a name for yourself:</string>
+    <string name="personal_best">Personal High</string>
+    <string name="global_best">Global High</string>
 </resources>

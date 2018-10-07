@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/menuLayout"
+    android:background="@color/black"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <VideoView
+        android:id="@+id/videoView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="1.0" />
+
+    <ImageView
+        android:id="@+id/logoView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="fitXY"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.22"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.40"
+        app:srcCompat="@drawable/logo" />
+
+    <TextView
+        android:id="@+id/newGameTextViewBtn"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/horizontal_text_box_blue_bg"
+        android:gravity="center"
+        android:text="@string/newgame_text"
+        android:textColor="@color/colorAccent"
+        android:textSize="@dimen/top_level_btn_font_size"
+        app:layout_constraintBottom_toTopOf="@+id/difficultyLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.12"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent="0.21" />
+
+    <TextView
+        android:id="@+id/viewScoresBtn"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/horizontal_text_box_flipped_blue_bg"
+        android:gravity="center"
+        android:text="@string/score_text"
+        android:textColor="@color/colorAccent"
+        android:textSize="@dimen/top_level_btn_font_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.12"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.21" />
+
+    <LinearLayout
+        android:id="@+id/difficultyLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="75dp"
+        android:background="@drawable/bg_black_border_thin_lightblue"
+        android:orientation="horizontal"
+        android:padding="15dp"
+        app:layout_constraintBottom_toBottomOf="@+id/videoView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.18"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent="0.42">
+
+        <TextView
+            android:id="@+id/easyButton"
+            android:layout_width="40dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_darkblue_border_thin_lightblue"
+            android:gravity="center"
+            android:paddingTop="0dp"
+            android:text="@string/diff_1_text"
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/diff_btn_font_size" />
+
+        <TextView
+            android:id="@+id/normalButton"
+            android:layout_width="40dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_darkblue_border_thin_lightblue"
+            android:gravity="center"
+            android:text="@string/diff_2_text"
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/diff_btn_font_size" />
+
+        <TextView
+            android:id="@+id/hardButton"
+            android:layout_width="40dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_darkblue_border_thin_lightblue"
+            android:gravity="center"
+            android:text="@string/diff_3_text"
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/diff_btn_font_size" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/nameLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.37"
+        app:layout_constraintWidth_percent="0.18"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:paddingTop="10dp"
+        android:background="@drawable/bg_black_border_thin_lightblue"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/renameImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_weight="3"
+            app:srcCompat="@drawable/holo_face"
+            tools:layout_editor_absoluteX="79dp"
+            tools:layout_editor_absoluteY="57dp" />
+
+        <TextView
+            android:id="@+id/nameTextView"
+            android:layout_width="120dp"
+            android:layout_height="13dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/top_level_btn_font_size" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/volumeLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/bg_black_border_thin_lightblue"
+        android:orientation="vertical"
+        android:paddingTop="5dp"
+        android:paddingBottom="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.20"
+        app:layout_constraintTop_toBottomOf="@+id/viewScoresBtn"
+        app:layout_constraintWidth_percent="0.20">
+
+        <TextView
+            android:id="@+id/volumeTextView"
+            android:layout_width="69dp"
+            android:layout_height="13dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="10dp"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:text="@string/volume_text"
+            android:textColor="@color/colorAccent"
+            android:textSize="16sp"
+            tools:layout_editor_absoluteX="494dp"
+            tools:layout_editor_absoluteY="62dp" />
+
+        <SeekBar
+            android:id="@+id/volumeBar"
+            style="@style/Widget.AppCompat.SeekBar.Discrete"
+            android:layout_width="113dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="@drawable/bg_darkblue_border_thin_lightblue"
+            tools:layout_editor_absoluteX="446dp"
+            tools:layout_editor_absoluteY="91dp" />
+
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/renameEditText"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="90dp"
+        android:background="@drawable/horizontal_text_box_flipped"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:paddingStart="16dp"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:textColor="@color/colorAccent"
+        android:textSize="@dimen/top_level_btn_font_size"
+        android:visibility="gone"
+        app:layout_constraintHeight_percent="0.12"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.22" />
+
+</android.support.constraint.ConstraintLayout>

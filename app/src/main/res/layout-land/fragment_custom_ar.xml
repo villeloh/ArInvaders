@@ -61,7 +61,7 @@
         android:elevation="1dp"
         app:layout_constraintEnd_toStartOf="@+id/killTextView"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ufo_icon" />
+        app:srcCompat="@drawable/ship_icon" />
 
     <ImageView
         android:id="@+id/earthImage"
@@ -108,5 +108,29 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <FrameLayout
+        android:layout_width="111dp"
+        android:layout_height="110dp"
+        android:layout_marginStart="200dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/custom_ar_fragment"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/speedometer" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="0000"
+            android:textColor="@color/colorAccent"
+            android:textSize="17sp" />
+    </FrameLayout>
 
 </android.support.constraint.ConstraintLayout>

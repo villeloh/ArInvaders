@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/outerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/highScoreLayout"
+        android:background="@drawable/bg_black_border_thin_lightblue"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.95"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.9">
+
+        <TextView
+            android:id="@+id/easyTextView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:text="@string/diff_1_text"
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/top_level_btn_font_size"
+            app:layout_constraintBottom_toTopOf="@+id/easyListView"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
+            app:layout_constraintHeight_percent="0.1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_percent="0.25" />
+
+        <TextView
+            android:id="@+id/normalTextView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:text="@string/diff_2_text"
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/top_level_btn_font_size"
+            app:layout_constraintBottom_toTopOf="@+id/normalListView"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintHeight_percent="0.1"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintWidth_percent="0.25" />
+
+        <TextView
+            android:id="@+id/hardTextView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:text="@string/diff_3_text"
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/top_level_btn_font_size"
+            app:layout_constraintBottom_toTopOf="@+id/hardListView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.1"
+            app:layout_constraintStart_toStartOf="@+id/guideline2"
+            app:layout_constraintWidth_percent="0.25" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.333" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.666" />
+
+        <ListView
+            android:id="@+id/easyListView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/bg_black_border_magenta"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
+            app:layout_constraintHeight_percent="0.66"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_percent="0.30">
+
+        </ListView>
+
+        <ListView
+            android:id="@+id/normalListView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/bg_black_border_magenta"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintHeight_percent="0.66"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintWidth_percent="0.30">
+
+        </ListView>
+
+        <ListView
+            android:id="@+id/hardListView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/bg_black_border_magenta"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.66"
+            app:layout_constraintStart_toStartOf="@+id/guideline2"
+            app:layout_constraintWidth_percent="0.30">
+        </ListView>
+
+        <ImageView
+            android:id="@+id/topImageView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_percent="0.13"
+            app:layout_constraintWidth_percent="0.95"
+            android:layout_marginTop="8dp"
+            android:scaleType="fitXY"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/bg_darkblue_border_thin_lightblue" />
+
+        <Button
+            android:id="@+id/switchBtn"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:backgroundTint="@color/lightBlue"
+            android:backgroundTintMode="multiply"
+            android:gravity="center"
+            android:text="@string/personal_best"
+            android:textAlignment="gravity"
+            android:textColor="@color/black"
+            android:textSize="@dimen/diff_btn_font_size"
+            app:layout_constraintBottom_toBottomOf="@+id/topImageView"
+            app:layout_constraintEnd_toEndOf="@+id/topImageView"
+            app:layout_constraintHeight_percent="0.11"
+            app:layout_constraintStart_toStartOf="@+id/topImageView"
+            app:layout_constraintTop_toTopOf="@+id/topImageView"
+            app:layout_constraintWidth_percent="0.25" />
+
+    </android.support.constraint.ConstraintLayout>
+</android.support.constraint.ConstraintLayout>

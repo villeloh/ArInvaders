@@ -1,0 +1,151 @@
+package villealla.com.arinvaders.Fragments
+
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.os.Bundle
+import android.support.v4.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.widget.TextView
+import kotlinx.android.synthetic.main.fragment_main_menu.*
+import villealla.com.arinvaders.Interfaces.DataPassListener
+import villealla.com.arinvaders.MainActivity
+import villealla.com.arinvaders.R
+
+class MenuFragment : Fragment() {
+
+    private lateinit var allDiffButtons: MutableList<View>
+    private lateinit var menuActivity: DataPassListener
+    private lateinit var playerName: String
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_main_menu, container, false)
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        menuActivity = activity as DataPassListener
+
+        val uri = Uri.parse("android.resource://" + activity!!.packageName + "/" + R.raw.bg_video)
+        videoView.setVideoURI(uri)
+        videoView.start()
+
+        videoView.setOnCompletionListener { it.start() }
+
+        allDiffButtons = getAllDirectChildViews(difficultyLayout)
+
+        difficultyLayout.apply {
+
+            // normal diff is chosen at start
+            makeChosenDiffButton(normalButton)
+
+            easyButton.setOnClickListener { makeChosenDiffButton(it) }
+            normalButton.setOnClickListener { makeChosenDiffButton(it) }
+            hardButton.setOnClickListener { makeChosenDiffButton(it) }
+        }
+
+        renameImageView.setOnClickListener {
+
+            renameEditText.visibility = View.VISIBLE
+            renameEditText.setText(playerName, TextView.BufferType.EDITABLE)
+            renameEditText.requestFocus()
+        }
+
+        viewScoresBtn.setOnClickListener {
+
+            val scoreFragment = HighScoreFragment()
+            val args = Bundle()
+            // TODO: put the actual scores in the args Bundle
+            scoreFragment.arguments = args
+            menuActivity.addFragment(scoreFragment)
+        }
+
+        renameEditText.setOnEditorActionListener {
+            editText: View, actionId: Int, _ ->
+
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+
+                if (renameEditText.text.isNotEmpty()) {
+
+                    playerName = renameEditText.text.toString()
+                    nameTextView.text = playerName
+                    editText.visibility = View.GONE
+                    menuActivity.passData(playerName, false) // no need to recreate the menu
+                }
+            }
+            true
+        }
+
+        newGameTextViewBtn.setOnClickListener {
+
+            startMainActivity()
+        }
+
+        val args = arguments
+        if (args != null) {
+            playerName = args.getString("player_name") ?: "NO PLAYERNAME FOUND, UH-OH!"
+            nameTextView.text = playerName
+        }
+    } // end onActivityCreated
+
+    override fun onResume() {
+        super.onResume()
+
+        if (!videoView.isPlaying) videoView.start()
+    }
+
+    private fun makeChosenDiffButton(button: View) {
+
+        button.setBackgroundResource(R.drawable.bg_darkblue_border_magenta)
+        allDiffButtons.forEach { it ->
+
+            // there's probably a way to avoid this...
+            if (it.id != button.id) {
+                makeUnchosenDiffButton(it)
+            }
+        }
+    } // end makeChosenDiffButton
+
+    private fun makeUnchosenDiffButton(button: View) {
+
+        button.setBackgroundResource(R.drawable.bg_darkblue_border_thin_lightblue)
+    }
+
+    private fun getAllDirectChildViews(view: View): MutableList<View> {
+
+        val list = mutableListOf<View>()
+
+        if (view is ViewGroup) {
+
+            for (i in 0..view.childCount) {
+
+                val child = view.getChildAt(i)
+
+                // how tf it can be null is anyone's guess
+                if (child != null) list.add(child)
+            }
+        } // end if
+        return list
+    } // end getAllChildViews
+
+    private fun startMainActivity() {
+
+        val intent = Intent(activity as Context, MainActivity::class.java).apply {
+
+            // some funky bitwise operation; equivalent to '|' in Java.
+            // this gets rid of the menu view back stack when launching the main game
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+            putExtra("player_name", playerName)
+        }
+        (activity as Activity).finish() // finish the menuActivity
+        startActivity(intent)
+    }
+
+} // end class

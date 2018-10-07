@@ -1,12 +1,20 @@
 package villealla.com.arinvaders
 
+import android.content.Context
 import android.graphics.BitmapFactory
 import android.graphics.drawable.TransitionDrawable
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.net.Uri
 import android.os.*
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import com.google.ar.sceneform.AnchorNode
 import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.collision.Box
@@ -28,13 +36,14 @@ import villealla.com.arinvaders.Sound.SoundEffects
 import villealla.com.arinvaders.Static.Configuration
 import villealla.com.arinvaders.Static.ShipType
 import villealla.com.arinvaders.WorldEntities.*
+import kotlin.math.sqrt
 
 /*
 * Manages UI and ties together most other parts of the app.
 * @author Sinan Sakaoğlu, Ville Lohkovuori
 * */
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), SensorEventListener {
 
     private lateinit var arFragment: CustomArFragment
     private lateinit var gameManager: GameManager
@@ -47,6 +56,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var gun: Gun
 
     private lateinit var anchorNode: AnchorNode
+
+    private lateinit var mSensorManager: SensorManager
+    private lateinit var mSensor: Sensor
+    private var shipSpeed: Float = 0f
+    private var accX: Float = 0f
+    private var accY: Float = 0f
+    private var accZ: Float = 0f
 
     companion object {
 
@@ -73,6 +89,9 @@ class MainActivity : AppCompatActivity() {
 
         setFragmentListeners()
 
+        // monitor acceleration for the ship's speedometer
+        mSensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)
     } // end onCreate
 
     private fun setFragmentListeners() {
@@ -288,14 +307,46 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        if (gameManager.gameState == GameState.RUNNING)
+        if (gameManager.gameState == GameState.RUNNING) {
             gameManager.pauseGameSession()
+        }
+
+        mSensorManager.unregisterListener(this)
     }
 
     override fun onResume() {
         super.onResume()
-        if (gameManager.gameState == GameState.PAUSED)
+        if (gameManager.gameState == GameState.PAUSED) {
             gameManager.resumeGameSession()
-    }
+        }
+
+        // for some reason, this needs to be done again
+        // with every resume
+        mSensor.also {
+            mSensorManager.registerListener(this, it,
+                    SensorManager.SENSOR_DELAY_NORMAL)
+        }
+    } // end onResume
+
+    override fun onSensorChanged(event: SensorEvent?) {
+
+        if (event?.sensor == mSensor) {
+
+            accX = event.values?.get(0) ?: 0f
+            accY = event.values?.get(1) ?: 0f
+            accZ = event.values?.get(2) ?: 0f
+            val exp = 2.0
+            val accXSquared = Math.pow(accX.toDouble(),  exp).toFloat()
+            val accYSquared = Math.pow(accY.toDouble(),  exp).toFloat()
+            val accZSquared = Math.pow(accZ.toDouble(),  exp).toFloat()
+            shipSpeed = sqrt(accXSquared + accYSquared + accZSquared) * 1000 // gives believable 'space speeds'
+            Log.d("HUUH", "Acceleration: " + shipSpeed.toString())
+            // TODO: update the hud's speedometer to show the speed value
+            // TODO: modulate the motor sound based on the speed value
+        }
+    } // end onSensorChanged
+
+    // it needs to be implemented whether we need it or not
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) { }
 
 } // end class
