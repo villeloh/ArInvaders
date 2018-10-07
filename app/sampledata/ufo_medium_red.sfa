@@ -46,7 +46,7 @@
    },
    samplers: [
       {
-         file: "sampledata\\ufo_red.png",
+         file: "sampledata/ufo_red.png",
          name: "ufo_red",
          pipeline_name: "ufo_red.png",
       },

@@ -27,7 +27,7 @@ class Planet private constructor(private var hitPoints: Long = 7000000000) : Ani
         val instance: Planet by lazy { Holder.INSTANCE }
 
         // determines the Y-coordinate that the ships will attack towards.
-        // if the model is rescaled, this should be changed as well
+        // if the modelRenderable is rescaled, this should be changed as well
         const val centerHeight = 0.07F
     }
 

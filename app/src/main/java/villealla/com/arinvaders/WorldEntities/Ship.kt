@@ -3,6 +3,8 @@ package villealla.com.arinvaders.WorldEntities
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.TimeInterpolator
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
@@ -34,7 +36,7 @@ open class Ship(
         var hp: Int = type.hp,
         val dmg: Long = randomizedDmgValue(ShipType.UFO.dmgScaleValue),
         localPosition: Vector3,
-        earthNode: Node,
+        val earthNode: Node,
         val observer: IonDeath
 ) : AnimatableNode() {
 
@@ -75,6 +77,7 @@ open class Ship(
     } // end companion object
 
     private lateinit var attackAnimation: Animator
+    private lateinit var firingThread: Thread
     private val fireList = ArrayList<Fire>(2)
 
     private fun attack(earthPosition: Vector3) {
@@ -93,6 +96,8 @@ open class Ship(
                 //Ship has reached the earth
                 SoundEffectPlayer.playEffect(SoundEffectPlayer.randomEarthEffect())
 
+                killFiresStopLasers()
+
                 //Kill this ship
                 dispose()
                 Log.d(Configuration.DEBUG_TAG, "Death by kamikaze $name")
@@ -107,6 +112,7 @@ open class Ship(
 
         spinAnimation.start()
         attackAnimation.start()
+        startShootingLasers()
 
     } // end attack
 
@@ -115,11 +121,7 @@ open class Ship(
         //cancel() and end() functions both call same callback function, so pause has to be called instead
         pauseAttack()
 
-        //stop all fire animations
-        fireList.forEach {
-            it.dispose()
-        }
-        fireList.clear()
+        killFiresStopLasers()
 
         val deathAnimation = createVector3Animator(1000, "localScale", AccelerateInterpolator(), this.localScale, this.localScale.scaled(2f))
 
@@ -138,6 +140,16 @@ open class Ship(
         this.renderable = MainActivity.explosionRenderable
         SoundEffectPlayer.playEffect(SoundEffects.EXPLOSION)
         deathAnimation.start()
+    }
+
+    fun killFiresStopLasers() {
+        firingThread.interrupt()
+
+        //stop all fire animations
+        fireList.forEach {
+            it.dispose()
+        }
+        fireList.clear()
     }
 
 
@@ -160,6 +172,7 @@ open class Ship(
         //the first if check is to prevent calling die() multiple times when death animation is already playing
         if (hp > 0) {
             this.hp -= dmg
+
             if (this.hp <= 0) {
                 die()
                 return
@@ -167,8 +180,39 @@ open class Ship(
 
             //spawn a fire on this ship if it is not dead yet
             fireList.add(Fire(this))
+
+            SoundEffectPlayer.playEffect(SoundEffects.SHIP_HIT)
         }
     } // end damageShip
+
+    private fun startShootingLasers() {
+
+        firingThread = Thread(Runnable {
+
+            while (true) {
+                try {
+                    Thread.sleep(rGen.nextLong().absoluteValue % 1000 + 1000)
+                } catch (e: InterruptedException) {
+                    break
+                }
+
+                SoundEffectPlayer.playEffect(SoundEffects.SHIP_LASER)
+
+                // create and fire a laser towards the earth
+                Handler(Looper.getMainLooper()).post {
+                    val laserBolt = LaserBolt()
+                    laserBolt.setParent(earthNode)
+                    laserBolt.localPosition = localPosition
+                    laserBolt.renderable = LaserBolt.modelRenderable
+                    laserBolt.fire(earthNode.localPosition)
+                }
+
+            }
+
+        })
+
+        firingThread.start()
+    }
 
 
     // enables callback in the registered observer (in practice, an object in SpawnLoop)

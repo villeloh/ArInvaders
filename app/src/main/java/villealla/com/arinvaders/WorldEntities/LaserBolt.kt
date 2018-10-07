@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.view.animation.AccelerateInterpolator
 import com.google.ar.sceneform.math.Vector3
+import com.google.ar.sceneform.rendering.ModelRenderable
 import villealla.com.arinvaders.Movement.AnimatableNode
 
 /*
@@ -17,7 +18,11 @@ class LaserBolt : AnimatableNode() {
 
     lateinit var animation: ObjectAnimator
 
-    fun fire(shootPosition: Vector3, fireCallback: IFireCallback) {
+    companion object {
+        lateinit var modelRenderable: ModelRenderable
+    }
+
+    fun fire(shootPosition: Vector3, fireCallback: IFireCallback = defaultCallback) {
 
         val distanceFactor = calculateDistanceFactor(localPosition, shootPosition)
         val duration = (350 * distanceFactor).toLong() // ms
@@ -35,6 +40,11 @@ class LaserBolt : AnimatableNode() {
     } // end fire
 
 
+    private val defaultCallback = object : IFireCallback {
+        override fun fireFinished() {
+
+        }
+    }
 } // end class
 
 interface IFireCallback {

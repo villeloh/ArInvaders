@@ -63,10 +63,6 @@ sceneform.asset('sampledata/model.obj',
         'sampledata/model.sfa',
         'src/main/assets/model')
 
-sceneform.asset('sampledata/laser_2.obj',
-        'default',
-        'sampledata/laser_2.sfa',
-        'src/main/assets/laser_2')
 
 sceneform.asset('sampledata/ufo_small_red.obj',
         'default',
@@ -108,3 +104,8 @@ sceneform.asset('sampledata/fire.obj',
         'default',
         'sampledata/fire.sfa',
         'src/main/assets/fire')
+
+sceneform.asset('sampledata/laser_2.obj',
+        'default',
+        'sampledata/laser_2.sfa',
+        'src/main/assets/laser_2')

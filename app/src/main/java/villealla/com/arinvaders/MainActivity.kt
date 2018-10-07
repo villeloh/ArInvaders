@@ -40,10 +40,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var gameManager: GameManager
     private lateinit var earth: Planet
 
-    private lateinit var laserRenderable: ModelRenderable
-    private lateinit var laserTexture: Texture
     private lateinit var laserLight: Light
-    private lateinit var gunRenderable: ModelRenderable
     private lateinit var gun: Gun
 
     private lateinit var anchorNode: AnchorNode
@@ -109,23 +106,7 @@ class MainActivity : AppCompatActivity() {
         }
     } // end setFragmentListeners
 
-    private fun loadShipRenderables() {
 
-        // Load all models that are present in ShipType enum
-        ShipType.values().forEach { shipType ->
-            ModelRenderable.builder()
-                    .setSource(this, Uri.parse(shipType.modelName))
-                    .build()
-                    .thenAccept { it -> Ship.renderables[shipType] = it }
-        }
-    }
-
-    private fun loadFireModel() {
-        ModelRenderable.builder()
-                .setSource(this, Uri.parse("fire.sfb"))
-                .build()
-                .thenAccept { it -> Fire.model = it }
-    }
 
     private fun setArViewTouchListener() {
 
@@ -139,68 +120,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadExplosionGraphics() {
-
-        val bitMap = BitmapFactory.decodeResource(resources, R.drawable.smoke_tx)
-        Texture.builder().setSource(bitMap).build().thenAccept { it ->
-            explosionTexture = it
-
-            val renderable = ModelRenderable.builder()
-                    .setSource(this, Uri.parse("model.sfb"))
-                    .build()
-            renderable.thenAccept { it2 ->
-
-                it2.material.setTexture("", explosionTexture)
-                explosionRenderable = it2
-            }
-        }
-    } // end loadExplosionGraphics
-
-    private fun loadLaserGraphics() {
-
-        val bitMap = BitmapFactory.decodeResource(resources, R.drawable.blaster_bolt)
-        Texture.builder().setSource(bitMap).build().thenAccept { it -> laserTexture = it
-
-            ModelRenderable.builder()
-                    .setSource(this, Uri.parse("laser_2.sfb"))
-                    .build()
-                    .thenAccept { it2 -> laserRenderable = it2
-                        laserRenderable.material.setTexture("", laserTexture)
-                        laserRenderable.isShadowCaster = false
-                        laserRenderable.isShadowReceiver = false
-                    }
-        }
-    } // end loadLaserGraphics
-
-    private fun setupGun() {
-
-        ModelRenderable.builder()
-                .setSource(this, Uri.parse("Gun.sfb"))
-                .build()
-                .thenAccept { it ->
-
-                    gunRenderable = it
-                    gunRenderable.isShadowCaster = false
-                    gunRenderable.isShadowReceiver = false
-                    gunRenderable.collisionShape = Box(Vector3(0.001f, 0.001f, 0.001f)) // so that we don't hit the model
-                    gun = Gun()
-                    gun.setParent(arFragment.arSceneView.scene.camera)
-                    gun.renderable = gunRenderable
-                    gun.localPosition = Vector3(0.015f, -0.065f, -0.2f) // simply what's needed for it to look right
-                    gun.localRotation = Quaternion.axisAngle(Vector3(1f, 0.34f, 0f), 40f) // ditto
-                    gun.name = "gun"
-                    gun.setupAnimation() // must be called last due to needing the updated localposition!
-
-                    // it's an awkward place for it, but meh, it's still static and gun-related
-                    laserLight = Light.builder(Light.Type.POINT)
-                            .setIntensity(4000f)
-                            .setFalloffRadius(200f)
-                            .setShadowCastingEnabled(false)
-                            .setColorTemperature(10000f)
-                            .setColor(Color(1f,0f,0f))
-                            .build()
-                }
-    } // end setupGun
 
     private fun fireLaser() {
 
@@ -209,7 +128,7 @@ class MainActivity : AppCompatActivity() {
 
         val laserBolt = LaserBolt()
         laserBolt.setParent(arFragment.arSceneView.scene.camera)
-        laserBolt.renderable = laserRenderable
+        laserBolt.renderable = LaserBolt.modelRenderable
         laserBolt.localPosition = Vector3(0.0f, -0.07f, -0.2f) // simply what's needed for it to look right
         laserBolt.localRotation = Quaternion.axisAngle(Vector3(1f, 0f, 0f), 40f) // ditto
         laserBolt.name = "laser"
@@ -304,6 +223,89 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         if (gameManager.gameState == GameState.PAUSED)
             gameManager.resumeGameSession()
+    }
+
+
+    private fun loadExplosionGraphics() {
+
+        val bitMap = BitmapFactory.decodeResource(resources, R.drawable.smoke_tx)
+        Texture.builder().setSource(bitMap).build().thenAccept { it ->
+            explosionTexture = it
+
+            val renderable = ModelRenderable.builder()
+                    .setSource(this, Uri.parse("model.sfb"))
+                    .build()
+            renderable.thenAccept { it2 ->
+
+                it2.material.setTexture("", explosionTexture)
+                explosionRenderable = it2
+            }
+        }
+    } // end loadExplosionGraphics
+
+    private fun loadLaserGraphics() {
+
+        val bitMap = BitmapFactory.decodeResource(resources, R.drawable.blaster_bolt)
+        Texture.builder().setSource(bitMap).build().thenAccept { it ->
+            ModelRenderable.builder()
+                    .setSource(this, Uri.parse("laser_2.sfb"))
+                    .build()
+                    .thenAccept { it2 ->
+                        LaserBolt.modelRenderable = it2
+                        LaserBolt.modelRenderable.isShadowCaster = false
+                        LaserBolt.modelRenderable.isShadowReceiver = false
+                        LaserBolt.modelRenderable.material.setTexture("", it)
+                    }
+        }
+
+    } // end loadLaserGraphics
+
+    private fun setupGun() {
+
+        ModelRenderable.builder()
+                .setSource(this, Uri.parse("Gun.sfb"))
+                .build()
+                .thenAccept { it ->
+
+                    Gun.modelRenderable = it
+                    Gun.modelRenderable.isShadowCaster = false
+                    Gun.modelRenderable.isShadowReceiver = false
+                    Gun.modelRenderable.collisionShape = Box(Vector3(0.001f, 0.001f, 0.001f)) // so that we don't hit the modelRenderable
+                    gun = Gun()
+                    gun.setParent(arFragment.arSceneView.scene.camera)
+                    gun.renderable = Gun.modelRenderable
+                    gun.localPosition = Vector3(0.015f, -0.065f, -0.2f) // simply what's needed for it to look right
+                    gun.localRotation = Quaternion.axisAngle(Vector3(1f, 0.34f, 0f), 40f) // ditto
+                    gun.name = "gun"
+                    gun.setupAnimation() // must be called last due to needing the updated localposition!
+
+                    // it's an awkward place for it, but meh, it's still static and gun-related
+                    laserLight = Light.builder(Light.Type.POINT)
+                            .setIntensity(4000f)
+                            .setFalloffRadius(200f)
+                            .setShadowCastingEnabled(false)
+                            .setColorTemperature(10000f)
+                            .setColor(Color(1f, 0f, 0f))
+                            .build()
+                }
+    } // end setupGun
+
+    private fun loadShipRenderables() {
+
+        // Load all models that are present in ShipType enum
+        ShipType.values().forEach { shipType ->
+            ModelRenderable.builder()
+                    .setSource(this, Uri.parse(shipType.modelName))
+                    .build()
+                    .thenAccept { it -> Ship.renderables[shipType] = it }
+        }
+    }
+
+    private fun loadFireModel() {
+        ModelRenderable.builder()
+                .setSource(this, Uri.parse("fire.sfb"))
+                .build()
+                .thenAccept { it -> Fire.model = it }
     }
 
 } // end class
