@@ -110,27 +110,28 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <FrameLayout
-        android:layout_width="111dp"
-        android:layout_height="110dp"
+        android:id="@+id/speedometerLayout"
+        android:layout_width="104dp"
+        android:layout_height="104dp"
         android:layout_marginStart="200dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="14dp"
         app:layout_constraintBottom_toBottomOf="@+id/custom_ar_fragment"
         app:layout_constraintStart_toStartOf="parent">
 
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/speedImageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/speedometer" />
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/speedTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="0000"
-            android:textColor="@color/colorAccent"
-            android:textSize="17sp" />
+            android:textColor="@color/lightBlue"
+            android:textSize="14sp" />
     </FrameLayout>
 
 </android.support.constraint.ConstraintLayout>

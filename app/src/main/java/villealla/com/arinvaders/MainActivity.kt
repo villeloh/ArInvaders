@@ -13,8 +13,6 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
-import android.view.Window
-import android.view.WindowManager
 import com.google.ar.sceneform.AnchorNode
 import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.collision.Box
@@ -36,6 +34,7 @@ import villealla.com.arinvaders.Sound.SoundEffects
 import villealla.com.arinvaders.Static.Configuration
 import villealla.com.arinvaders.Static.ShipType
 import villealla.com.arinvaders.WorldEntities.*
+import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 /*
@@ -285,6 +284,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                     Configuration.MESSAGE_PEOPLE_ALIVE -> {
                         peopleTextView.text = newValue
 
+                        // TODO: refactor this shit asap !!! -.-
                         if (Planet.instance.people() < 7000000000L) {
                             val transition = peopleTextView.background as TransitionDrawable
                             transition.startTransition(500)
@@ -320,8 +320,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             gameManager.resumeGameSession()
         }
 
-        // for some reason, this needs to be done again
-        // with every resume
+        // for some reason, this needs to be done again with every resume
         mSensor.also {
             mSensorManager.registerListener(this, it,
                     SensorManager.SENSOR_DELAY_NORMAL)
@@ -330,7 +329,12 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     override fun onSensorChanged(event: SensorEvent?) {
 
-        if (event?.sensor == mSensor) {
+        if (event == null) return
+
+        // to limit the update speed of the speedometer to a human-readable level
+        val timeCondition = (event.timestamp / 100000000L) % 5 == 0L
+
+        if (event.sensor == mSensor && timeCondition) {
 
             accX = event.values?.get(0) ?: 0f
             accY = event.values?.get(1) ?: 0f
@@ -340,9 +344,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             val accYSquared = Math.pow(accY.toDouble(),  exp).toFloat()
             val accZSquared = Math.pow(accZ.toDouble(),  exp).toFloat()
             shipSpeed = sqrt(accXSquared + accYSquared + accZSquared) * 1000 // gives believable 'space speeds'
-            Log.d("HUUH", "Acceleration: " + shipSpeed.toString())
-            // TODO: update the hud's speedometer to show the speed value
-            // TODO: modulate the motor sound based on the speed value
+
+            speedTextView.text = shipSpeed.roundToInt().toString()
         }
     } // end onSensorChanged
 

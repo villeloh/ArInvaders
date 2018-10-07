@@ -10,7 +10,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.widget.Button
 import android.widget.TextView
+import kotlinx.android.synthetic.main.fragment_custom_ar.view.*
 import kotlinx.android.synthetic.main.fragment_main_menu.*
 import villealla.com.arinvaders.Interfaces.DataPassListener
 import villealla.com.arinvaders.MainActivity
@@ -21,6 +23,7 @@ class MenuFragment : Fragment() {
     private lateinit var allDiffButtons: MutableList<View>
     private lateinit var menuActivity: DataPassListener
     private lateinit var playerName: String
+    private lateinit var difficulty: String
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -44,11 +47,11 @@ class MenuFragment : Fragment() {
         difficultyLayout.apply {
 
             // normal diff is chosen at start
-            makeChosenDiffButton(normalButton)
+            makeChosenDifficulty(normalButton)
 
-            easyButton.setOnClickListener { makeChosenDiffButton(it) }
-            normalButton.setOnClickListener { makeChosenDiffButton(it) }
-            hardButton.setOnClickListener { makeChosenDiffButton(it) }
+            easyButton.setOnClickListener { makeChosenDifficulty(it) }
+            normalButton.setOnClickListener { makeChosenDifficulty(it) }
+            hardButton.setOnClickListener { makeChosenDifficulty(it) }
         }
 
         renameImageView.setOnClickListener {
@@ -101,19 +104,21 @@ class MenuFragment : Fragment() {
         if (!videoView.isPlaying) videoView.start()
     }
 
-    private fun makeChosenDiffButton(button: View) {
+    private fun makeChosenDifficulty(button: View) {
 
+        val btn = button as TextView // technically, the 'buttons' are TextViews in this case
+        difficulty = btn.text.toString().toLowerCase()
         button.setBackgroundResource(R.drawable.bg_darkblue_border_magenta)
         allDiffButtons.forEach { it ->
 
-            // there's probably a way to avoid this...
+            // there's probably a way to avoid having to do this...
             if (it.id != button.id) {
-                makeUnchosenDiffButton(it)
+                makeUnchosenDifficulty(it)
             }
         }
     } // end makeChosenDiffButton
 
-    private fun makeUnchosenDiffButton(button: View) {
+    private fun makeUnchosenDifficulty(button: View) {
 
         button.setBackgroundResource(R.drawable.bg_darkblue_border_thin_lightblue)
     }
@@ -143,6 +148,7 @@ class MenuFragment : Fragment() {
             // this gets rid of the menu view back stack when launching the main game
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
             putExtra("player_name", playerName)
+            putExtra("difficulty", difficulty)
         }
         (activity as Activity).finish() // finish the menuActivity
         startActivity(intent)

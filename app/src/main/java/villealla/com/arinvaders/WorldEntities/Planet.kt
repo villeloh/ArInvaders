@@ -56,7 +56,6 @@ class Planet private constructor(private var hitPoints: Long = 7000000000) : Ani
     fun startRotating() {
 
         //Creates two rotation animations, one for half way of spin, then loops.
-
         createSpinAnimator(8000, this.localRotation).start()
     }
 
@@ -74,4 +73,4 @@ class Planet private constructor(private var hitPoints: Long = 7000000000) : Ani
         return hitPoints
     }
 
-} // end class1
+} // end class
