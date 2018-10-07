@@ -102,3 +102,9 @@ sceneform.asset('sampledata/Gun.obj',
         'default',
         'sampledata/Gun.sfa',
         'src/main/assets/Gun')
+
+
+sceneform.asset('sampledata/fire.obj',
+        'default',
+        'sampledata/fire.sfa',
+        'src/main/assets/fire')

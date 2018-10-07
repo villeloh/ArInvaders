@@ -69,6 +69,7 @@ class MainActivity : AppCompatActivity() {
         loadShipRenderables()
         loadExplosionGraphics()
         loadLaserGraphics()
+        loadFireModel()
         SoundEffectPlayer.loadAllEffects(this)
 
         setFragmentListeners()
@@ -117,6 +118,13 @@ class MainActivity : AppCompatActivity() {
                     .build()
                     .thenAccept { it -> Ship.renderables[shipType] = it }
         }
+    }
+
+    private fun loadFireModel() {
+        ModelRenderable.builder()
+                .setSource(this, Uri.parse("fire.sfb"))
+                .build()
+                .thenAccept { it -> Fire.model = it }
     }
 
     private fun setArViewTouchListener() {

@@ -79,4 +79,9 @@ open class AnimatableNode : Node() {
         return Math.sqrt((end.x - start.x).pow(2).toDouble() + (end.y - start.y).pow(2).toDouble() + (end.z - start.z).pow(2).toDouble())
     }
 
+    open fun dispose() {
+        renderable = null
+        setParent(null)
+    }
+
 } // end class

@@ -35,11 +35,6 @@ class LaserBolt : AnimatableNode() {
     } // end fire
 
 
-    private fun dispose() {
-        renderable = null
-        setParent(null)
-    }
-
 } // end class
 
 interface IFireCallback {

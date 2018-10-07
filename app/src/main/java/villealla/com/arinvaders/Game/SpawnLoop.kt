@@ -65,7 +65,7 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
 
         for (i in 1..(wave / 2)) {
             mainHandler.post {
-                val newShip = Ship(type = ShipType.THRALL, localPosition = randomCoord(), earthNode = earthNode, observer = onShipDeath, speed = rGen.nextInt(10) + 5)
+                val newShip = Ship(type = ShipType.THRALL, localPosition = randomCoord(), earthNode = earthNode, observer = onShipDeath, speed = rGen.nextInt(1) + 1)
                 shipsInScene[newShip.name] = newShip
             }
         }
@@ -147,6 +147,7 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
 
         //remove all ships from scene
         shipsInScene.forEach { name, ship ->
+            ship.cancelAttack()
             ship.dispose()
         }
 

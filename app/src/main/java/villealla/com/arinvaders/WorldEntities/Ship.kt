@@ -17,6 +17,7 @@ import villealla.com.arinvaders.Sound.SoundEffects
 import villealla.com.arinvaders.Static.Configuration
 import villealla.com.arinvaders.Static.ShipType
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.math.absoluteValue
 
 /*
@@ -37,7 +38,7 @@ open class Ship(
         val observer: IonDeath
 ) : AnimatableNode() {
 
-    lateinit var attackInterpolator: TimeInterpolator
+    var attackInterpolator: TimeInterpolator
 
     init {
         // ships need a unique identifier
@@ -53,8 +54,6 @@ open class Ship(
             ShipType.THRALL -> AccelerateInterpolator()
             ShipType.MOTHERSHIP -> LinearInterpolator()
         }
-
-
 
         this.attack(Vector3(0f, Planet.centerHeight, 0f))
     }
@@ -75,9 +74,10 @@ open class Ship(
         }
     } // end companion object
 
-    lateinit var attackAnimation: Animator
+    private lateinit var attackAnimation: Animator
+    private val fireList = ArrayList<Fire>(2)
 
-    open fun attack(earthPosition: Vector3) {
+    private fun attack(earthPosition: Vector3) {
 
         val distanceFactor = calculateDistanceFactor(this.localPosition, earthPosition)
 
@@ -91,7 +91,6 @@ open class Ship(
             override fun onAnimationEnd(animation: Animator?) {
 
                 //Ship has reached the earth
-                //Planet.instance.killPeople(dmg)
                 SoundEffectPlayer.playEffect(SoundEffectPlayer.randomEarthEffect())
 
                 //Kill this ship
@@ -111,10 +110,16 @@ open class Ship(
 
     } // end attack
 
-    protected open fun die() {
+    private fun die() {
 
         //cancel() and end() functions both call same callback function, so pause has to be called instead
-        attackAnimation.pause()
+        pauseAttack()
+
+        //stop all fire animations
+        fireList.forEach {
+            it.dispose()
+        }
+        fireList.clear()
 
         val deathAnimation = createVector3Animator(1000, "localScale", AccelerateInterpolator(), this.localScale, this.localScale.scaled(2f))
 
@@ -129,11 +134,12 @@ open class Ship(
             }
         })
 
+        // Audible and visual death effect for the ship
         this.renderable = MainActivity.explosionRenderable
-
         SoundEffectPlayer.playEffect(SoundEffects.EXPLOSION)
         deathAnimation.start()
     }
+
 
     fun pauseAttack() {
         if (attackAnimation.isRunning)
@@ -145,6 +151,10 @@ open class Ship(
             attackAnimation.resume()
     }
 
+    fun cancelAttack() {
+        attackAnimation.cancel()
+    }
+
     fun damageShip(dmg: Int) {
 
         //the first if check is to prevent calling die() multiple times when death animation is already playing
@@ -152,16 +162,16 @@ open class Ship(
             this.hp -= dmg
             if (this.hp <= 0) {
                 die()
+                return
             }
+
+            //spawn a fire on this ship if it is not dead yet
+            fireList.add(Fire(this))
         }
     } // end damageShip
 
-    fun dispose() {
-        renderable = null
-        setParent(null)
-    }
 
-    // enables callback in the registered Observer (in practice, an object in SpawnLoop)
+    // enables callback in the registered observer (in practice, an object in SpawnLoop)
     interface IonDeath {
 
         fun onDeath(ship: Ship, reachedEarth: Boolean)
