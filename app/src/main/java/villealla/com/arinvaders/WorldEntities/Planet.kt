@@ -6,6 +6,7 @@ import com.google.ar.sceneform.AnchorNode
 import com.google.ar.sceneform.rendering.ModelRenderable
 import villealla.com.arinvaders.Game.GameManager
 import villealla.com.arinvaders.Movement.AnimatableNode
+import villealla.com.arinvaders.Static.Configuration
 
 /*
 * Manages the planet Earth and the people on it.
@@ -13,7 +14,7 @@ import villealla.com.arinvaders.Movement.AnimatableNode
 * */
 
 // needs to be a Singleton for easy reference...
-class Planet private constructor(private var hitPoints: Long = 7000000000) : AnimatableNode() {
+class Planet private constructor(private var hitPoints: Long = Configuration.EARTH_POPULATION) : AnimatableNode() {
 
     init {
     }

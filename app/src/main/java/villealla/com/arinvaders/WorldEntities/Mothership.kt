@@ -1,11 +1,12 @@
 package villealla.com.arinvaders.WorldEntities
 
+import android.os.Handler
 import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.math.Vector3
 import villealla.com.arinvaders.Static.ShipType
 import kotlin.math.absoluteValue
 
-class Mothership(type: ShipType, speed: Int, localPosition: Vector3, earthNode: Node, observer: IonDeath, val iMinionSpawner: IMinionSpawner) : Ship(type = type, speed = speed, localPosition = localPosition, earthNode = earthNode, observer = observer) {
+class Mothership(type: ShipType, speed: Int, localPosition: Vector3, earthNode: Node, observer: IonDeath, val iMinionSpawner: IMinionSpawner, mainHandler: Handler) : Ship(type = type, speed = speed, localPosition = localPosition, earthNode = earthNode, observer = observer, mainHandler = mainHandler) {
 
     init {
 

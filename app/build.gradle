@@ -109,3 +109,8 @@ sceneform.asset('sampledata/laser_2.obj',
         'default',
         'sampledata/laser_2.sfa',
         'src/main/assets/laser_2')
+
+sceneform.asset('sampledata/laser_yellow.obj',
+        'default',
+        'sampledata/laser_yellow.sfa',
+        'src/main/assets/laser_yellow')

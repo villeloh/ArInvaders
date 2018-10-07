@@ -107,7 +107,6 @@ class MainActivity : AppCompatActivity() {
     } // end setFragmentListeners
 
 
-
     private fun setArViewTouchListener() {
 
         arFragment.arSceneView.scene.setOnTouchListener { _, motionEvent ->
@@ -128,7 +127,7 @@ class MainActivity : AppCompatActivity() {
 
         val laserBolt = LaserBolt()
         laserBolt.setParent(arFragment.arSceneView.scene.camera)
-        laserBolt.renderable = LaserBolt.modelRenderable
+        laserBolt.renderable = LaserBolt.redRenderable
         laserBolt.localPosition = Vector3(0.0f, -0.07f, -0.2f) // simply what's needed for it to look right
         laserBolt.localRotation = Quaternion.axisAngle(Vector3(1f, 0f, 0f), 40f) // ditto
         laserBolt.name = "laser"
@@ -138,7 +137,7 @@ class MainActivity : AppCompatActivity() {
         lightNode.localPosition = Vector3(0f, 0.1f, 0f) // lift it up so the light can be seen
         lightNode.light = laserLight
 
-        laserBolt.fire(Vector3(0.0f, 0.0f, -1.0f), object : IFireCallback {
+        laserBolt.fire(Vector3(0.0f, 0.0f, -1.0f), fireCallback = object : IFireCallback {
             override fun fireFinished() {
                 playerAttack()
             }
@@ -193,11 +192,11 @@ class MainActivity : AppCompatActivity() {
                     Configuration.MESSAGE_PEOPLE_ALIVE -> {
                         peopleTextView.text = newValue
 
-                        if (Planet.instance.people() < 7000000000L) {
-                            val transition = peopleTextView.background as TransitionDrawable
-                            transition.startTransition(500)
-                            transition.reverseTransition(500)
-                        }
+                        //Flash background
+                        val transition = peopleTextView.background as TransitionDrawable
+                        transition.startTransition(500)
+                        transition.reverseTransition(500)
+
                     }
                     Configuration.MESSAGE_KILL_COUNT -> {
                         killTextView.text = newValue
@@ -208,6 +207,11 @@ class MainActivity : AppCompatActivity() {
                     Configuration.MESSAGE_WAVE_NUMBER -> {
                         waveNumberTextView.text = "WAVE " + newValue
                     }
+                    Configuration.MESSAGE_RESET -> {
+                        peopleTextView.text = Configuration.EARTH_POPULATION.toString()
+                        killTextView.text = "0"
+                    }
+
                 } // end when
             } // end null check
         } // end handleMessage
@@ -245,18 +249,22 @@ class MainActivity : AppCompatActivity() {
 
     private fun loadLaserGraphics() {
 
-        val bitMap = BitmapFactory.decodeResource(resources, R.drawable.blaster_bolt)
-        Texture.builder().setSource(bitMap).build().thenAccept { it ->
-            ModelRenderable.builder()
-                    .setSource(this, Uri.parse("laser_2.sfb"))
-                    .build()
-                    .thenAccept { it2 ->
-                        LaserBolt.modelRenderable = it2
-                        LaserBolt.modelRenderable.isShadowCaster = false
-                        LaserBolt.modelRenderable.isShadowReceiver = false
-                        LaserBolt.modelRenderable.material.setTexture("", it)
-                    }
-        }
+        ModelRenderable.builder()
+                .setSource(this, Uri.parse("laser_2.sfb"))
+                .build()
+                .thenAccept { it ->
+                    LaserBolt.redRenderable = it
+                    LaserBolt.redRenderable.isShadowCaster = false
+                    LaserBolt.redRenderable.isShadowReceiver = false
+                }
+        ModelRenderable.builder()
+                .setSource(this, Uri.parse("laser_yellow.sfb"))
+                .build()
+                .thenAccept { it ->
+                    LaserBolt.yellowRenderable = it
+                    LaserBolt.yellowRenderable.isShadowCaster = false
+                    LaserBolt.yellowRenderable.isShadowReceiver = false
+                }
 
     } // end loadLaserGraphics
 

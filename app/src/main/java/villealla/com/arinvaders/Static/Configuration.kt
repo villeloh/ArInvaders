@@ -17,5 +17,7 @@ class Configuration {
         const val MESSAGE_KILL_COUNT = 2
         const val MESSAGE_WAVE_NUMBER = 3
         const val MESSAGE_SHIPS_LEFT_IN_WAVE = 4
+        const val MESSAGE_RESET = 5
+        const val EARTH_POPULATION = 7000000000
     }
 } // end class

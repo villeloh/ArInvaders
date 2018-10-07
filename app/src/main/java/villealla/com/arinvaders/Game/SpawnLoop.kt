@@ -58,21 +58,21 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
         //spawn ships in a balanced and formulated manner
         for (i in 1..(5 + wave - 1)) {
             mainHandler.post {
-                val newShip = Ship(type = ShipType.UFO, localPosition = randomCoord(), earthNode = earthNode, observer = onShipDeath, speed = rGen.nextInt(8) + 1)
+                val newShip = Ship(type = ShipType.UFO, localPosition = randomCoord(), earthNode = earthNode, observer = onShipDeath, speed = rGen.nextInt(5) + 1, mainHandler = mainHandler)
                 shipsInScene[newShip.name] = newShip
             }
         }
 
         for (i in 1..(wave / 2)) {
             mainHandler.post {
-                val newShip = Ship(type = ShipType.THRALL, localPosition = randomCoord(), earthNode = earthNode, observer = onShipDeath, speed = rGen.nextInt(1) + 1)
+                val newShip = Ship(type = ShipType.THRALL, localPosition = randomCoord(), earthNode = earthNode, observer = onShipDeath, speed = rGen.nextInt(5) + 5, mainHandler = mainHandler)
                 shipsInScene[newShip.name] = newShip
             }
         }
 
         for (i in 1..((wave - 2) / 3)) {
             mainHandler.post {
-                val newShip = Mothership(type = ShipType.MOTHERSHIP, localPosition = randomCoord(), earthNode = anchorNode, observer = onShipDeath, speed = 1, iMinionSpawner = iMinionSpawner)
+                val newShip = Mothership(type = ShipType.MOTHERSHIP, localPosition = randomCoord(), earthNode = anchorNode, observer = onShipDeath, speed = 1, iMinionSpawner = iMinionSpawner, mainHandler = mainHandler)
                 shipsInScene[newShip.name] = newShip
             }
         }
@@ -108,6 +108,7 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
                         try {
                             Thread.sleep(DELAY_BETWEEN_WAVES_SEC * 1000)
                         } catch (ex: InterruptedException) {
+                            break
                         }
 
                     //Update ui & notify user about new wave
@@ -147,7 +148,7 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
 
         //remove all ships from scene
         shipsInScene.forEach { name, ship ->
-            ship.cancelAttack()
+            ship.pauseAttack()
             ship.dispose()
         }
 
@@ -238,7 +239,7 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
         // This method is used by the mothership to spawn more ships
         override fun spawnMinion(localPosition: Vector3) {
             mainHandler.post {
-                val newShip = Ship(type = ShipType.UFO, localPosition = localPosition, earthNode = earthNode, observer = onShipDeath, speed = rGen.nextInt(20) + 10)
+                val newShip = Ship(type = ShipType.UFO, localPosition = localPosition, earthNode = earthNode, observer = onShipDeath, speed = rGen.nextInt(5) + 1, mainHandler = mainHandler)
                 shipsInScene[newShip.name] = newShip
             }
 

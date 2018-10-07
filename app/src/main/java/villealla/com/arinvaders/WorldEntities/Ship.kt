@@ -4,7 +4,6 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.TimeInterpolator
 import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
@@ -37,7 +36,8 @@ open class Ship(
         val dmg: Long = randomizedDmgValue(ShipType.UFO.dmgScaleValue),
         localPosition: Vector3,
         val earthNode: Node,
-        val observer: IonDeath
+        val observer: IonDeath,
+        val mainHandler: Handler
 ) : AnimatableNode() {
 
     var attackInterpolator: TimeInterpolator
@@ -163,10 +163,6 @@ open class Ship(
             attackAnimation.resume()
     }
 
-    fun cancelAttack() {
-        attackAnimation.cancel()
-    }
-
     fun damageShip(dmg: Int) {
 
         //the first if check is to prevent calling die() multiple times when death animation is already playing
@@ -191,7 +187,7 @@ open class Ship(
 
             while (true) {
                 try {
-                    Thread.sleep(rGen.nextLong().absoluteValue % 1000 + 1000)
+                    Thread.sleep(rGen.nextLong().absoluteValue % 5000 + 2000)
                 } catch (e: InterruptedException) {
                     break
                 }
@@ -199,12 +195,31 @@ open class Ship(
                 SoundEffectPlayer.playEffect(SoundEffects.SHIP_LASER)
 
                 // create and fire a laser towards the earth
-                Handler(Looper.getMainLooper()).post {
+                mainHandler.post {
                     val laserBolt = LaserBolt()
-                    laserBolt.setParent(earthNode)
+                    laserBolt.setParent(earthNode.parent)
                     laserBolt.localPosition = localPosition
-                    laserBolt.renderable = LaserBolt.modelRenderable
-                    laserBolt.fire(earthNode.localPosition)
+                    laserBolt.renderable = LaserBolt.yellowRenderable
+
+                    /* // Gets close to the earth, but doesn't reach it
+
+                     var target = vector3Difference(localPosition,earthNode.localPosition)
+
+                     target = vector3Sum(target.normalized().scaled(0.5f),localPosition)*/
+
+
+                    laserBolt.fire(earthNode.localPosition, dur = 700, fireCallback = object : IFireCallback {
+                        override fun fireFinished() {
+
+                            //laser kills a little bit of people
+                            Planet.instance.killPeople(dmg / 1000)
+
+                            val message = mainHandler.obtainMessage()
+                            message.what = Configuration.MESSAGE_PEOPLE_ALIVE
+                            message.data.putString(Configuration.MESSAGE_PEOPLE_ALIVE.toString(), Planet.instance.people().toString())
+                            mainHandler.sendMessage(message)
+                        }
+                    })
                 }
 
             }
@@ -214,6 +229,13 @@ open class Ship(
         firingThread.start()
     }
 
+    private fun vector3Difference(vec1: Vector3, vec2: Vector3): Vector3 {
+        return Vector3(vec2.x - vec1.x, vec2.y - vec1.y, vec2.z - vec1.z)
+    }
+
+    private fun vector3Sum(vec1: Vector3, vec2: Vector3): Vector3 {
+        return Vector3(vec2.x + vec1.x, vec2.y + vec1.y, vec2.z + vec1.z)
+    }
 
     // enables callback in the registered observer (in practice, an object in SpawnLoop)
     interface IonDeath {
