@@ -10,6 +10,8 @@ import android.view.animation.DecelerateInterpolator
 import android.view.animation.LinearInterpolator
 import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.math.Vector3
+import com.google.ar.sceneform.rendering.Color
+import com.google.ar.sceneform.rendering.Light
 import com.google.ar.sceneform.rendering.ModelRenderable
 import villealla.com.arinvaders.MainActivity
 import villealla.com.arinvaders.Movement.AnimatableNode
@@ -41,6 +43,7 @@ open class Ship(
 ) : AnimatableNode() {
 
     var attackInterpolator: TimeInterpolator
+    private var directionalUnitVector3: Vector3
 
     init {
         // ships need a unique identifier
@@ -56,6 +59,9 @@ open class Ship(
             ShipType.THRALL -> AccelerateInterpolator()
             ShipType.MOTHERSHIP -> LinearInterpolator()
         }
+
+        //calculate the directional unit vector
+        directionalUnitVector3 = vector3Difference(localPosition, earthNode.localPosition).normalized()
 
         this.attack(Vector3(0f, Planet.centerHeight, 0f))
     }
@@ -78,7 +84,9 @@ open class Ship(
 
     private lateinit var attackAnimation: Animator
     private lateinit var firingThread: Thread
+    private var isFiring = true
     private val fireList = ArrayList<Fire>(2)
+
 
     private fun attack(earthPosition: Vector3) {
 
@@ -91,6 +99,7 @@ open class Ship(
 
         attackAnimation.addListener(object : AnimatorListenerAdapter() {
 
+            // This function is called when the ship reaches the earth without dying
             override fun onAnimationEnd(animation: Animator?) {
 
                 //Ship has reached the earth
@@ -102,13 +111,13 @@ open class Ship(
                 dispose()
                 Log.d(Configuration.DEBUG_TAG, "Death by kamikaze $name")
 
-                //broadcast ships death to any one that cares
+                //signal ship's death to observer
                 observer.onDeath(this@Ship, true)
             } // end onAnimationEnd
         })
 
         //create spin/hover animation
-        val spinAnimation = createSpinAnimator(3000, this.localRotation)
+        val spinAnimation = createSpinAnimator(rGen.nextBoolean(), 1000, this.localRotation)
 
         spinAnimation.start()
         attackAnimation.start()
@@ -121,8 +130,18 @@ open class Ship(
         //cancel() and end() functions both call same callback function, so pause has to be called instead
         pauseAttack()
 
+        //destroy fire objects on the ships if any and stop firing lasers
         killFiresStopLasers()
 
+        // Audible and visual death effect for the ship
+        this.renderable = MainActivity.explosionRenderable
+        SoundEffectPlayer.playEffect(SoundEffects.EXPLOSION)
+
+        playDeathAnimation()
+
+    }
+
+    private fun playDeathAnimation() {
         val deathAnimation = createVector3Animator(1000, "localScale", AccelerateInterpolator(), this.localScale, this.localScale.scaled(2f))
 
         deathAnimation.addListener(object : AnimatorListenerAdapter() {
@@ -136,13 +155,11 @@ open class Ship(
             }
         })
 
-        // Audible and visual death effect for the ship
-        this.renderable = MainActivity.explosionRenderable
-        SoundEffectPlayer.playEffect(SoundEffects.EXPLOSION)
         deathAnimation.start()
+        playFlashingLightsAnim()
     }
 
-    fun killFiresStopLasers() {
+    private fun killFiresStopLasers() {
         firingThread.interrupt()
 
         //stop all fire animations
@@ -152,15 +169,46 @@ open class Ship(
         fireList.clear()
     }
 
+    private fun playFlashingLightsAnim() {
+
+        //create one red on yellow light place them next to ship and flash
+        for (i in 0..1) {
+            val light = Light.builder(Light.Type.POINT)
+                    .setColor(Color(1f, (i % 2).toFloat(), 0f))
+                    .setIntensity(5000f)
+                    .setColorTemperature(1500f)
+                    .build()
+
+            val lightNode = AnimatableNode()
+            lightNode.light = light
+            lightNode.setParent(earthNode)
+            lightNode.localPosition = vector3Sum(this.localPosition, Vector3(0.1f, 0f, 0f + i * 0.1f))
+
+            val animator = createFlashingAnimator(lightNode.light, 1000)
+            animator.addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator?) {
+                    super.onAnimationEnd(animation)
+                    lightNode.dispose()
+                }
+            })
+            animator.start()
+        }
+
+
+    }
 
     fun pauseAttack() {
-        if (attackAnimation.isRunning)
+        if (attackAnimation.isRunning) {
             attackAnimation.pause()
+            isFiring = false
+        }
     }
 
     fun resumeAttack() {
-        if (attackAnimation.isPaused)
+        if (attackAnimation.isPaused) {
             attackAnimation.resume()
+            isFiring = true
+        }
     }
 
     fun damageShip(dmg: Int) {
@@ -185,7 +233,7 @@ open class Ship(
 
         firingThread = Thread(Runnable {
 
-            while (true) {
+            while (isFiring && true) {
                 try {
                     Thread.sleep(rGen.nextLong().absoluteValue % 5000 + 2000)
                 } catch (e: InterruptedException) {
@@ -200,6 +248,7 @@ open class Ship(
                     laserBolt.setParent(earthNode.parent)
                     laserBolt.localPosition = localPosition
                     laserBolt.renderable = LaserBolt.yellowRenderable
+                    laserBolt.setLookDirection(directionalUnitVector3)
 
                     /* // Gets close to the earth, but doesn't reach it
 
