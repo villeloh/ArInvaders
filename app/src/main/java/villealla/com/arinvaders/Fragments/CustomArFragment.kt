@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.ar.sceneform.ux.ArFragment
-
 /*
 * Custom ArFragment class (needed in order to be able to disable plane detection).
 * @author Ville Lohkovuori

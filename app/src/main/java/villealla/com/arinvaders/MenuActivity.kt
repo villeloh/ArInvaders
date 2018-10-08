@@ -8,6 +8,8 @@ import android.support.v4.app.FragmentManager
 import android.support.v7.app.AppCompatActivity
 import android.view.Window
 import android.view.WindowManager
+import android.widget.SeekBar
+import kotlinx.android.synthetic.main.fragment_main_menu.*
 import villealla.com.arinvaders.Fragments.MenuFragment
 import villealla.com.arinvaders.Fragments.NamePromptFragment
 import villealla.com.arinvaders.Interfaces.DataPassListener
@@ -71,12 +73,14 @@ class MenuActivity : AppCompatActivity(), DataPassListener {
 
     private fun createMenuFragment(playerName: String) {
 
+        // the only way to remove the NamePromptFragment from the back stack... for some reason
+        // it's added there even when not calling .addToBackStack on it
         supportFragmentManager.popBackStack("namePrompt", FragmentManager.POP_BACK_STACK_INCLUSIVE)
         val menuFragment = MenuFragment()
         val args = Bundle()
         args.putString("player_name", playerName)
         menuFragment.arguments = args
         supportFragmentManager.beginTransaction().replace(R.id.mainMenuLayout, menuFragment).addToBackStack(null).commit()
-    }
+    } // end createMenuFragment
 
 } // end class

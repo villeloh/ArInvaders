@@ -90,8 +90,6 @@ open class Ship(
 
             override fun onAnimationEnd(animation: Animator?) {
 
-                //Ship has reached the earth
-                //Planet.instance.killPeople(dmg)
                 SoundEffectPlayer.playEffect(SoundEffectPlayer.randomEarthEffect())
 
                 //Kill this ship

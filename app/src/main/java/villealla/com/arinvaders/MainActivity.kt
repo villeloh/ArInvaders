@@ -1,6 +1,8 @@
 package villealla.com.arinvaders
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.drawable.TransitionDrawable
 import android.hardware.Sensor
@@ -65,6 +67,14 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private var accY: Float = 0f
     private var accZ: Float = 0f
 
+    private lateinit var playerName: String
+    private lateinit var difficulty: String
+    private var score = 0
+
+    // I just put this in MainActivity, because getSystemService can't easily be
+    // used by the non-activity classes
+    private lateinit var vibrator: Vibrator
+
     companion object {
 
         // referred to from the Ship class
@@ -97,6 +107,21 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         // monitor acceleration for the ship's speedometer
         mSensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)
+
+        vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+
+
+
+        // TODO: assign the actual received playerName and difficulty (from the arguments field)
+        // these will need to be sent back to the new MenuActivity when the player hits the
+        // quit button (for storing the current score in the highscore list)
+        playerName = "huu"
+        difficulty = "normal"
+
+        quitTextView.setOnClickListener {
+
+            startMenuActivity()
+        }
     } // end onCreate
 
     private fun setFragmentListeners() {
@@ -295,6 +320,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                             val transition = peopleTextView.background as TransitionDrawable
                             transition.startTransition(500)
                             transition.reverseTransition(500)
+
+                            vibrator.vibrate(1000L) // 1 second
                         }
                     }
                     Configuration.MESSAGE_KILL_COUNT -> {
@@ -315,6 +342,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         super.onPause()
         if (gameManager.gameState == GameState.RUNNING) {
             gameManager.pauseGameSession()
+            vibrator.cancel()
         }
 
         mSensorManager.unregisterListener(this)
@@ -324,6 +352,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         super.onResume()
         if (gameManager.gameState == GameState.PAUSED) {
             gameManager.resumeGameSession()
+
+            // the only way to restart it seems to be to reassign it
+            vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         }
 
         // for some reason, this needs to be done again with every resume
@@ -358,5 +389,21 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     // it needs to be implemented whether we need it or not
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) { }
+
+    // TODO: this should also be called when the game is over (we may need an interface to do that)
+    private fun startMenuActivity() {
+
+        val intent = Intent(this, MenuActivity::class.java).apply {
+
+            // some funky bitwise operation; equivalent to '|' in Java.
+            // this gets rid of the ar fragment back stack when returning to menu
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+            putExtra("player_name", playerName)
+            putExtra("difficulty", difficulty)
+            putExtra("score", score)
+        }
+        this.finish() // finish the MainActivity
+        startActivity(intent)
+    } // end startMenuActivity
 
 } // end class

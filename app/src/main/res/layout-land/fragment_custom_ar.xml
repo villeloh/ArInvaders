@@ -54,29 +54,36 @@
 
     <ImageView
         android:id="@+id/ufoImage"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginTop="4dp"
-        android:layout_marginEnd="2dp"
         android:elevation="1dp"
+        android:scaleType="fitXY"
         app:layout_constraintEnd_toStartOf="@+id/killTextView"
+        app:layout_constraintHeight_percent="0.23"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.13"
         app:srcCompat="@drawable/ship_icon" />
 
     <ImageView
         android:id="@+id/earthImage"
-        android:layout_width="104dp"
-        android:layout_height="104dp"
-        android:layout_marginStart="2dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.23"
+        app:layout_constraintWidth_percent="0.135"
         android:elevation="1dp"
+        android:scaleType="fitXY"
         app:layout_constraintStart_toEndOf="@+id/peopleTextView"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/earth_icon" />
 
     <ImageView
         android:id="@+id/middleImage"
-        android:layout_width="150dp"
-        android:layout_height="80dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.20"
+        app:layout_constraintWidth_percent="0.16"
+        android:scaleType="fitXY"
         android:elevation="1dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -87,7 +94,6 @@
         android:id="@+id/peopleTextView"
         android:layout_width="145dp"
         android:layout_height="40dp"
-        android:layout_marginBottom="32dp"
         android:background="@drawable/kill_people_transition"
         android:elevation="1dp"
         android:gravity="center_vertical"
@@ -96,8 +102,24 @@
         android:text="7,000,000,000"
         android:textColor="@color/colorAccent"
         android:textSize="17sp"
-        app:layout_constraintBottom_toBottomOf="@+id/earthImage"
+        app:layout_constraintBottom_toBottomOf="@+id/killTextView"
         app:layout_constraintStart_toEndOf="@+id/middleImage" />
+
+    <TextView
+        android:id="@+id/quitTextView"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        android:padding="2dp"
+        android:background="@drawable/horizontal_text_box_blue_bg"
+        android:elevation="1dp"
+        android:gravity="center"
+        android:text="@string/quit_to_menu"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <fragment
         android:id="@+id/custom_ar_fragment"
@@ -111,12 +133,14 @@
 
     <FrameLayout
         android:id="@+id/speedometerLayout"
-        android:layout_width="104dp"
-        android:layout_height="104dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginStart="200dp"
-        android:layout_marginBottom="14dp"
+        android:layout_marginBottom="10dp"
         app:layout_constraintBottom_toBottomOf="@+id/custom_ar_fragment"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintHeight_percent="0.28"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent="0.14">
 
         <ImageView
             android:id="@+id/speedImageView"

@@ -3,6 +3,7 @@ package villealla.com.arinvaders.Fragments
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.media.AudioManager
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -11,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
+import android.widget.SeekBar
 import android.widget.TextView
 import kotlinx.android.synthetic.main.fragment_custom_ar.view.*
 import kotlinx.android.synthetic.main.fragment_main_menu.*
@@ -25,6 +27,8 @@ class MenuFragment : Fragment() {
     private lateinit var playerName: String
     private lateinit var difficulty: String
 
+    private lateinit var audioManager: AudioManager
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -35,6 +39,11 @@ class MenuFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         menuActivity = activity as DataPassListener
+        val activityAsActivity = activity as Activity // seems a bit ridiculous, but we need to access the damn Activity -.-
+        activityAsActivity.volumeControlStream = AudioManager.STREAM_MUSIC
+        audioManager = activityAsActivity.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        // hook up the app volume bar
+        initVolumeControls()
 
         val uri = Uri.parse("android.resource://" + activity!!.packageName + "/" + R.raw.bg_video)
         videoView.setVideoURI(uri)
@@ -152,6 +161,25 @@ class MenuFragment : Fragment() {
         }
         (activity as Activity).finish() // finish the menuActivity
         startActivity(intent)
-    }
+    } // end startMainActivity
+
+    private fun initVolumeControls() {
+
+        volumeBar.apply {
+            max = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+            progress = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+            setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+
+                override fun onStopTrackingTouch(arg0: SeekBar) {}
+
+                override fun onStartTrackingTouch(arg0: SeekBar) {}
+
+                override fun onProgressChanged(arg0: SeekBar, progress: Int, arg2: Boolean) {
+                    audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
+                            progress, 0)
+                }
+            })
+        }
+    } // end initVolumeControls
 
 } // end class
