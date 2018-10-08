@@ -76,7 +76,7 @@ class GameManager private constructor() {
         message.what = Configuration.MESSAGE_KILL_COUNT
         message.data.putString(Configuration.MESSAGE_KILL_COUNT.toString(), "0")
         mainHandler.sendMessage(message)
-    }
+    } // end resetUI
 
     fun endGameSession() {
 

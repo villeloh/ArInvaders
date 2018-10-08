@@ -190,7 +190,7 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
 
                 val message = mainHandler.obtainMessage()
                 message.what = Configuration.MESSAGE_PEOPLE_ALIVE
-                message.data.putString(Configuration.MESSAGE_PEOPLE_ALIVE.toString(), Planet.instance.people().toString())
+                message.data.putString(Configuration.MESSAGE_PEOPLE_ALIVE.toString(), Planet.instance.people())
                 mainHandler.sendMessage(message)
 
             } else {
@@ -234,6 +234,7 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
     } // end randomCoord
 
     val iMinionSpawner = object : IMinionSpawner {
+
         // This method is used by the mothership to spawn more ships
         override fun spawnMinion(localPosition: Vector3) {
             mainHandler.post {

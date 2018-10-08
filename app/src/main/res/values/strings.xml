@@ -23,4 +23,5 @@
     <string name="cd_scorelist_hard">Score list for hard difficulty</string>
     <string name="cd_topbar_image">Background image</string>
     <string name="cd_switch_button">Switch between personal and global score list</string>
+    <string name="cd_ar_view">Sorry, but our app is not suitable for the visually impaired.</string>
 </resources>

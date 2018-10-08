@@ -7,6 +7,7 @@ import com.google.ar.sceneform.math.Quaternion
 import com.google.ar.sceneform.math.QuaternionEvaluator
 import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.math.Vector3Evaluator
+import com.google.ar.sceneform.rendering.Light
 import kotlin.math.pow
 
 /*
@@ -30,7 +31,7 @@ open class AnimatableNode : Node() {
             // Always apply evaluator AFTER object values or it will be overwritten by a default one
             setEvaluator(Vector3Evaluator())
         }
-    }
+    } // end createVector3Animator
 
     private fun createQuaternionAnimator(duration: Long, propertyName: String, interpolator: TimeInterpolator, vararg values: Quaternion?): ObjectAnimator {
         return ObjectAnimator().apply {
@@ -44,16 +45,13 @@ open class AnimatableNode : Node() {
             setObjectValues(*values)
             // Always apply evaluator AFTER object values or it will be overwritten by a default one
             setEvaluator(QuaternionEvaluator())
-
-
         }
-    }
+    } // end createQuaternionAnimator
 
     protected fun createSpinAnimator(duration: Long, localRotation: Quaternion): Animator {
 
         val spinQuaternion1 = Quaternion.axisAngle(Vector3(0f, 1f, 0f), 180f)
         val spinQuaternion2 = Quaternion.axisAngle(Vector3(0f, 1f, 0f), -1f)
-
 
         val halfSpin1 = createQuaternionAnimator(duration, "localRotation", LinearInterpolator(), localRotation, spinQuaternion1)
         val halfSpin2 = createQuaternionAnimator(duration, "localRotation", LinearInterpolator(), spinQuaternion1, spinQuaternion2)
@@ -62,7 +60,6 @@ open class AnimatableNode : Node() {
 
             play(halfSpin1).before(halfSpin2)
         }
-
         spinAnimator.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator?) {
                 super.onAnimationEnd(animation)
@@ -70,10 +67,24 @@ open class AnimatableNode : Node() {
 
             }
         })
-
         return spinAnimator
+    } // end createSpinAnimator
 
-    }
+    protected fun createLightIntensityAnimator(light: Light, dura: Long, startIntensity: Float, maxIntensity: Float, endIntensity: Float): Animator {
+
+        val intensify = ObjectAnimator.ofFloat(light, "intensity", startIntensity, maxIntensity).apply {
+            duration = dura / 2
+        }
+
+        val dim = ObjectAnimator.ofFloat(light, "intensity", maxIntensity, endIntensity).apply {
+            duration = dura / 2
+        }
+
+        return AnimatorSet().apply {
+
+            play(intensify).before(dim)
+        }
+    } // end createLightIntensityAnimator
 
     protected fun calculateDistanceFactor(start: Vector3, end: Vector3): Double {
         return Math.sqrt((end.x - start.x).pow(2).toDouble() + (end.y - start.y).pow(2).toDouble() + (end.z - start.z).pow(2).toDouble())

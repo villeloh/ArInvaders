@@ -229,7 +229,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
                     // it's an awkward place for it, but meh, it's still static and gun-related
                     laserLight = Light.builder(Light.Type.POINT)
-                            .setIntensity(4000f)
+                            .setIntensity(110000f)
                             .setFalloffRadius(200f)
                             .setShadowCastingEnabled(false)
                             .setColorTemperature(10000f)
@@ -252,7 +252,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
         val lightNode = Node()
         lightNode.setParent(laserBolt)
-        lightNode.localPosition = Vector3(0f, 0.1f, 0f) // lift it up so the light can be seen
+        lightNode.localPosition = Vector3(0f, 0.08f, 0f) // lift it up so the light can be seen
         lightNode.light = laserLight
 
         laserBolt.fire(Vector3(0.0f, 0.0f, -1.0f), object : IFireCallback {
@@ -310,13 +310,13 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                     Configuration.MESSAGE_PEOPLE_ALIVE -> {
                         peopleTextView.text = newValue
 
-                            // TODO: refactor this shit asap !!! -.-
-                            val transition = peopleTextView.background as TransitionDrawable
-                            transition.startTransition(500)
-                            transition.reverseTransition(500)
+                        val transition = peopleTextView.background as TransitionDrawable
+                        transition.startTransition(500)
+                        transition.reverseTransition(500)
 
-                            vibrator.vibrate(1000L) // 1 second
+                        earth.flashExplosionLights()
 
+                        // vibrator.vibrate(1000L) // 1 second
                     }
                     Configuration.MESSAGE_KILL_COUNT -> {
                         killTextView.text = newValue
