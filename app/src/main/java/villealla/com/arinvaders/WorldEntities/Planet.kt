@@ -6,6 +6,8 @@ import com.google.ar.sceneform.AnchorNode
 import com.google.ar.sceneform.rendering.ModelRenderable
 import villealla.com.arinvaders.Game.GameManager
 import villealla.com.arinvaders.Movement.AnimatableNode
+import java.text.NumberFormat
+import java.util.*
 
 /*
 * Manages the planet Earth and the people on it.
@@ -69,8 +71,9 @@ class Planet private constructor(private var hitPoints: Long = 7000000000) : Ani
         }
     }
 
-    fun people(): Long {
-        return hitPoints
+    fun people(): String {
+
+        return NumberFormat.getNumberInstance(Locale.US).format(hitPoints)
     }
 
 } // end class

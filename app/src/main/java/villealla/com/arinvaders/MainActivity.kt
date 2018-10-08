@@ -1,6 +1,5 @@
 package villealla.com.arinvaders
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
@@ -110,11 +109,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
         vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 
-
-
         // TODO: assign the actual received playerName and difficulty (from the arguments field)
-        // these will need to be sent back to the new MenuActivity when the player hits the
-        // quit button (for storing the current score in the highscore list)
         playerName = "huu"
         difficulty = "normal"
 
@@ -126,7 +121,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     private fun setFragmentListeners() {
 
-        arFragment.setOnTapArPlaneListener { hitResult, plane, motionEvent ->
+        arFragment.setOnTapArPlaneListener { hitResult, _, _ ->
 
             // return if the earth renderable is not ready
             if (earth.earthRenderable == null) {
@@ -315,14 +310,13 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                     Configuration.MESSAGE_PEOPLE_ALIVE -> {
                         peopleTextView.text = newValue
 
-                        // TODO: refactor this shit asap !!! -.-
-                        if (Planet.instance.people() < 7000000000L) {
+                            // TODO: refactor this shit asap !!! -.-
                             val transition = peopleTextView.background as TransitionDrawable
                             transition.startTransition(500)
                             transition.reverseTransition(500)
 
                             vibrator.vibrate(1000L) // 1 second
-                        }
+
                     }
                     Configuration.MESSAGE_KILL_COUNT -> {
                         killTextView.text = newValue
@@ -342,9 +336,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         super.onPause()
         if (gameManager.gameState == GameState.RUNNING) {
             gameManager.pauseGameSession()
-            vibrator.cancel()
         }
-
+        vibrator.cancel()
         mSensorManager.unregisterListener(this)
     }
 
@@ -352,10 +345,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         super.onResume()
         if (gameManager.gameState == GameState.PAUSED) {
             gameManager.resumeGameSession()
-
-            // the only way to restart it seems to be to reassign it
-            vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         }
+
+        // the only way to restart it seems to be to reassign it
+        vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 
         // for some reason, this needs to be done again with every resume
         mSensor.also {

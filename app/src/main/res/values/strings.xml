@@ -11,4 +11,16 @@
     <string name="personal_best">Personal High</string>
     <string name="global_best">Global High</string>
     <string name="quit_to_menu">Quit to Menu</string>
+    <string name="hint_enter_name">Enter name here</string>
+    <string name="cd_logo">App logo: AR Invaders</string>
+    <string name="cd_rename_player">Tap to rename player</string>
+    <string name="hint_rename_player">Rename player</string>
+    <string name="cd_video">Space Invaders video</string>
+    <string name="cd_difficulty">Choose difficulty</string>
+    <string name="cd_volume">Volume Bar</string>
+    <string name="cd_scorelist_easy">Score list for easy difficulty</string>
+    <string name="cd_scorelist_normal">Score list for normal difficulty</string>
+    <string name="cd_scorelist_hard">Score list for hard difficulty</string>
+    <string name="cd_topbar_image">Background image</string>
+    <string name="cd_switch_button">Switch between personal and global score list</string>
 </resources>

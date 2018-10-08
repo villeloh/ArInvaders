@@ -48,11 +48,6 @@ dependencies {
 
 apply plugin: 'com.google.ar.sceneform.plugin'
 
-sceneform.asset('sampledata/CUPIC_FYINGSAUCER.obj',
-        'default',
-        'sampledata/CUPIC_FYINGSAUCER.sfa',
-        'src/main/assets/CUPIC_FYINGSAUCER')
-
 sceneform.asset('sampledata/earth_ball.obj',
         'default',
         'sampledata/earth_ball.sfa',

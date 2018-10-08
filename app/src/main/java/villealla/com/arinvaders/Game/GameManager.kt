@@ -1,11 +1,9 @@
 package villealla.com.arinvaders.Game
 
-import android.app.Activity
 import android.os.Handler
 import android.os.Looper
 import com.google.ar.sceneform.AnchorNode
 import com.google.ar.sceneform.Node
-import villealla.com.arinvaders.Fragments.GameOverFragment
 import villealla.com.arinvaders.Sound.Maestro
 import villealla.com.arinvaders.Static.Configuration
 import villealla.com.arinvaders.WorldEntities.Planet
@@ -71,7 +69,7 @@ class GameManager private constructor() {
 
         var message = mainHandler.obtainMessage()
         message.what = Configuration.MESSAGE_PEOPLE_ALIVE
-        message.data.putString(Configuration.MESSAGE_PEOPLE_ALIVE.toString(), Planet.instance.people().toString())
+        message.data.putString(Configuration.MESSAGE_PEOPLE_ALIVE.toString(), Planet.instance.people())
         mainHandler.sendMessage(message)
 
         message = mainHandler.obtainMessage()

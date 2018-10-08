@@ -39,7 +39,7 @@ class MenuFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         menuActivity = activity as DataPassListener
-        val activityAsActivity = activity as Activity // seems a bit ridiculous, but we need to access the damn Activity -.-
+        val activityAsActivity = activity as Activity // seems a bit ridiculous, but we need to access the damned Activity -.-
         activityAsActivity.volumeControlStream = AudioManager.STREAM_MUSIC
         audioManager = activityAsActivity.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         // hook up the app volume bar
