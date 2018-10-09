@@ -18,6 +18,7 @@ import retrofit2.Response
 import villealla.com.arinvaders.API.Leaderboard
 import villealla.com.arinvaders.API.ScoreEntry
 import villealla.com.arinvaders.Fragments.CustomArFragment
+import villealla.com.arinvaders.Fragments.GameOverFragment
 import villealla.com.arinvaders.Fragments.HudFragment
 import villealla.com.arinvaders.Game.GameManager
 import villealla.com.arinvaders.Game.GameState
@@ -27,8 +28,8 @@ import villealla.com.arinvaders.Sound.Music
 import villealla.com.arinvaders.Sound.SoundEffectPlayer
 import villealla.com.arinvaders.Static.Configuration
 import villealla.com.arinvaders.Static.StaticResources
+import villealla.com.arinvaders.WorldEntities.Gun
 import villealla.com.arinvaders.WorldEntities.IFireCallback
-import villealla.com.arinvaders.WorldEntities.OwnShipWeapon
 import villealla.com.arinvaders.WorldEntities.Planet
 import villealla.com.arinvaders.WorldEntities.Ship
 import kotlin.math.roundToInt
@@ -216,6 +217,9 @@ class MainActivity : AppCompatActivity(), Speedometer.SpeedometerListener {
 
                     }
                     Configuration.MESSAGE_GAME_OVER -> {
+
+                        supportFragmentManager.beginTransaction().add(R.id.mainLayout, GameOverFragment()).commit()
+
                         score = killTextView.text.toString().toInt()
 
                         val totalScore = calculateTotalScore()
