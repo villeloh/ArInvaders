@@ -222,7 +222,6 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
 
             waveKillCount++
 
-
             updateUIShipsInWave(totalShipsToSpawn - waveKillCount, totalShipsToSpawn)
 
             shipsInScene.remove(ship.name)
@@ -268,9 +267,7 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
             }
         })
         animator.start()
-
-
-    }
+    } // end playNukeAnim
 
     val iMinionSpawner = object : IMinionSpawner {
 
@@ -285,7 +282,6 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
 
             updateUIShipsInWave(totalShipsToSpawn - waveKillCount, totalShipsToSpawn)
         }
-    }
-
+    } // end iMinionSpawner
 
 } // end class

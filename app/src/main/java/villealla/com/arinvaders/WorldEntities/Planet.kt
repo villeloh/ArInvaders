@@ -18,9 +18,6 @@ import villealla.com.arinvaders.Static.Configuration
 // needs to be a Singleton for easy reference...
 class Planet private constructor(private var hitPoints: Long = Configuration.EARTH_POPULATION) : AnimatableNode() {
 
-    init {
-    }
-
     private object Holder {
 
         val INSTANCE = Planet()
@@ -36,8 +33,7 @@ class Planet private constructor(private var hitPoints: Long = Configuration.EAR
 
     var earthRenderable: ModelRenderable? = null
 
-    // needs to be its own function because of the delay in attaching
-    // the renderable... feel free to refactor; I'm not very good at async stuffs
+    // needs to be its own function because of the delay in attaching the renderable
     fun loadRenderable(context: Context) {
 
         val renderable = ModelRenderable.builder()
@@ -46,8 +42,6 @@ class Planet private constructor(private var hitPoints: Long = Configuration.EAR
         renderable.thenAccept { it -> earthRenderable = it }
     }
 
-    // we could have a PlanetManager to do all this, to mimic the pattern with ships,
-    // but since only one planet is needed, I think that's overkill
     fun renderInArSpace(anchorNode: AnchorNode) {
 
         this.renderable = earthRenderable
@@ -72,9 +66,10 @@ class Planet private constructor(private var hitPoints: Long = Configuration.EAR
         }
     }
 
+    // add commas to the population number, to make it easier to read
     fun people(): String {
 
         return NumberFormat.getNumberInstance(Locale.US).format(hitPoints)
     }
 
-} // end class1
+} // end class

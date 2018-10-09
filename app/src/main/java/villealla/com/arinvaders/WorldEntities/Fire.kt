@@ -9,6 +9,11 @@ import com.google.ar.sceneform.rendering.ModelRenderable
 import villealla.com.arinvaders.Movement.AnimatableNode
 import java.util.*
 
+/*
+* Used for making fires (on damaged ships and for the muzzle flash of our ship's weapon).
+* @author Sinan Sakaoğlu
+* */
+
 class Fire(ship: Node?) : AnimatableNode() {
 
     init {
@@ -22,7 +27,6 @@ class Fire(ship: Node?) : AnimatableNode() {
             startAnimation()
         }
     }
-
 
     companion object {
         lateinit var model: ModelRenderable
@@ -56,4 +60,5 @@ class Fire(ship: Node?) : AnimatableNode() {
 
         return Vector3(center.x + x, center.y + 0.01f, center.z + z)
     }
-}
+
+} // end class

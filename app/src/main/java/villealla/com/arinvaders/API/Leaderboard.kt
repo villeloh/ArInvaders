@@ -7,6 +7,11 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 
+/*
+* API for storing the global scores remotely and retrieving them.
+* @author Sinan Sakaoğlu
+* */
+
 object Leaderboard {
 
     const val URL = "http://apolets.com"

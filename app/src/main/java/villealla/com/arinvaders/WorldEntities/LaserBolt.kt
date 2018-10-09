@@ -9,7 +9,7 @@ import com.google.ar.sceneform.rendering.ModelRenderable
 import villealla.com.arinvaders.Movement.AnimatableNode
 
 /*
-* An animatable class (node, whatever) for the bolts of laser
+* An animatable node class for the bolts of the laser
 * that the ship fires.
 * @author Ville Lohkovuori, Sinan Sakaoğlu
 * */
@@ -38,7 +38,6 @@ class LaserBolt : AnimatableNode() {
         })
         animation.start()
     } // end fire
-
 
     private val defaultCallback = object : IFireCallback {
         override fun fireFinished() {

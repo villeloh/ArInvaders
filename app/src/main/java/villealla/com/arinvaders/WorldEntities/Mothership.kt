@@ -6,10 +6,29 @@ import com.google.ar.sceneform.math.Vector3
 import villealla.com.arinvaders.Static.ShipType
 import kotlin.math.absoluteValue
 
-class Mothership(type: ShipType, speed: Int, localPosition: Vector3, earthNode: Node, observer: IonDeath, val iMinionSpawner: IMinionSpawner, mainHandler: Handler) : Ship(type = type, speed = speed, localPosition = localPosition, earthNode = earthNode, observer = observer, mainHandler = mainHandler) {
+/*
+* A class for controlling the Mothership type UFOs, which have
+* unique behavior (spawning the smaller ships).
+* @author Sinan Sakaoğlu
+* */
+
+// there's no nice way to format this...
+class Mothership(
+        type: ShipType,
+        speed: Int,
+        localPosition: Vector3,
+        earthNode: Node,
+        observer: IonDeath,
+        val iMinionSpawner: IMinionSpawner,
+        mainHandler: Handler)
+    : Ship(type = type,
+        speed = speed,
+        localPosition = localPosition,
+        earthNode = earthNode,
+        observer = observer,
+        mainHandler = mainHandler) {
 
     init {
-
         startMinionSpawner()
     }
 
@@ -28,7 +47,7 @@ class Mothership(type: ShipType, speed: Int, localPosition: Vector3, earthNode: 
         })
 
         spawnerThread.start()
-    }
+    } // end startMinionSpawner
 
 
     private lateinit var spawnerThread: Thread
@@ -39,7 +58,7 @@ class Mothership(type: ShipType, speed: Int, localPosition: Vector3, earthNode: 
         super.dispose()
     }
 
-}
+} // end class
 
 interface IMinionSpawner {
     fun spawnMinion(localPosition: Vector3)

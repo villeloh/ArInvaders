@@ -50,7 +50,7 @@ object SoundEffectPlayer {
 
     fun playEffect(soundEffect: SoundEffects, loop: Boolean = false) {
 
-        // a little variation in the sound level / pitch serves to add some realism
+        // a little variation in the volume / pitch serves to add some realism
         var sign = if (random.nextBoolean()) 1 else -1
         val modVol = 1.0f + sign * random.nextFloat() * 0.2f // 0.8 -- 1.2
 
@@ -65,8 +65,6 @@ object SoundEffectPlayer {
             soundPool.play(soundEffect.id, modifiedVolume, modifiedVolume, soundEffect.priority, loopNum, modifiedPitch)
     } // end playEffect
 
-    // it seems a bit clumsy and unnecessary, as the effects enum is static.
-    // a better solution should be thought of...
     private fun initEarthEffects() {
         SoundEffects.values().forEach {
 
@@ -81,5 +79,5 @@ object SoundEffectPlayer {
         return earthEffects[random.nextInt(earthEffects.size)]
     }
 
-}
+} // end SoundEffectPlayer
 

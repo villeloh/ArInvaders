@@ -23,7 +23,7 @@ import villealla.com.arinvaders.WorldEntities.Ship
 
 object StaticResources {
 
-    // referred to from OwnShipWeapon
+    // referred to from Gun
     lateinit var redLaserLight: Light
 
     // referred to from the Ship class

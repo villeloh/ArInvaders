@@ -8,8 +8,6 @@ import android.support.v4.app.FragmentManager
 import android.support.v7.app.AppCompatActivity
 import android.view.Window
 import android.view.WindowManager
-import android.widget.SeekBar
-import kotlinx.android.synthetic.main.fragment_main_menu.*
 import villealla.com.arinvaders.Fragments.MenuFragment
 import villealla.com.arinvaders.Fragments.NamePromptFragment
 import villealla.com.arinvaders.Interfaces.DataPassListener

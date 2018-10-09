@@ -4,7 +4,6 @@ import android.content.Context
 import android.media.MediaPlayer
 import villealla.com.arinvaders.R
 
-
 /* Responsible for background music.
 * @author Sinan Sakaoğlu
 * */
@@ -16,9 +15,6 @@ enum class Music(val musicName: Int) {
 object Maestro {
 
     private var mediaPlayer: MediaPlayer? = null
-
-    init {
-    }
 
     fun playMusic(context: Context, music: Music, loop: Boolean) {
 

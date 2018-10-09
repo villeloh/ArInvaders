@@ -20,6 +20,8 @@ import kotlin.math.pow
 open class AnimatableNode : Node() {
 
     companion object {
+
+        // used in the nuclear explosion when ships hit the Earth
         fun createFlashingAnimator(target: Light, duration: Long): ObjectAnimator {
             return ObjectAnimator().apply {
                 this.target = target
@@ -36,8 +38,8 @@ open class AnimatableNode : Node() {
                 // Always apply evaluator AFTER object values or it will be overwritten by a default one
                 setEvaluator(FloatEvaluator())
             }
-        }
-    }
+        } // end createFlashingAnimator
+    } // end companion object
 
      fun createVector3Animator(duration: Long, propertyName: String, interpolator: TimeInterpolator, vararg values: Vector3?): ObjectAnimator {
         return ObjectAnimator().apply {
@@ -69,6 +71,7 @@ open class AnimatableNode : Node() {
         }
     } // end createQuaternionAnimator
 
+    // used for making the Earth spin
     protected fun createSpinAnimator(directionIsClockwise: Boolean = true, duration: Long, localRotation: Quaternion): Animator {
 
         val sign = if (directionIsClockwise) 1 else -1
@@ -87,7 +90,6 @@ open class AnimatableNode : Node() {
             override fun onAnimationEnd(animation: Animator?) {
                 super.onAnimationEnd(animation)
                 animation?.start()
-
             }
         })
         return spinAnimator
