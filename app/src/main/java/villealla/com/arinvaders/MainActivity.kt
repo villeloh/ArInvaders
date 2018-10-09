@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity(), Speedometer.SpeedometerListener {
 
     private lateinit var mSensorManager: SensorManager
 
-    private lateinit var ownShipWeapon: OwnShipWeapon
+    private lateinit var laserGun: Gun
     private lateinit var speedoMeter: Speedometer
 
     private lateinit var playerName: String
@@ -106,7 +106,7 @@ class MainActivity : AppCompatActivity(), Speedometer.SpeedometerListener {
 
             earth.renderInArSpace(anchorNode)
 
-            ownShipWeapon = OwnShipWeapon(arFragment.arSceneView.scene.camera)
+            laserGun = Gun(arFragment.arSceneView.scene.camera)
 
             gameManager.mainHandler = handler
             gameManager.earthNode = earth
@@ -131,13 +131,12 @@ class MainActivity : AppCompatActivity(), Speedometer.SpeedometerListener {
             // this ensures that we only get one attack per finger tap
             if (motionEvent.action == MotionEvent.ACTION_DOWN) {
 
-                // fireLaser()
                 val fireCallback = object : IFireCallback {
                     override fun fireFinished() {
                         playerAttack()
                     }
                 }
-                ownShipWeapon.fire(fireCallback)
+                laserGun.fire(fireCallback)
             }
             true
         }

@@ -24,6 +24,7 @@ object Maestro {
 
         mediaPlayer = MediaPlayer.create(context, music.musicName)
         mediaPlayer!!.isLooping = loop
+        mediaPlayer!!.setVolume(0.4f,0.4f)
         mediaPlayer!!.start()
     }
 
