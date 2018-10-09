@@ -20,6 +20,8 @@ import kotlin.math.pow
 open class AnimatableNode : Node() {
 
     companion object {
+
+        // used in the nuclear explosion when ships hit the Earth
         fun createFlashingAnimator(target: Light, duration: Long): ObjectAnimator {
             return ObjectAnimator().apply {
                 this.target = target
@@ -36,10 +38,10 @@ open class AnimatableNode : Node() {
                 // Always apply evaluator AFTER object values or it will be overwritten by a default one
                 setEvaluator(FloatEvaluator())
             }
-        }
-    }
+        } // end createFlashingAnimator
+    } // end companion object
 
-    protected fun createVector3Animator(duration: Long, propertyName: String, interpolator: TimeInterpolator, vararg values: Vector3?): ObjectAnimator {
+     fun createVector3Animator(duration: Long, propertyName: String, interpolator: TimeInterpolator, vararg values: Vector3?): ObjectAnimator {
         return ObjectAnimator().apply {
             this.target = this@AnimatableNode
             this.propertyName = propertyName
@@ -54,7 +56,7 @@ open class AnimatableNode : Node() {
         }
     } // end createVector3Animator
 
-    private fun createQuaternionAnimator(duration: Long, propertyName: String, interpolator: TimeInterpolator, vararg values: Quaternion?): ObjectAnimator {
+    fun createQuaternionAnimator(duration: Long, propertyName: String, interpolator: TimeInterpolator, vararg values: Quaternion?): ObjectAnimator {
         return ObjectAnimator().apply {
             this.target = this@AnimatableNode
             this.propertyName = propertyName
@@ -69,6 +71,7 @@ open class AnimatableNode : Node() {
         }
     } // end createQuaternionAnimator
 
+    // used for making the Earth spin
     protected fun createSpinAnimator(directionIsClockwise: Boolean = true, duration: Long, localRotation: Quaternion): Animator {
 
         val sign = if (directionIsClockwise) 1 else -1
@@ -87,33 +90,14 @@ open class AnimatableNode : Node() {
             override fun onAnimationEnd(animation: Animator?) {
                 super.onAnimationEnd(animation)
                 animation?.start()
-
             }
         })
         return spinAnimator
     } // end createSpinAnimator
 
-    protected fun createLightIntensityAnimator(light: Light, dura: Long, startIntensity: Float, maxIntensity: Float, endIntensity: Float): Animator {
-
-        val intensify = ObjectAnimator.ofFloat(light, "intensity", startIntensity, maxIntensity).apply {
-            duration = dura / 2
-        }
-
-        val dim = ObjectAnimator.ofFloat(light, "intensity", maxIntensity, endIntensity).apply {
-            duration = dura / 2
-        }
-
-        return AnimatorSet().apply {
-
-            play(intensify).before(dim)
-        }
-    } // end createLightIntensityAnimator
-
     protected fun calculateDistanceFactor(start: Vector3, end: Vector3): Double {
         return Math.sqrt((end.x - start.x).pow(2).toDouble() + (end.y - start.y).pow(2).toDouble() + (end.z - start.z).pow(2).toDouble())
     }
-
-
 
     open fun dispose() {
         renderable = null

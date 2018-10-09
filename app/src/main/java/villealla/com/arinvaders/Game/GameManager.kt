@@ -21,14 +21,7 @@ enum class GameState {
 
 class GameManager private constructor() {
 
-
-    init {
-        // do stuff when GameManager.instance is assigned
-    }
-
-    private object Holder {
-        val INSTANCE = GameManager()
-    }
+    private object Holder { val INSTANCE = GameManager() }
 
     // makes the class into a singleton
     companion object {

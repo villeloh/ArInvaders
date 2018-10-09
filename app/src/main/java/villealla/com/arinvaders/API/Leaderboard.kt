@@ -5,6 +5,11 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
 
+/*
+* API for storing the global scores remotely and retrieving them.
+* @author Sinan Sakaoğlu
+* */
+
 object Leaderboard {
 
     const val URL = "http://apolets.com"

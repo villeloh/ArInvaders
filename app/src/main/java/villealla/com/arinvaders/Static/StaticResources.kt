@@ -10,10 +10,7 @@ import com.google.ar.sceneform.rendering.Light
 import com.google.ar.sceneform.rendering.ModelRenderable
 import com.google.ar.sceneform.rendering.Texture
 import villealla.com.arinvaders.R
-import villealla.com.arinvaders.WorldEntities.Fire
-import villealla.com.arinvaders.WorldEntities.Gun
-import villealla.com.arinvaders.WorldEntities.LaserBolt
-import villealla.com.arinvaders.WorldEntities.Ship
+import villealla.com.arinvaders.WorldEntities.*
 
 /*
 * Static 'class' for loading all the needed resources at game start
@@ -23,7 +20,7 @@ import villealla.com.arinvaders.WorldEntities.Ship
 
 object StaticResources {
 
-    // referred to from OwnShipWeapon
+    // referred to from Gun
     lateinit var redLaserLight: Light
 
     // referred to from the Ship class
@@ -39,7 +36,19 @@ object StaticResources {
         loadExplosionGraphics(context)
         loadShipRenderables(context)
         loadFireModel(context)
+        loadEarthRenderable(context)
     } // end loadResources
+
+    // needs to be its own function because of the delay in attaching the renderable
+    fun loadEarthRenderable(context: Context) {
+
+        ModelRenderable.builder()
+                .setSource(context, Uri.parse("earth_ball.sfb"))
+                .build()
+                .thenAccept { it ->
+                    Planet.instance.earthRenderable = it
+                }
+    } // end loadEarthRenderable
 
     private fun loadLaserResources(context: Context) {
 

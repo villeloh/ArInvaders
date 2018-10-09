@@ -223,7 +223,6 @@ class SpawnLoop(val difficultyMultiplier: Float, var waveNumber: Int = 0, val ea
 
             waveKillCount++
 
-
             updateUIShipsInWave(totalShipsToSpawn - waveKillCount, totalShipsToSpawn)
 
             shipsInScene.remove(ship.name)
@@ -269,9 +268,7 @@ class SpawnLoop(val difficultyMultiplier: Float, var waveNumber: Int = 0, val ea
             }
         })
         animator.start()
-
-
-    }
+    } // end playNukeAnim
 
     val iMinionSpawner = object : IMinionSpawner {
 
@@ -286,7 +283,6 @@ class SpawnLoop(val difficultyMultiplier: Float, var waveNumber: Int = 0, val ea
 
             updateUIShipsInWave(totalShipsToSpawn - waveKillCount, totalShipsToSpawn)
         }
-    }
-
+    } // end iMinionSpawner
 
 } // end class

@@ -48,15 +48,14 @@ class MainActivity : AppCompatActivity(), Speedometer.SpeedometerListener {
 
     private lateinit var mSensorManager: SensorManager
 
-    private lateinit var ownShipWeapon: OwnShipWeapon
+    private lateinit var laserGun: Gun
+
     private lateinit var speedoMeter: Speedometer
 
     private lateinit var playerName: String
     private lateinit var difficulty: String
     private var score = 0
 
-    // I just put this in MainActivity, because getSystemService can't easily be
-    // used by the non-activity classes
     private lateinit var vibrator: Vibrator
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,13 +69,12 @@ class MainActivity : AppCompatActivity(), Speedometer.SpeedometerListener {
         arFragment = supportFragmentManager.findFragmentById(R.id.custom_ar_fragment) as CustomArFragment
         supportFragmentManager.beginTransaction().add(R.id.mainLayout, HudFragment()).commit()
 
-        gameManager = GameManager.instance
-        earth = Planet.instance
-        earth.loadRenderable(this)
-
         StaticResources.loadAll(this)
         SoundEffectPlayer.loadAllEffects(this)
 
+        gameManager = GameManager.instance
+        earth = Planet.instance
+        
         setFragmentListeners()
 
         // monitor acceleration for the ship's speedometer
@@ -109,7 +107,7 @@ class MainActivity : AppCompatActivity(), Speedometer.SpeedometerListener {
 
             earth.renderInArSpace(anchorNode)
 
-            ownShipWeapon = OwnShipWeapon(arFragment.arSceneView.scene.camera)
+            laserGun = Gun(arFragment.arSceneView.scene.camera)
 
             gameManager.mainHandler = handler
             gameManager.earthNode = earth
@@ -127,7 +125,6 @@ class MainActivity : AppCompatActivity(), Speedometer.SpeedometerListener {
         }
     } // end setFragmentListeners
 
-
     private fun setArViewTouchListener() {
 
         arFragment.arSceneView.scene.setOnTouchListener { _, motionEvent ->
@@ -135,13 +132,12 @@ class MainActivity : AppCompatActivity(), Speedometer.SpeedometerListener {
             // this ensures that we only get one attack per finger tap
             if (motionEvent.action == MotionEvent.ACTION_DOWN) {
 
-                // fireLaser()
                 val fireCallback = object : IFireCallback {
                     override fun fireFinished() {
                         playerAttack()
                     }
                 }
-                ownShipWeapon.fire(fireCallback)
+                laserGun.fire(fireCallback)
             }
             true
         }
@@ -187,7 +183,6 @@ class MainActivity : AppCompatActivity(), Speedometer.SpeedometerListener {
     // Handles receiving updates and applying them to the ui
     private val handler = object : Handler(Looper.getMainLooper()) {
 
-
         override fun handleMessage(message: Message?) {
             if (message != null) {
                 val newValue = message.data.getString(message.what.toString())
@@ -216,6 +211,7 @@ class MainActivity : AppCompatActivity(), Speedometer.SpeedometerListener {
                         killTextView.text = "0"
                     }
                     Configuration.MESSAGE_VIBRATE -> {
+
                         vibrator.vibrate(1000)
 
                     }

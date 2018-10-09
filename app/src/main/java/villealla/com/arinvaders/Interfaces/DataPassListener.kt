@@ -3,7 +3,7 @@ package villealla.com.arinvaders.Interfaces
 import android.support.v4.app.Fragment
 
 /*
-* We use this in MainActivity to pass data between Fragments.
+* We use this in MenuActivity to pass data between Fragments.
 * there may be a better way, but this works.
 * @author Ville Lohkovuori
 */

@@ -48,7 +48,7 @@ class Speedometer(private val sensorManager: SensorManager, private val activity
         } // end if
     } // end onSensorChanged
 
-    // it needs to exist whether needed or not
+    // it needs to exist whether it's needed or not
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
 
     }

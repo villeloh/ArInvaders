@@ -31,7 +31,7 @@ class NamePromptFragment : Fragment() {
 
         namePromptEditText.requestFocus()
         namePromptEditText.setOnEditorActionListener {
-            editText: View, actionId: Int, _ ->
+            _, actionId: Int, _ ->
 
             if (actionId == EditorInfo.IME_ACTION_DONE) {
 

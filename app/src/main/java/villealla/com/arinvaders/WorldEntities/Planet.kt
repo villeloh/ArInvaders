@@ -12,14 +12,11 @@ import villealla.com.arinvaders.Static.Configuration
 
 /*
 * Manages the planet Earth and the people on it.
-* @author Ville Lohkovuori
+* @author Ville Lohkovuori, Sinan Sakaoğlu
 * */
 
 // needs to be a Singleton for easy reference...
 class Planet private constructor(private var hitPoints: Long = Configuration.EARTH_POPULATION) : AnimatableNode() {
-
-    init {
-    }
 
     private object Holder {
 
@@ -34,20 +31,9 @@ class Planet private constructor(private var hitPoints: Long = Configuration.EAR
         const val centerHeight = 0.07F
     }
 
+    // set when loading resources on game start
     var earthRenderable: ModelRenderable? = null
 
-    // needs to be its own function because of the delay in attaching
-    // the renderable... feel free to refactor; I'm not very good at async stuffs
-    fun loadRenderable(context: Context) {
-
-        val renderable = ModelRenderable.builder()
-                .setSource(context, Uri.parse("earth_ball.sfb"))
-                .build()
-        renderable.thenAccept { it -> earthRenderable = it }
-    }
-
-    // we could have a PlanetManager to do all this, to mimic the pattern with ships,
-    // but since only one planet is needed, I think that's overkill
     fun renderInArSpace(anchorNode: AnchorNode) {
 
         this.renderable = earthRenderable
@@ -72,9 +58,10 @@ class Planet private constructor(private var hitPoints: Long = Configuration.EAR
         }
     }
 
+    // add commas to the population number, to make it easier to read
     fun people(): String {
 
         return NumberFormat.getNumberInstance(Locale.US).format(hitPoints)
     }
 
-} // end class1
+} // end class

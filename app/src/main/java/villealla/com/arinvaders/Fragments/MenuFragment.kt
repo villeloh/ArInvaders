@@ -11,10 +11,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.Button
 import android.widget.SeekBar
 import android.widget.TextView
-import kotlinx.android.synthetic.main.fragment_custom_ar.view.*
 import kotlinx.android.synthetic.main.fragment_main_menu.*
 import villealla.com.arinvaders.Interfaces.DataPassListener
 import villealla.com.arinvaders.MainActivity
@@ -93,7 +91,7 @@ class MenuFragment : Fragment() {
                 }
             }
             true
-        }
+        } // end setOnEditorActionListener
 
         newGameTextViewBtn.setOnClickListener {
 
@@ -147,7 +145,7 @@ class MenuFragment : Fragment() {
             }
         } // end if
         return list
-    } // end getAllChildViews
+    } // end getAllDirectChildViews
 
     private fun startMainActivity() {
 
@@ -159,7 +157,7 @@ class MenuFragment : Fragment() {
             putExtra("player_name", playerName)
             putExtra("difficulty", difficulty)
         }
-        (activity as Activity).finish() // finish the menuActivity
+        (activity as Activity).finish()
         startActivity(intent)
     } // end startMainActivity
 
