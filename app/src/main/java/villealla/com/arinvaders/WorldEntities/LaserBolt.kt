@@ -4,8 +4,6 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.view.animation.DecelerateInterpolator
-import com.google.ar.sceneform.Node
-import com.google.ar.sceneform.math.Quaternion
 import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.rendering.ModelRenderable
 import villealla.com.arinvaders.Movement.AnimatableNode
@@ -16,7 +14,7 @@ import villealla.com.arinvaders.Movement.AnimatableNode
 * @author Ville Lohkovuori, Sinan Sakaoğlu
 * */
 
-class LaserBolt() : AnimatableNode() {
+class LaserBolt : AnimatableNode() {
 
     lateinit var animation: ObjectAnimator
 

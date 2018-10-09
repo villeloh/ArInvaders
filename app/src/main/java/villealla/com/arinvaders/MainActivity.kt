@@ -19,6 +19,7 @@ import villealla.com.arinvaders.Fragments.CustomArFragment
 import villealla.com.arinvaders.Fragments.HudFragment
 import villealla.com.arinvaders.Game.GameManager
 import villealla.com.arinvaders.Game.GameState
+import villealla.com.arinvaders.Movement.Speedometer
 import villealla.com.arinvaders.Sound.Maestro
 import villealla.com.arinvaders.Sound.Music
 import villealla.com.arinvaders.Sound.SoundEffectPlayer
@@ -33,7 +34,7 @@ import kotlin.math.sqrt
 * @author Sinan Sakaoğlu, Ville Lohkovuori
 * */
 
-class MainActivity : AppCompatActivity(), SensorEventListener {
+class MainActivity : AppCompatActivity(), Speedometer.SpeedometerListener {
 
     private lateinit var arFragment: CustomArFragment
     private lateinit var gameManager: GameManager
@@ -42,13 +43,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var anchorNode: AnchorNode
 
     private lateinit var mSensorManager: SensorManager
-    private lateinit var mSensor: Sensor
-    private var shipSpeed: Float = 0f
-    private var accX: Float = 0f
-    private var accY: Float = 0f
-    private var accZ: Float = 0f
 
     private lateinit var ownShipWeapon: OwnShipWeapon
+    private lateinit var speedoMeter: Speedometer
 
     private lateinit var playerName: String
     private lateinit var difficulty: String
@@ -80,7 +77,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
         // monitor acceleration for the ship's speedometer
         mSensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)
+        speedoMeter = Speedometer(mSensorManager, this)
 
         vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 
@@ -230,7 +227,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             gameManager.pauseGameSession()
         }
         vibrator.cancel()
-        mSensorManager.unregisterListener(this)
+        speedoMeter.onActivityPause()
     }
 
     override fun onResume() {
@@ -241,39 +238,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
         // the only way to restart it seems to be to reassign it
         vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-
-        // for some reason, this needs to be done again with every resume
-        mSensor.also {
-            mSensorManager.registerListener(this, it,
-                    SensorManager.SENSOR_DELAY_NORMAL)
-        }
+        speedoMeter.onActivityResume()
     } // end onResume
-
-    // monitor sensor events and update the speedometer value based on them
-    override fun onSensorChanged(event: SensorEvent?) {
-
-        if (event == null) return
-
-        // to limit the update speed of the speedometer to a human-readable level
-        val timeCondition = (event.timestamp / 100000000L) % 5 == 0L
-
-        if (event.sensor == mSensor && timeCondition) {
-
-            accX = event.values?.get(0) ?: 0f
-            accY = event.values?.get(1) ?: 0f
-            accZ = event.values?.get(2) ?: 0f
-            val exp = 2.0
-            val accXSquared = Math.pow(accX.toDouble(),  exp).toFloat()
-            val accYSquared = Math.pow(accY.toDouble(),  exp).toFloat()
-            val accZSquared = Math.pow(accZ.toDouble(),  exp).toFloat()
-            shipSpeed = sqrt(accXSquared + accYSquared + accZSquared) * 1000 // gives believable 'space speeds'
-
-            speedTextView.text = shipSpeed.roundToInt().toString()
-        }
-    } // end onSensorChanged
-
-    // it needs to be implemented whether we need it or not
-    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) { }
 
     // TODO: this should also be called when the game is over (we may need an interface to do that)
     private fun startMenuActivity() {
@@ -290,5 +256,11 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         this.finish() // finish the MainActivity
         startActivity(intent)
     } // end startMenuActivity
+
+    // called from SpeedoMeter
+    override fun onSpeedChange(ownShipSpeed: Float) {
+
+        speedTextView.text = ownShipSpeed.roundToInt().toString()
+    }
 
 } // end class
