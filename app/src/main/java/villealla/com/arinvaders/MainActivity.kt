@@ -124,7 +124,6 @@ class MainActivity : AppCompatActivity(), Speedometer.SpeedometerListener {
         }
     } // end setFragmentListeners
 
-
     private fun setArViewTouchListener() {
 
         arFragment.arSceneView.scene.setOnTouchListener { _, motionEvent ->
@@ -213,7 +212,8 @@ class MainActivity : AppCompatActivity(), Speedometer.SpeedometerListener {
                         killTextView.text = "0"
                     }
                     Configuration.MESSAGE_VIBRATE -> {
-                        vibrator.vibrate(1000)
+
+                        // vibrator.vibrate(1000)
                     }
 
                 } // end when

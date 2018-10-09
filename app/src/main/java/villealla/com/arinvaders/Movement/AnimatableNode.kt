@@ -39,7 +39,7 @@ open class AnimatableNode : Node() {
         }
     }
 
-    protected fun createVector3Animator(duration: Long, propertyName: String, interpolator: TimeInterpolator, vararg values: Vector3?): ObjectAnimator {
+     fun createVector3Animator(duration: Long, propertyName: String, interpolator: TimeInterpolator, vararg values: Vector3?): ObjectAnimator {
         return ObjectAnimator().apply {
             this.target = this@AnimatableNode
             this.propertyName = propertyName
@@ -54,7 +54,7 @@ open class AnimatableNode : Node() {
         }
     } // end createVector3Animator
 
-    private fun createQuaternionAnimator(duration: Long, propertyName: String, interpolator: TimeInterpolator, vararg values: Quaternion?): ObjectAnimator {
+    fun createQuaternionAnimator(duration: Long, propertyName: String, interpolator: TimeInterpolator, vararg values: Quaternion?): ObjectAnimator {
         return ObjectAnimator().apply {
             this.target = this@AnimatableNode
             this.propertyName = propertyName
@@ -93,27 +93,9 @@ open class AnimatableNode : Node() {
         return spinAnimator
     } // end createSpinAnimator
 
-    protected fun createLightIntensityAnimator(light: Light, dura: Long, startIntensity: Float, maxIntensity: Float, endIntensity: Float): Animator {
-
-        val intensify = ObjectAnimator.ofFloat(light, "intensity", startIntensity, maxIntensity).apply {
-            duration = dura / 2
-        }
-
-        val dim = ObjectAnimator.ofFloat(light, "intensity", maxIntensity, endIntensity).apply {
-            duration = dura / 2
-        }
-
-        return AnimatorSet().apply {
-
-            play(intensify).before(dim)
-        }
-    } // end createLightIntensityAnimator
-
     protected fun calculateDistanceFactor(start: Vector3, end: Vector3): Double {
         return Math.sqrt((end.x - start.x).pow(2).toDouble() + (end.y - start.y).pow(2).toDouble() + (end.z - start.z).pow(2).toDouble())
     }
-
-
 
     open fun dispose() {
         renderable = null

@@ -9,17 +9,18 @@ import com.google.ar.sceneform.rendering.ModelRenderable
 import villealla.com.arinvaders.Movement.AnimatableNode
 import java.util.*
 
-class Fire(ship: Node) : AnimatableNode() {
+class Fire(ship: Node?) : AnimatableNode() {
 
     init {
         renderable = model
-        setParent(ship)
-        localPosition = randomLocation(localPosition)
-
         // remove collision so the lasers hit the ship instead of this object
         this.collisionShape = Box(Vector3(0.00001f, 0.00001f, 0.00001f))
 
-        startAnimation()
+        if (ship != null) {
+            setParent(ship)
+            localPosition = randomLocation(localPosition)
+            startAnimation()
+        }
     }
 
 
@@ -37,7 +38,6 @@ class Fire(ship: Node) : AnimatableNode() {
         animation = createVector3Animator(1000, "localScale", BounceInterpolator(), localScale, localScale.scaled(MAX_SCALE))
         animation.repeatCount = ObjectAnimator.INFINITE
         animation.start()
-
     }
 
     override fun dispose() {
