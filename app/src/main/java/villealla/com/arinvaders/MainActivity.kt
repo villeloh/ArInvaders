@@ -314,8 +314,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                         transition.startTransition(500)
                         transition.reverseTransition(500)
 
-                        earth.flashExplosionLights()
-
+                        // earth.flashExplosionLights()
                         // vibrator.vibrate(1000L) // 1 second
                     }
                     Configuration.MESSAGE_KILL_COUNT -> {

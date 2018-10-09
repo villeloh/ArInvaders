@@ -92,11 +92,15 @@ class Planet private constructor(private var hitPoints: Long = 7000000000) : Ani
         return NumberFormat.getNumberInstance(Locale.US).format(hitPoints)
     }
 
+/*    private fun initLight() {
+
+    }*/
+
     private fun addLights() {
 
         explosionLight = Light.builder(Light.Type.POINT)
                 .setIntensity(0f)
-                .setFalloffRadius(200000f)
+                .setFalloffRadius(2000f)
                 .setShadowCastingEnabled(false)
                 .setColorTemperature(10000f)
                 .setColor(Color(1f,1f,1f))
@@ -123,6 +127,7 @@ class Planet private constructor(private var hitPoints: Long = 7000000000) : Ani
 
         return Node().apply {
             setParent(this@Planet)
+            name = "light"
             light = explosionLight
             localPosition = locPos
         }

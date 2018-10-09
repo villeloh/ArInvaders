@@ -13,7 +13,7 @@
         android:layout_height="39dp"
         android:layout_marginEnd="35dp"
         android:layout_marginBottom="32dp"
-        android:background="@drawable/horizontal_text_box"
+        android:background="@drawable/horizontal_text_box_with_x"
         android:elevation="1dp"
         android:gravity="center"
         android:paddingStart="14dp"
