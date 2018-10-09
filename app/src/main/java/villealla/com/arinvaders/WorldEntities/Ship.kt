@@ -245,7 +245,7 @@ open class Ship(
 
                 // create and fire a laser towards the earth
                 mainHandler.post {
-                    val laserBolt = LaserBolt(null)
+                    val laserBolt = LaserBolt()
                     laserBolt.setParent(earthNode.parent)
                     laserBolt.localPosition = localPosition
                     laserBolt.renderable = LaserBolt.yellowRenderable

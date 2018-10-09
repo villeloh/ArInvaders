@@ -16,20 +16,9 @@ import villealla.com.arinvaders.Movement.AnimatableNode
 * @author Ville Lohkovuori, Sinan Sakaoğlu
 * */
 
-class LaserBolt(cameraNode: Node?) : AnimatableNode() {
+class LaserBolt() : AnimatableNode() {
 
     lateinit var animation: ObjectAnimator
-
-    init {
-        if (cameraNode != null) {
-            setParent(cameraNode)
-            renderable = redRenderable
-            localPosition = Vector3(0.0f, -0.07f, -0.2f) // simply what's needed for it to look right
-            localRotation = Quaternion.axisAngle(Vector3(1f, 0f, 0f), 40f) // ditto
-            name = "laser"
-        }
-
-    }
 
     companion object {
         lateinit var redRenderable: ModelRenderable

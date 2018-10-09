@@ -15,6 +15,12 @@ import villealla.com.arinvaders.WorldEntities.Gun
 import villealla.com.arinvaders.WorldEntities.LaserBolt
 import villealla.com.arinvaders.WorldEntities.Ship
 
+/*
+* Static 'class' for loading all the needed resources at game start
+* (to avoid lag during the actual game).
+* @author Ville Lohkovuori
+* */
+
 object StaticResources {
 
     // referred to from OwnShipWeapon

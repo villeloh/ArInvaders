@@ -1,6 +1,7 @@
 package villealla.com.arinvaders.WorldEntities
 
 import com.google.ar.sceneform.Node
+import com.google.ar.sceneform.math.Quaternion
 import com.google.ar.sceneform.math.Vector3
 import villealla.com.arinvaders.Sound.SoundEffectPlayer
 import villealla.com.arinvaders.Sound.SoundEffects
@@ -14,13 +15,19 @@ class OwnShipWeapon(private val cameraNode: Node) {
 
     }
 
-    // note: the passed callback is an object that contains a call to playerAttacl in MainActivity
+    // note: the passed callback is an object that contains a call to playerAttack in MainActivity
     fun fire(fireCallback: IFireCallback) {
 
         SoundEffectPlayer.playEffect(SoundEffects.LASER)
         gun.kickback()
 
-        val laserBolt = LaserBolt(cameraNode)
+        val laserBolt = LaserBolt().apply {
+            setParent(cameraNode)
+            renderable = LaserBolt.redRenderable
+            localPosition = Vector3(0.0f, -0.07f, -0.2f) // simply what's needed for it to look right
+            localRotation = Quaternion.axisAngle(Vector3(1f, 0f, 0f), 40f) // ditto
+            name = "laser"
+        }
 
         val lightNode = Node()
         lightNode.setParent(laserBolt)
