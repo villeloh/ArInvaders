@@ -3,6 +3,7 @@ package villealla.com.arinvaders.Static
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.util.Log
 import com.google.ar.sceneform.collision.Box
 import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.rendering.Color
@@ -27,16 +28,23 @@ object StaticResources {
     lateinit var explosionRenderable: ModelRenderable
     lateinit var explosionTexture: Texture
 
+    const val TOTAL_NUMBER_OF_RENDERABLES = 9
+
+    var loadedRenderablesCount = 0
+
     // we call this in MainActivity to make available all the asynchronous
     // resources (mostly renderables) that are needed by the world entity classes
     fun loadAll(context: Context) {
 
-        loadGunResources(context)
-        loadLaserResources(context)
-        loadExplosionGraphics(context)
-        loadShipRenderables(context)
-        loadFireModel(context)
-        loadEarthRenderable(context)
+        if (loadedRenderablesCount != TOTAL_NUMBER_OF_RENDERABLES) {
+            Log.d(Configuration.DEBUG_TAG, "loading models...")
+            loadGunResources(context)
+            loadLaserResources(context)
+            loadExplosionGraphics(context)
+            loadShipRenderables(context)
+            loadFireModel(context)
+            loadEarthRenderable(context)
+        }
     } // end loadResources
 
     // needs to be its own function because of the delay in attaching the renderable
@@ -47,6 +55,7 @@ object StaticResources {
                 .build()
                 .thenAccept { it ->
                     Planet.instance.earthRenderable = it
+                    loadedRenderablesCount++
                 }
     } // end loadEarthRenderable
 
@@ -67,6 +76,7 @@ object StaticResources {
                     LaserBolt.redRenderable = it
                     LaserBolt.redRenderable.isShadowCaster = false
                     LaserBolt.redRenderable.isShadowReceiver = false
+                    loadedRenderablesCount++
                 }
         ModelRenderable.builder()
                 .setSource(context, Uri.parse("laser_yellow.sfb"))
@@ -75,6 +85,7 @@ object StaticResources {
                     LaserBolt.yellowRenderable = it
                     LaserBolt.yellowRenderable.isShadowCaster = false
                     LaserBolt.yellowRenderable.isShadowReceiver = false
+                    loadedRenderablesCount++
                 }
     } // end loadLaserResources
 
@@ -87,6 +98,7 @@ object StaticResources {
                     Gun.gunRenderable.isShadowReceiver = false
                     Gun.gunRenderable.isShadowCaster = false
                     Gun.gunRenderable.collisionShape = Box(Vector3(0.001f, 0.001f, 0.001f))
+                    loadedRenderablesCount++
                 }
     } // end loadGunResources
 
@@ -103,6 +115,7 @@ object StaticResources {
 
                 it2.material.setTexture("", explosionTexture)
                 explosionRenderable = it2
+                loadedRenderablesCount++
             }
         }
     } // end loadExplosionGraphics
@@ -114,7 +127,10 @@ object StaticResources {
             ModelRenderable.builder()
                     .setSource(context, Uri.parse(shipType.modelName))
                     .build()
-                    .thenAccept { it -> Ship.renderables[shipType] = it }
+                    .thenAccept { it ->
+                        Ship.renderables[shipType] = it
+                        loadedRenderablesCount++
+                    }
         }
     } // end loadShipRenderables
 
@@ -122,7 +138,10 @@ object StaticResources {
         ModelRenderable.builder()
                 .setSource(context, Uri.parse("fire.sfb"))
                 .build()
-                .thenAccept { it -> Fire.model = it }
+                .thenAccept { it ->
+                    Fire.model = it
+                    loadedRenderablesCount++
+                }
     }
 
 } // end StaticResources

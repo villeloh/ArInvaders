@@ -200,7 +200,7 @@ class SpawnLoop(val difficultyMultiplier: Float, var waveNumber: Int = 0, val ea
                 message.data.putString(Configuration.MESSAGE_PEOPLE_ALIVE.toString(), Planet.instance.people())
                 mainHandler.sendMessage(message)
 
-                //vibrate
+                //vibrate and nuke
                 if (rGen.nextBoolean()) {
                     message = mainHandler.obtainMessage()
                     message.what = Configuration.MESSAGE_VIBRATE
