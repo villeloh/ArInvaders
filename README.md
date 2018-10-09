@@ -26,3 +26,20 @@ Download the project, open it in Android Studio, plug in your phone to a USB por
 ## Project Specs
 
 Done with Google's ArCore library.
+
+## Screenshots
+
+Start Menu
+![image1](https://i.imgur.com/8ySygF4.jpg)
+
+High Score List
+
+![image2](https://i.imgur.com/jH5iqMK.jpg)
+
+Gameplay #1
+
+![image3](https://i.imgur.com/UOZdCoI.jpg)
+
+Gameplay #2
+
+![image4](https://i.imgur.com/Dx7mmHK.jpg)
