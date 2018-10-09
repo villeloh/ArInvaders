@@ -63,11 +63,8 @@ object SoundEffectPlayer {
         val loopNum = if (loop) 1 else 0
 
         if (soundEffect.id != 0)
-            soundPool.play(soundEffect.id, modifiedVolume, modifiedVolume, 1, loopNum, modifiedPitch)
-    } // end playEffect
             soundPool.play(soundEffect.id, soundEffect.volumeLevel, soundEffect.volumeLevel, soundEffect.priority, 0, 1f)
-    }
-
+    } // end playEffect
     // it seems a bit clumsy and unnecessary, as the effects enum is static.
     // a better solution should be thought of...
     private fun initEarthEffects() {
@@ -84,4 +81,5 @@ object SoundEffectPlayer {
         return earthEffects[random.nextInt(earthEffects.size)]
     }
 
-} // end class
+}
+

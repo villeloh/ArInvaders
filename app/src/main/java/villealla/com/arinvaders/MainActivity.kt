@@ -227,6 +227,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     // Handles receiving updates and applying them to the ui
     private val handler = object : Handler(Looper.getMainLooper()) {
 
+
         override fun handleMessage(message: Message?) {
             if (message != null) {
                 val newValue = message.data.getString(message.what.toString())
@@ -240,7 +241,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                         transition.startTransition(500)
                         transition.reverseTransition(500)
 
-                        vibrator.vibrate(1000L) // 1 second
                     }
                     Configuration.MESSAGE_KILL_COUNT -> {
                         killTextView.text = newValue
@@ -254,6 +254,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                     Configuration.MESSAGE_RESET -> {
                         peopleTextView.text = Configuration.EARTH_POPULATION.toString()
                         killTextView.text = "0"
+                    }
+                    Configuration.MESSAGE_VIBRATE -> {
+                        vibrator.vibrate(1000)
                     }
 
                 } // end when

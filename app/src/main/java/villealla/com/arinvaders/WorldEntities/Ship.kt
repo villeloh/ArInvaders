@@ -43,7 +43,7 @@ open class Ship(
 ) : AnimatableNode() {
 
     var attackInterpolator: TimeInterpolator
-    private var directionalUnitVector3: Vector3
+    var directionalUnitVector3: Vector3
 
     init {
         // ships need a unique identifier
@@ -101,7 +101,6 @@ open class Ship(
 
             // This function is called when the ship reaches the earth without dying
             override fun onAnimationEnd(animation: Animator?) {
-
                 //Ship has reached the earth
                 SoundEffectPlayer.playEffect(SoundEffectPlayer.randomEarthEffect())
 
@@ -113,6 +112,7 @@ open class Ship(
 
                 //signal ship's death to observer
                 observer.onDeath(this@Ship, true)
+
             } // end onAnimationEnd
         })
 
@@ -156,7 +156,7 @@ open class Ship(
         })
 
         deathAnimation.start()
-        playFlashingLightsAnim()
+        playShipExplosionLightsAnim()
     }
 
     private fun killFiresStopLasers() {
@@ -169,7 +169,8 @@ open class Ship(
         fireList.clear()
     }
 
-    private fun playFlashingLightsAnim() {
+
+    private fun playShipExplosionLightsAnim() {
 
         //create one red on yellow light place them next to ship and flash
         for (i in 0..1) {

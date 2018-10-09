@@ -19,6 +19,26 @@ import kotlin.math.pow
 
 open class AnimatableNode : Node() {
 
+    companion object {
+        fun createFlashingAnimator(target: Light, duration: Long): ObjectAnimator {
+            return ObjectAnimator().apply {
+                this.target = target
+                this.propertyName = "intensity"
+                this.duration = duration / 2
+                this.interpolator = BounceInterpolator()
+
+                setAutoCancel(false)
+                // * = Spread operator, this will pass N `Any?` values instead of a single list `List<Any?>`
+                setObjectValues(target.intensity)
+                setObjectValues(0)
+
+                repeatCount = 2
+                // Always apply evaluator AFTER object values or it will be overwritten by a default one
+                setEvaluator(FloatEvaluator())
+            }
+        }
+    }
+
     protected fun createVector3Animator(duration: Long, propertyName: String, interpolator: TimeInterpolator, vararg values: Vector3?): ObjectAnimator {
         return ObjectAnimator().apply {
             this.target = this@AnimatableNode
@@ -93,23 +113,7 @@ open class AnimatableNode : Node() {
         return Math.sqrt((end.x - start.x).pow(2).toDouble() + (end.y - start.y).pow(2).toDouble() + (end.z - start.z).pow(2).toDouble())
     }
 
-    protected fun createFlashingAnimator(target: Light, duration: Long): ObjectAnimator {
-        return ObjectAnimator().apply {
-            this.target = target
-            this.propertyName = "intensity"
-            this.duration = duration / 2
-            this.interpolator = BounceInterpolator()
 
-            setAutoCancel(false)
-            // * = Spread operator, this will pass N `Any?` values instead of a single list `List<Any?>`
-            setObjectValues(target.intensity)
-            setObjectValues(0)
-
-            repeatCount = 2
-            // Always apply evaluator AFTER object values or it will be overwritten by a default one
-            setEvaluator(FloatEvaluator())
-        }
-    }
 
     open fun dispose() {
         renderable = null

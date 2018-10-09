@@ -1,10 +1,15 @@
 package villealla.com.arinvaders.Game
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.os.Handler
 import android.util.Log
 import com.google.ar.sceneform.AnchorNode
 import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.math.Vector3
+import com.google.ar.sceneform.rendering.Color
+import com.google.ar.sceneform.rendering.Light
+import villealla.com.arinvaders.Movement.AnimatableNode
 import villealla.com.arinvaders.Sound.SoundEffectPlayer
 import villealla.com.arinvaders.Static.Configuration
 import villealla.com.arinvaders.Static.ShipType
@@ -190,10 +195,17 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
 
                 //notify ui thread about this change
 
-                val message = mainHandler.obtainMessage()
+                var message = mainHandler.obtainMessage()
                 message.what = Configuration.MESSAGE_PEOPLE_ALIVE
                 message.data.putString(Configuration.MESSAGE_PEOPLE_ALIVE.toString(), Planet.instance.people())
                 mainHandler.sendMessage(message)
+
+                //vibrate
+                message = mainHandler.obtainMessage()
+                message.what = Configuration.MESSAGE_VIBRATE
+                mainHandler.sendMessage(message)
+
+                playNukeAnim(ship.directionalUnitVector3)
 
             } else {
                 //ship killed by player
@@ -235,6 +247,31 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
         return Vector3(x, y, z)
     } // end randomCoord
 
+    private fun playNukeAnim(directionalUnitVector3: Vector3) {
+
+        val light = Light.builder(Light.Type.POINT)
+                .setColor(Color(1f, 1f, 1f))
+                .setIntensity(100000f)
+                .setFalloffRadius(200f)
+                .build()
+
+        val lightNode = AnimatableNode()
+        lightNode.light = light
+        lightNode.setParent(earthNode)
+        lightNode.localPosition = directionalUnitVector3.negated()
+
+        val animator = AnimatableNode.createFlashingAnimator(lightNode.light, 1000)
+        animator.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator?) {
+                super.onAnimationEnd(animation)
+                lightNode.dispose()
+            }
+        })
+        animator.start()
+
+
+    }
+
     val iMinionSpawner = object : IMinionSpawner {
 
         // This method is used by the mothership to spawn more ships
@@ -249,5 +286,6 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
             updateUIShipsInWave(totalShipsToSpawn - waveKillCount, totalShipsToSpawn)
         }
     }
+
 
 } // end class
