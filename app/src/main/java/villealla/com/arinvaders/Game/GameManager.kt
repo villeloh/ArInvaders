@@ -26,7 +26,9 @@ class GameManager private constructor() {
         // do stuff when GameManager.instance is assigned
     }
 
-    private object Holder { val INSTANCE = GameManager() }
+    private object Holder {
+        val INSTANCE = GameManager()
+    }
 
     // makes the class into a singleton
     companion object {
@@ -40,9 +42,15 @@ class GameManager private constructor() {
     var mainHandler = Handler(Looper.getMainLooper())
     var gameState = GameState.UNINITIALIZED
 
-    fun startGameSession() {
+    fun startGameSession(difficulty: String) {
 
-        gameLoop = SpawnLoop(earthNode = earthNode, mainHandler = mainHandler, anchorNode = anchorNode)
+        val multiplier: Float = when (difficulty) {
+            "easy" -> 0.5f
+            "hard" -> 1.5f
+            else -> 1f
+        }
+
+        gameLoop = SpawnLoop(multiplier, earthNode = earthNode, mainHandler = mainHandler, anchorNode = anchorNode)
 
         resetUI()
 
@@ -71,11 +79,20 @@ class GameManager private constructor() {
         mainHandler.sendMessage(message)
     }
 
-    fun endGameSession() {
+    fun endGameSession(exitEarly: Boolean = false) {
 
-        Maestro.stopMusic()
-        gameLoop.stop()
-        gameState = GameState.STOPPED
+        if (gameState == GameState.RUNNING) {
+            Maestro.stopMusic()
+            gameLoop.stop()
+            gameState = GameState.STOPPED
+
+            if (!exitEarly) {
+                val message = mainHandler.obtainMessage()
+                message.what = Configuration.MESSAGE_GAME_OVER
+                mainHandler.sendMessage(message)
+            }
+        }
+
     }
 
 } // end class

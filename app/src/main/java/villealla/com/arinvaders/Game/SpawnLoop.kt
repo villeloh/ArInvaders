@@ -30,7 +30,7 @@ import java.util.*
 * should be a concrete class
 * @author Sinan Sakaoğlu
 * */
-class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: Handler, val anchorNode: AnchorNode) {
+class SpawnLoop(val difficultyMultiplier: Float, var waveNumber: Int = 0, val earthNode: Node, val mainHandler: Handler, val anchorNode: AnchorNode) {
 
     companion object {
         const val DELAY_BETWEEN_WAVES_SEC: Long = 2
@@ -63,21 +63,21 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
         //spawn ships in a balanced and formulated manner
         for (i in 1..(5 + wave - 1)) {
             mainHandler.post {
-                val newShip = Ship(type = ShipType.UFO, localPosition = randomCoord(), earthNode = earthNode, observer = onShipDeath, speed = rGen.nextInt(5) + 1, mainHandler = mainHandler)
+                val newShip = Ship(type = ShipType.UFO, localPosition = randomCoord(), earthNode = earthNode, observer = onShipDeath, speed = rGen.nextInt(5) + 1, dmg = (Ship.randomizedDmgValue(ShipType.UFO.dmgScaleValue) * difficultyMultiplier).toLong(), mainHandler = mainHandler)
                 shipsInScene[newShip.name] = newShip
             }
         }
 
         for (i in 1..(wave / 2)) {
             mainHandler.post {
-                val newShip = Ship(type = ShipType.THRALL, localPosition = randomCoord(), earthNode = earthNode, observer = onShipDeath, speed = rGen.nextInt(5) + 5, mainHandler = mainHandler)
+                val newShip = Ship(type = ShipType.THRALL, localPosition = randomCoord(), earthNode = earthNode, observer = onShipDeath, speed = rGen.nextInt(5) + 5, dmg = (Ship.randomizedDmgValue(ShipType.THRALL.dmgScaleValue) * difficultyMultiplier).toLong(), mainHandler = mainHandler)
                 shipsInScene[newShip.name] = newShip
             }
         }
 
         for (i in 1..((wave - 2) / 3)) {
             mainHandler.post {
-                val newShip = Mothership(type = ShipType.MOTHERSHIP, localPosition = randomCoord(), earthNode = anchorNode, observer = onShipDeath, speed = 1, iMinionSpawner = iMinionSpawner, mainHandler = mainHandler)
+                val newShip = Mothership(type = ShipType.MOTHERSHIP, localPosition = randomCoord(), earthNode = anchorNode, observer = onShipDeath, speed = 1, iMinionSpawner = iMinionSpawner, dmg = (Ship.randomizedDmgValue(ShipType.MOTHERSHIP.dmgScaleValue) * difficultyMultiplier).toLong(), mainHandler = mainHandler)
                 shipsInScene[newShip.name] = newShip
             }
         }
@@ -201,11 +201,12 @@ class SpawnLoop(var waveNumber: Int = 0, val earthNode: Node, val mainHandler: H
                 mainHandler.sendMessage(message)
 
                 //vibrate
-                message = mainHandler.obtainMessage()
-                message.what = Configuration.MESSAGE_VIBRATE
-                mainHandler.sendMessage(message)
-
-                playNukeAnim(ship.directionalUnitVector3)
+                if (rGen.nextBoolean()) {
+                    message = mainHandler.obtainMessage()
+                    message.what = Configuration.MESSAGE_VIBRATE
+                    mainHandler.sendMessage(message)
+                    playNukeAnim(ship.directionalUnitVector3)
+                }
 
             } else {
                 //ship killed by player

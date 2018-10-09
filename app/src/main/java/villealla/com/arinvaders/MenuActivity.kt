@@ -1,18 +1,17 @@
 package villealla.com.arinvaders
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AppCompatActivity
 import android.view.Window
 import android.view.WindowManager
-import android.widget.SeekBar
-import kotlinx.android.synthetic.main.fragment_main_menu.*
 import villealla.com.arinvaders.Fragments.MenuFragment
 import villealla.com.arinvaders.Fragments.NamePromptFragment
 import villealla.com.arinvaders.Interfaces.DataPassListener
+
 
 /*
 * Acts as the main menu of the app, where you can choose/change the player name,
@@ -35,7 +34,7 @@ class MenuActivity : AppCompatActivity(), DataPassListener {
         supportActionBar?.hide()
         setContentView(R.layout.activity_menu)
 
-        playerPrefs = this.getSharedPreferences("player_prefs", Context.MODE_PRIVATE)
+        playerPrefs = PreferenceManager.getDefaultSharedPreferences(this)
         playerName = playerPrefs.getString("player_name", DEFAULT_PLAYER_NAME) ?: DEFAULT_PLAYER_NAME
 
         if (playerName == DEFAULT_PLAYER_NAME) {

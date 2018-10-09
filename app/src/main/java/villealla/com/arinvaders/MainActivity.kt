@@ -3,18 +3,20 @@ package villealla.com.arinvaders
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.TransitionDrawable
-import android.hardware.Sensor
-import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.*
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import com.google.ar.sceneform.AnchorNode
 import kotlinx.android.synthetic.main.fragment_custom_ar.*
+import retrofit2.Call
+import retrofit2.Response
+import villealla.com.arinvaders.API.Leaderboard
+import villealla.com.arinvaders.API.ScoreEntry
 import villealla.com.arinvaders.Fragments.CustomArFragment
 import villealla.com.arinvaders.Fragments.HudFragment
 import villealla.com.arinvaders.Game.GameManager
@@ -25,9 +27,11 @@ import villealla.com.arinvaders.Sound.Music
 import villealla.com.arinvaders.Sound.SoundEffectPlayer
 import villealla.com.arinvaders.Static.Configuration
 import villealla.com.arinvaders.Static.StaticResources
-import villealla.com.arinvaders.WorldEntities.*
+import villealla.com.arinvaders.WorldEntities.IFireCallback
+import villealla.com.arinvaders.WorldEntities.OwnShipWeapon
+import villealla.com.arinvaders.WorldEntities.Planet
+import villealla.com.arinvaders.WorldEntities.Ship
 import kotlin.math.roundToInt
-import kotlin.math.sqrt
 
 /*
 * Manages UI and ties together most other parts of the app.
@@ -81,12 +85,11 @@ class MainActivity : AppCompatActivity(), Speedometer.SpeedometerListener {
 
         vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 
-        // TODO: assign the actual received playerName and difficulty (from the arguments field)
-        playerName = "huu"
-        difficulty = "normal"
+        playerName = intent.extras.getString("player_name")
+        difficulty = intent.extras.getString("difficulty")
 
         quitTextView.setOnClickListener {
-
+            gameManager.endGameSession(exitEarly = true)
             startMenuActivity()
         }
     } // end onCreate
@@ -111,7 +114,7 @@ class MainActivity : AppCompatActivity(), Speedometer.SpeedometerListener {
             gameManager.mainHandler = handler
             gameManager.earthNode = earth
             gameManager.anchorNode = anchorNode
-            gameManager.startGameSession()
+            gameManager.startGameSession(difficulty)
 
             // Play game music
             Maestro.playMusic(this, Music.BATTLE, true)
@@ -214,12 +217,44 @@ class MainActivity : AppCompatActivity(), Speedometer.SpeedometerListener {
                     }
                     Configuration.MESSAGE_VIBRATE -> {
                         vibrator.vibrate(1000)
+
+                    }
+                    Configuration.MESSAGE_GAME_OVER -> {
+                        score = killTextView.text.toString().toInt()
+
+                        val totalScore = calculateTotalScore()
+
+                        Leaderboard.service.postScore(playerName, difficulty, totalScore).enqueue(object : retrofit2.Callback<List<List<ScoreEntry>>> {
+                            override fun onFailure(call: Call<List<List<ScoreEntry>>>, t: Throwable) {
+                                Log.d(Configuration.DEBUG_TAG, "Score post failed.")
+                                t.printStackTrace()
+                                startMenuActivity()
+                            }
+
+                            override fun onResponse(call: Call<List<List<ScoreEntry>>>, response: Response<List<List<ScoreEntry>>>) {
+                                Log.d(Configuration.DEBUG_TAG, "Score post successful.")
+                                startMenuActivity()
+                            }
+                        })
+
                     }
 
                 } // end when
             } // end null check
         } // end handleMessage
     } // end handler
+
+    private fun calculateTotalScore(): Int {
+
+
+        val multiplier: Float = when (difficulty) {
+            "easy" -> 0.53f
+            "hard" -> 1.52f
+            else -> 1.06f
+        }
+
+        return (score * multiplier).toInt() * 17
+    }
 
     override fun onPause() {
         super.onPause()

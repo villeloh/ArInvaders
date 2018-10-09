@@ -17,8 +17,8 @@ import villealla.com.arinvaders.Movement.AnimatableNode
 import villealla.com.arinvaders.Sound.SoundEffectPlayer
 import villealla.com.arinvaders.Sound.SoundEffects
 import villealla.com.arinvaders.Static.Configuration
-import villealla.com.arinvaders.Static.StaticResources
 import villealla.com.arinvaders.Static.ShipType
+import villealla.com.arinvaders.Static.StaticResources
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.absoluteValue
@@ -71,7 +71,8 @@ open class Ship(
         val renderables = mutableMapOf<ShipType, ModelRenderable>()
         val rGen = Random(System.currentTimeMillis())
 
-        private fun randomizedDmgValue(dmgScaleValue: Float): Long {
+
+        fun randomizedDmgValue(dmgScaleValue: Float): Long {
 
             val min = DEFAULT_UNSCALED_MIN_DMG
             val max = DEFAULT_UNSCALED_MAX_DMG

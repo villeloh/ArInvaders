@@ -3,9 +3,7 @@ package villealla.com.arinvaders.API
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
+import retrofit2.http.*
 
 object Leaderboard {
 
@@ -13,10 +11,11 @@ object Leaderboard {
 
     interface Service {
         @GET("/leaderboard.php")
-        fun topTenLeaders(): Call<List<ScoreEntry>>
+        fun topTenLeaders(@Query("username") username: String = ""): Call<List<List<ScoreEntry>>>
 
+        @FormUrlEncoded
         @POST("/leaderboard.php")
-        fun postScore(@Body scoreEntry: ScoreEntry): Call<List<ScoreEntry>>
+        fun postScore(@Field("username") username: String, @Field("difficulty") difficulty: String, @Field("score") score: Int): Call<List<List<ScoreEntry>>>
     }
 
     private val retrofit = Retrofit.Builder()
