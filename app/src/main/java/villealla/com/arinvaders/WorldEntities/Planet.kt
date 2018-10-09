@@ -59,7 +59,7 @@ class Planet private constructor(private var hitPoints: Long = Configuration.EAR
     fun startRotating() {
 
         //Creates two rotation animations, one for half way of spin, then loops.
-        createSpinAnimator(8000, this.localRotation).start()
+        createSpinAnimator(duration = 8000, localRotation = this.localRotation).start()
     }
 
     // I've always wanted to write this :)
