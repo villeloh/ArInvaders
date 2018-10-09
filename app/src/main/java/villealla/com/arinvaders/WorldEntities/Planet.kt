@@ -12,7 +12,7 @@ import villealla.com.arinvaders.Static.Configuration
 
 /*
 * Manages the planet Earth and the people on it.
-* @author Ville Lohkovuori
+* @author Ville Lohkovuori, Sinan Sakaoğlu
 * */
 
 // needs to be a Singleton for easy reference...
@@ -31,16 +31,8 @@ class Planet private constructor(private var hitPoints: Long = Configuration.EAR
         const val centerHeight = 0.07F
     }
 
+    // set when loading resources on game start
     var earthRenderable: ModelRenderable? = null
-
-    // needs to be its own function because of the delay in attaching the renderable
-    fun loadRenderable(context: Context) {
-
-        val renderable = ModelRenderable.builder()
-                .setSource(context, Uri.parse("earth_ball.sfb"))
-                .build()
-        renderable.thenAccept { it -> earthRenderable = it }
-    }
 
     fun renderInArSpace(anchorNode: AnchorNode) {
 

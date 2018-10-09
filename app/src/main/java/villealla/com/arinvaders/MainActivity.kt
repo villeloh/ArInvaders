@@ -65,13 +65,12 @@ class MainActivity : AppCompatActivity(), Speedometer.SpeedometerListener {
         arFragment = supportFragmentManager.findFragmentById(R.id.custom_ar_fragment) as CustomArFragment
         supportFragmentManager.beginTransaction().add(R.id.mainLayout, HudFragment()).commit()
 
-        gameManager = GameManager.instance
-        earth = Planet.instance
-        earth.loadRenderable(this)
-
         StaticResources.loadAll(this)
         SoundEffectPlayer.loadAllEffects(this)
 
+        gameManager = GameManager.instance
+        earth = Planet.instance
+        
         setFragmentListeners()
 
         // monitor acceleration for the ship's speedometer
@@ -180,7 +179,7 @@ class MainActivity : AppCompatActivity(), Speedometer.SpeedometerListener {
 
     // Handles receiving updates and applying them to the ui
     private val handler = object : Handler(Looper.getMainLooper()) {
-        
+
         override fun handleMessage(message: Message?) {
             if (message != null) {
                 val newValue = message.data.getString(message.what.toString())
