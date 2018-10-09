@@ -13,11 +13,11 @@ import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.rendering.Color
 import com.google.ar.sceneform.rendering.Light
 import com.google.ar.sceneform.rendering.ModelRenderable
-import villealla.com.arinvaders.MainActivity
 import villealla.com.arinvaders.Movement.AnimatableNode
 import villealla.com.arinvaders.Sound.SoundEffectPlayer
 import villealla.com.arinvaders.Sound.SoundEffects
 import villealla.com.arinvaders.Static.Configuration
+import villealla.com.arinvaders.Static.StaticResources
 import villealla.com.arinvaders.Static.ShipType
 import java.util.*
 import kotlin.collections.ArrayList
@@ -134,7 +134,7 @@ open class Ship(
         killFiresStopLasers()
 
         // Audible and visual death effect for the ship
-        this.renderable = MainActivity.explosionRenderable
+        this.renderable = StaticResources.explosionRenderable
         SoundEffectPlayer.playEffect(SoundEffects.EXPLOSION)
 
         playDeathAnimation()
@@ -245,7 +245,7 @@ open class Ship(
 
                 // create and fire a laser towards the earth
                 mainHandler.post {
-                    val laserBolt = LaserBolt()
+                    val laserBolt = LaserBolt(null)
                     laserBolt.setParent(earthNode.parent)
                     laserBolt.localPosition = localPosition
                     laserBolt.renderable = LaserBolt.yellowRenderable
@@ -266,7 +266,7 @@ open class Ship(
 
                             val message = mainHandler.obtainMessage()
                             message.what = Configuration.MESSAGE_PEOPLE_ALIVE
-                            message.data.putString(Configuration.MESSAGE_PEOPLE_ALIVE.toString(), Planet.instance.people().toString())
+                            message.data.putString(Configuration.MESSAGE_PEOPLE_ALIVE.toString(), Planet.instance.people())
                             mainHandler.sendMessage(message)
                         }
                     })

@@ -4,6 +4,8 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.view.animation.AccelerateInterpolator
+import com.google.ar.sceneform.Node
+import com.google.ar.sceneform.math.Quaternion
 import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.rendering.ModelRenderable
 import villealla.com.arinvaders.Movement.AnimatableNode
@@ -13,15 +15,24 @@ import villealla.com.arinvaders.Movement.AnimatableNode
 * @author Ville Lohkovuori
 * */
 
-class Gun : AnimatableNode() {
+class Gun(cameraNode: Node) : AnimatableNode() {
 
     private lateinit var animation_1: ObjectAnimator
 
-    companion object {
-        lateinit var modelRenderable: ModelRenderable
+    init {
+        renderable = gunRenderable
+        setParent(cameraNode)
+        localPosition = Vector3(0.015f, -0.065f, -0.2f) // simply what's needed for it to look right
+        localRotation = Quaternion.axisAngle(Vector3(1f, 0.34f, 0f), 40f) // ditto
+        name = "gun"
+        setupKickbackAnimation() // must be called last due to needing the updated localPosition!
     }
 
-    fun setupAnimation() {
+    companion object {
+        lateinit var gunRenderable: ModelRenderable
+    }
+
+    private fun setupKickbackAnimation() {
 
         val startPosition = localPosition
         val movePosition = Vector3(localPosition.x, localPosition.y - 0.008f, localPosition.z)
@@ -35,12 +46,10 @@ class Gun : AnimatableNode() {
                 animation_2.start()
             }
         })
-    }
+    } // end setupKickAnimation
 
     fun kickback() {
 
         animation_1.start()
     }
-
-
 }

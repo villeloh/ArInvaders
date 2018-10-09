@@ -2,13 +2,11 @@ package villealla.com.arinvaders
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.graphics.drawable.TransitionDrawable
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.net.Uri
 import android.os.*
 import android.support.v7.app.AppCompatActivity
 import android.view.MotionEvent
@@ -16,14 +14,6 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import com.google.ar.sceneform.AnchorNode
-import com.google.ar.sceneform.Node
-import com.google.ar.sceneform.collision.Box
-import com.google.ar.sceneform.math.Quaternion
-import com.google.ar.sceneform.math.Vector3
-import com.google.ar.sceneform.rendering.Color
-import com.google.ar.sceneform.rendering.Light
-import com.google.ar.sceneform.rendering.ModelRenderable
-import com.google.ar.sceneform.rendering.Texture
 import kotlinx.android.synthetic.main.fragment_custom_ar.*
 import villealla.com.arinvaders.Fragments.CustomArFragment
 import villealla.com.arinvaders.Fragments.HudFragment
@@ -32,9 +22,8 @@ import villealla.com.arinvaders.Game.GameState
 import villealla.com.arinvaders.Sound.Maestro
 import villealla.com.arinvaders.Sound.Music
 import villealla.com.arinvaders.Sound.SoundEffectPlayer
-import villealla.com.arinvaders.Sound.SoundEffects
 import villealla.com.arinvaders.Static.Configuration
-import villealla.com.arinvaders.Static.ShipType
+import villealla.com.arinvaders.Static.StaticResources
 import villealla.com.arinvaders.WorldEntities.*
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
@@ -50,9 +39,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var gameManager: GameManager
     private lateinit var earth: Planet
 
-    private lateinit var laserLight: Light
-    private lateinit var gun: Gun
-
     private lateinit var anchorNode: AnchorNode
 
     private lateinit var mSensorManager: SensorManager
@@ -62,6 +48,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private var accY: Float = 0f
     private var accZ: Float = 0f
 
+    private lateinit var ownShipWeapon: OwnShipWeapon
+
     private lateinit var playerName: String
     private lateinit var difficulty: String
     private var score = 0
@@ -69,13 +57,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     // I just put this in MainActivity, because getSystemService can't easily be
     // used by the non-activity classes
     private lateinit var vibrator: Vibrator
-
-    companion object {
-
-        // referred to from the Ship class
-        lateinit var explosionRenderable: ModelRenderable
-        lateinit var explosionTexture: Texture
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,12 +71,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
         gameManager = GameManager.instance
         earth = Planet.instance
-
         earth.loadRenderable(this)
-        loadShipRenderables()
-        loadExplosionGraphics()
-        loadLaserGraphics()
-        loadFireModel()
+
+        StaticResources.loadAll(this)
         SoundEffectPlayer.loadAllEffects(this)
 
         setFragmentListeners()
@@ -131,7 +109,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
             earth.renderInArSpace(anchorNode)
 
-            setupGun()
+            ownShipWeapon = OwnShipWeapon(arFragment.arSceneView.scene.camera)
 
             gameManager.mainHandler = handler
             gameManager.earthNode = earth
@@ -156,36 +134,18 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
             // this ensures that we only get one attack per finger tap
             if (motionEvent.action == MotionEvent.ACTION_DOWN) {
-                fireLaser()
+
+                // fireLaser()
+                val fireCallback = object : IFireCallback {
+                    override fun fireFinished() {
+                        playerAttack()
+                    }
+                }
+                ownShipWeapon.fire(fireCallback)
             }
             true
         }
-    }
-
-
-    private fun fireLaser() {
-
-        SoundEffectPlayer.playEffect(SoundEffects.LASER)
-        gun.kickback()
-
-        val laserBolt = LaserBolt()
-        laserBolt.setParent(arFragment.arSceneView.scene.camera)
-        laserBolt.renderable = LaserBolt.redRenderable
-        laserBolt.localPosition = Vector3(0.0f, -0.07f, -0.2f) // simply what's needed for it to look right
-        laserBolt.localRotation = Quaternion.axisAngle(Vector3(1f, 0f, 0f), 40f) // ditto
-        laserBolt.name = "laser"
-
-        val lightNode = Node()
-        lightNode.setParent(laserBolt)
-        lightNode.localPosition = Vector3(0f, 0.08f, 0f) // lift it up so the light can be seen
-        lightNode.light = laserLight
-
-        laserBolt.fire(Vector3(0.0f, 0.0f, -1.0f), fireCallback = object : IFireCallback {
-            override fun fireFinished() {
-                playerAttack()
-            }
-        }) // to the center of the screen
-    } // end fireLaser
+    } // end setArViewTouchListener
 
     private fun playerAttack() {
         val screenCenterMEvent = obtainScreenCenterMotionEvent()
@@ -330,91 +290,5 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         this.finish() // finish the MainActivity
         startActivity(intent)
     } // end startMenuActivity
-
-    private fun loadExplosionGraphics() {
-
-        val bitMap = BitmapFactory.decodeResource(resources, R.drawable.smoke_tx)
-        Texture.builder().setSource(bitMap).build().thenAccept { it ->
-            explosionTexture = it
-
-            val renderable = ModelRenderable.builder()
-                    .setSource(this, Uri.parse("model.sfb"))
-                    .build()
-            renderable.thenAccept { it2 ->
-
-                it2.material.setTexture("", explosionTexture)
-                explosionRenderable = it2
-            }
-        }
-    } // end loadExplosionGraphics
-
-    private fun loadLaserGraphics() {
-
-        ModelRenderable.builder()
-                .setSource(this, Uri.parse("laser_2.sfb"))
-                .build()
-                .thenAccept { it ->
-                    LaserBolt.redRenderable = it
-                    LaserBolt.redRenderable.isShadowCaster = false
-                    LaserBolt.redRenderable.isShadowReceiver = false
-                }
-        ModelRenderable.builder()
-                .setSource(this, Uri.parse("laser_yellow.sfb"))
-                .build()
-                .thenAccept { it ->
-                    LaserBolt.yellowRenderable = it
-                    LaserBolt.yellowRenderable.isShadowCaster = false
-                    LaserBolt.yellowRenderable.isShadowReceiver = false
-                }
-
-    } // end loadLaserGraphics
-
-    private fun setupGun() {
-
-        ModelRenderable.builder()
-                .setSource(this, Uri.parse("Gun.sfb"))
-                .build()
-                .thenAccept { it ->
-
-                    Gun.modelRenderable = it
-                    Gun.modelRenderable.isShadowCaster = false
-                    Gun.modelRenderable.isShadowReceiver = false
-                    Gun.modelRenderable.collisionShape = Box(Vector3(0.001f, 0.001f, 0.001f)) // so that we don't hit the modelRenderable
-                    gun = Gun()
-                    gun.setParent(arFragment.arSceneView.scene.camera)
-                    gun.renderable = Gun.modelRenderable
-                    gun.localPosition = Vector3(0.015f, -0.065f, -0.2f) // simply what's needed for it to look right
-                    gun.localRotation = Quaternion.axisAngle(Vector3(1f, 0.34f, 0f), 40f) // ditto
-                    gun.name = "gun"
-                    gun.setupAnimation() // must be called last due to needing the updated localposition!
-
-                    // it's an awkward place for it, but meh, it's still static and gun-related
-                    laserLight = Light.builder(Light.Type.POINT)
-                            .setIntensity(4000f)
-                            .setFalloffRadius(200f)
-                            .setShadowCastingEnabled(false)
-                            .setColorTemperature(10000f)
-                            .setColor(Color(1f, 0f, 0f))
-                            .build()
-                }
-    } // end setupGun
-
-    private fun loadShipRenderables() {
-
-        // Load all models that are present in ShipType enum
-        ShipType.values().forEach { shipType ->
-            ModelRenderable.builder()
-                    .setSource(this, Uri.parse(shipType.modelName))
-                    .build()
-                    .thenAccept { it -> Ship.renderables[shipType] = it }
-        }
-    }
-
-    private fun loadFireModel() {
-        ModelRenderable.builder()
-                .setSource(this, Uri.parse("fire.sfb"))
-                .build()
-                .thenAccept { it -> Fire.model = it }
-    }
 
 } // end class
