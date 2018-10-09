@@ -143,7 +143,7 @@ open class Ship(
     }
 
     private fun playDeathAnimation() {
-        val deathAnimation = createVector3Animator(1000, "localScale", AccelerateInterpolator(), this.localScale, this.localScale.scaled(2f))
+        val deathAnimation = createVector3Animator(1000, "localScale", AccelerateInterpolator(), this.localScale, this.localScale.scaled(1.5f))
 
         deathAnimation.addListener(object : AnimatorListenerAdapter() {
 
