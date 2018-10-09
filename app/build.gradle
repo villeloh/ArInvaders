@@ -58,31 +58,15 @@ sceneform.asset('sampledata/model.obj',
         'sampledata/model.sfa',
         'src/main/assets/model')
 
-
 sceneform.asset('sampledata/ufo_small_red.obj',
         'default',
         'sampledata/ufo_small_red.sfa',
         'src/main/assets/ufo_small_red')
 
-sceneform.asset('sampledata/ufo_medium_red.obj',
-        'default',
-        'sampledata/ufo_medium_red.sfa',
-        'src/main/assets/ufo_medium_red')
-
 sceneform.asset('sampledata/ufo_medium_yellow.obj',
         'default',
         'sampledata/ufo_medium_yellow.sfa',
         'src/main/assets/ufo_medium_yellow')
-
-sceneform.asset('sampledata/ufo_large_red.obj',
-        'default',
-        'sampledata/ufo_large_red.sfa',
-        'src/main/assets/ufo_large_red')
-
-sceneform.asset('sampledata/ufo_large_yellow.obj',
-        'default',
-        'sampledata/ufo_large_yellow.sfa',
-        'src/main/assets/ufo_large_yellow')
 
 sceneform.asset('sampledata/ufo_large_green.obj',
         'default',
