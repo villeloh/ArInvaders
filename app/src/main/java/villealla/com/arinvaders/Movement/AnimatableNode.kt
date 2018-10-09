@@ -1,6 +1,7 @@
 package villealla.com.arinvaders.Movement
 
 import android.animation.*
+import android.view.animation.BounceInterpolator
 import android.view.animation.LinearInterpolator
 import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.math.Quaternion
@@ -48,10 +49,12 @@ open class AnimatableNode : Node() {
         }
     } // end createQuaternionAnimator
 
-    protected fun createSpinAnimator(duration: Long, localRotation: Quaternion): Animator {
+    protected fun createSpinAnimator(directionIsClockwise: Boolean = true, duration: Long, localRotation: Quaternion): Animator {
 
-        val spinQuaternion1 = Quaternion.axisAngle(Vector3(0f, 1f, 0f), 180f)
-        val spinQuaternion2 = Quaternion.axisAngle(Vector3(0f, 1f, 0f), -1f)
+        val sign = if (directionIsClockwise) 1 else -1
+
+        val spinQuaternion1 = Quaternion.axisAngle(Vector3(0f, 1f, 0f), -180f * sign)
+        val spinQuaternion2 = Quaternion.axisAngle(Vector3(0f, 1f, 0f), 1f * sign)
 
         val halfSpin1 = createQuaternionAnimator(duration, "localRotation", LinearInterpolator(), localRotation, spinQuaternion1)
         val halfSpin2 = createQuaternionAnimator(duration, "localRotation", LinearInterpolator(), spinQuaternion1, spinQuaternion2)
@@ -88,6 +91,29 @@ open class AnimatableNode : Node() {
 
     protected fun calculateDistanceFactor(start: Vector3, end: Vector3): Double {
         return Math.sqrt((end.x - start.x).pow(2).toDouble() + (end.y - start.y).pow(2).toDouble() + (end.z - start.z).pow(2).toDouble())
+    }
+
+    protected fun createFlashingAnimator(target: Light, duration: Long): ObjectAnimator {
+        return ObjectAnimator().apply {
+            this.target = target
+            this.propertyName = "intensity"
+            this.duration = duration / 2
+            this.interpolator = BounceInterpolator()
+
+            setAutoCancel(false)
+            // * = Spread operator, this will pass N `Any?` values instead of a single list `List<Any?>`
+            setObjectValues(target.intensity)
+            setObjectValues(0)
+
+            repeatCount = 2
+            // Always apply evaluator AFTER object values or it will be overwritten by a default one
+            setEvaluator(FloatEvaluator())
+        }
+    }
+
+    open fun dispose() {
+        renderable = null
+        setParent(null)
     }
 
 } // end class

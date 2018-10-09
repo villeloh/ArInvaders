@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.view.animation.AccelerateInterpolator
 import com.google.ar.sceneform.math.Vector3
+import com.google.ar.sceneform.rendering.ModelRenderable
 import villealla.com.arinvaders.Movement.AnimatableNode
 
 /*
@@ -15,6 +16,10 @@ import villealla.com.arinvaders.Movement.AnimatableNode
 class Gun : AnimatableNode() {
 
     private lateinit var animation_1: ObjectAnimator
+
+    companion object {
+        lateinit var modelRenderable: ModelRenderable
+    }
 
     fun setupAnimation() {
 

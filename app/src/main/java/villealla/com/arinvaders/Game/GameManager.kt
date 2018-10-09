@@ -6,7 +6,6 @@ import com.google.ar.sceneform.AnchorNode
 import com.google.ar.sceneform.Node
 import villealla.com.arinvaders.Sound.Maestro
 import villealla.com.arinvaders.Static.Configuration
-import villealla.com.arinvaders.WorldEntities.Planet
 
 /*
 * Class for managing the player and game-related operations.
@@ -67,16 +66,10 @@ class GameManager private constructor() {
 
     fun resetUI() {
 
-        var message = mainHandler.obtainMessage()
-        message.what = Configuration.MESSAGE_PEOPLE_ALIVE
-        message.data.putString(Configuration.MESSAGE_PEOPLE_ALIVE.toString(), Planet.instance.people())
+        val message = mainHandler.obtainMessage()
+        message.what = Configuration.MESSAGE_RESET
         mainHandler.sendMessage(message)
-
-        message = mainHandler.obtainMessage()
-        message.what = Configuration.MESSAGE_KILL_COUNT
-        message.data.putString(Configuration.MESSAGE_KILL_COUNT.toString(), "0")
-        mainHandler.sendMessage(message)
-    } // end resetUI
+    }
 
     fun endGameSession() {
 

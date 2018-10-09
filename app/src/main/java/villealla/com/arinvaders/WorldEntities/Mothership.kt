@@ -1,17 +1,15 @@
 package villealla.com.arinvaders.WorldEntities
 
-import android.util.Log
+import android.os.Handler
 import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.math.Vector3
-import villealla.com.arinvaders.Static.Configuration
 import villealla.com.arinvaders.Static.ShipType
 import kotlin.math.absoluteValue
 
-class Mothership(type: ShipType, speed: Int, localPosition: Vector3, earthNode: Node, observer: IonDeath, val iMinionSpawner: IMinionSpawner) : Ship(type = type, speed = speed, localPosition = localPosition, earthNode = earthNode, observer = observer) {
+class Mothership(type: ShipType, speed: Int, localPosition: Vector3, earthNode: Node, observer: IonDeath, val iMinionSpawner: IMinionSpawner, mainHandler: Handler) : Ship(type = type, speed = speed, localPosition = localPosition, earthNode = earthNode, observer = observer, mainHandler = mainHandler) {
 
-    override fun attack(earthPosition: Vector3) {
-        Log.d(Configuration.DEBUG_TAG, "Mother : ${this.name}")
-        super.attack(earthPosition)
+    init {
+
         startMinionSpawner()
     }
 
@@ -20,7 +18,7 @@ class Mothership(type: ShipType, speed: Int, localPosition: Vector3, earthNode: 
 
             while (true) {
                 try {
-                    Thread.sleep(rGen.nextLong().absoluteValue % 4000 + 4000)
+                    Thread.sleep(rGen.nextLong().absoluteValue % 3000 + 4000)
                 } catch (e: InterruptedException) {
                     break
                 }
@@ -35,12 +33,12 @@ class Mothership(type: ShipType, speed: Int, localPosition: Vector3, earthNode: 
 
     private lateinit var spawnerThread: Thread
 
-
-    override fun die() {
+    override fun dispose() {
         spawnerThread.interrupt()
 
-        super.die()
+        super.dispose()
     }
+
 }
 
 interface IMinionSpawner {

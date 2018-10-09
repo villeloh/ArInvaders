@@ -11,23 +11,23 @@ import java.util.concurrent.ThreadLocalRandom
 * @author Sinan Sakaoğlu, Ville Lohkovuori
 * */
 
-enum class SoundEffects(val effectName: Int, val volumeLevel: Float = 1f, var id: Int = 0, val effectId: String = "") {
+enum class SoundEffects(val effectName: Int, val volumeLevel: Float = 1f, var id: Int = 0, val effectId: String = "", val priority: Int = 2) {
     LASER(R.raw.laser, 0.75f),
-    EXPLOSION(R.raw.bomb),
     EARTH_HIT_1(R.raw.scream_1, 0.1f, 0, "planetEffect"),
     EARTH_HIT_2(R.raw.scream_2, 0.4f, 0, "planetEffect"),
     EARTH_HIT_3(R.raw.scream_3, 0.4f, 0, "planetEffect"),
     EARTH_HIT_4(R.raw.nuke, 0.35f, 0, "planetEffect"),
+    EXPLOSION(R.raw.bomb, 0.5f),
+    SHIP_HIT(R.raw.ship_hit, 0.5f),
+    SHIP_LASER(R.raw.ship_laser, 0.5f)
+
 }
 
 object SoundEffectPlayer {
 
-    private val rGen = ThreadLocalRandom.current()
-
     private val soundPool: SoundPool
     private val random = ThreadLocalRandom.current()
     private val earthEffects = mutableListOf<SoundEffects>()
-    private var earthEffectsSize = 0
 
     init {
         val audioAttributes = AudioAttributes.Builder()
@@ -36,7 +36,7 @@ object SoundEffectPlayer {
                 .build()
 
         soundPool = SoundPool.Builder()
-                .setMaxStreams(5)
+                .setMaxStreams(6)
                 .setAudioAttributes(audioAttributes)
                 .build()
 
@@ -52,11 +52,11 @@ object SoundEffectPlayer {
     fun playEffect(soundEffect: SoundEffects, loop: Boolean = false) {
 
         // a little variation in the sound level / pitch serves to add some realism
-        var sign = if (rGen.nextBoolean()) 1 else -1
-        val modVol = 1.0f + sign * rGen.nextFloat() * 0.2f // 0.8 -- 1.2
+        var sign = if (random.nextBoolean()) 1 else -1
+        val modVol = 1.0f + sign * random.nextFloat() * 0.2f // 0.8 -- 1.2
 
-        sign = if (rGen.nextBoolean()) 1 else -1
-        val modifiedPitch = 1.0f + sign * rGen.nextFloat() * 0.2f // 0.8 -- 1.2
+        sign = if (random.nextBoolean()) 1 else -1
+        val modifiedPitch = 1.0f + sign * random.nextFloat() * 0.2f // 0.8 -- 1.2
 
         val modifiedVolume = soundEffect.volumeLevel * modVol
 
@@ -65,6 +65,8 @@ object SoundEffectPlayer {
         if (soundEffect.id != 0)
             soundPool.play(soundEffect.id, modifiedVolume, modifiedVolume, 1, loopNum, modifiedPitch)
     } // end playEffect
+            soundPool.play(soundEffect.id, soundEffect.volumeLevel, soundEffect.volumeLevel, soundEffect.priority, 0, 1f)
+    }
 
     // it seems a bit clumsy and unnecessary, as the effects enum is static.
     // a better solution should be thought of...
@@ -75,12 +77,11 @@ object SoundEffectPlayer {
                 earthEffects.add(it)
             }
         }
-        earthEffectsSize = earthEffects.size
     } // end initEarthEffects
 
     fun randomEarthEffect(): SoundEffects {
 
-        return earthEffects[random.nextInt(earthEffectsSize)]
+        return earthEffects[random.nextInt(earthEffects.size)]
     }
 
 } // end class

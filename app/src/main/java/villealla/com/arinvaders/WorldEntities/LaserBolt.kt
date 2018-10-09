@@ -3,8 +3,9 @@ package villealla.com.arinvaders.WorldEntities
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
-import android.view.animation.AccelerateInterpolator
+import android.view.animation.DecelerateInterpolator
 import com.google.ar.sceneform.math.Vector3
+import com.google.ar.sceneform.rendering.ModelRenderable
 import villealla.com.arinvaders.Movement.AnimatableNode
 
 /*
@@ -17,12 +18,17 @@ class LaserBolt : AnimatableNode() {
 
     lateinit var animation: ObjectAnimator
 
-    fun fire(shootPosition: Vector3, fireCallback: IFireCallback) {
+    companion object {
+        lateinit var redRenderable: ModelRenderable
+        lateinit var yellowRenderable: ModelRenderable
+    }
+
+    fun fire(shootPosition: Vector3, dur: Int = 350, fireCallback: IFireCallback = defaultCallback) {
 
         val distanceFactor = calculateDistanceFactor(localPosition, shootPosition)
-        val duration = (350 * distanceFactor).toLong() // ms
+        val duration = (dur * distanceFactor).toLong() // ms
 
-        animation = createVector3Animator(duration, "localPosition", AccelerateInterpolator(), localPosition, shootPosition)
+        animation = createVector3Animator(duration, "localPosition", DecelerateInterpolator(), localPosition, shootPosition)
         animation.addListener(object : AnimatorListenerAdapter() {
 
             override fun onAnimationEnd(animation: Animator?) {
@@ -35,11 +41,11 @@ class LaserBolt : AnimatableNode() {
     } // end fire
 
 
-    private fun dispose() {
-        renderable = null
-        setParent(null)
-    }
+    private val defaultCallback = object : IFireCallback {
+        override fun fireFinished() {
 
+        }
+    }
 } // end class
 
 interface IFireCallback {
