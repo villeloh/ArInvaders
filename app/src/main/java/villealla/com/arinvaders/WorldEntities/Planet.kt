@@ -37,10 +37,6 @@ class Planet private constructor(private var hitPoints: Long = Configuration.EAR
     var earthRenderable: ModelRenderable? = null
 
 
-    fun resetHitPoints(){
-        hitPoints = Configuration.EARTH_POPULATION
-    }
-
     fun renderInArSpace(anchorNode: AnchorNode) {
 
         this.renderable = earthRenderable
