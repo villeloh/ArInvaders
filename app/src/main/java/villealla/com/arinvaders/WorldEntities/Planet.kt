@@ -1,14 +1,12 @@
 package villealla.com.arinvaders.WorldEntities
 
-import android.content.Context
-import android.net.Uri
 import com.google.ar.sceneform.AnchorNode
 import com.google.ar.sceneform.rendering.ModelRenderable
 import villealla.com.arinvaders.Game.GameManager
 import villealla.com.arinvaders.Movement.AnimatableNode
+import villealla.com.arinvaders.Static.Configuration
 import java.text.NumberFormat
 import java.util.*
-import villealla.com.arinvaders.Static.Configuration
 
 /*
 * Manages the planet Earth and the people on it.
@@ -31,8 +29,17 @@ class Planet private constructor(private var hitPoints: Long = Configuration.EAR
         const val centerHeight = 0.07F
     }
 
+    fun resetHitPoints() {
+        hitPoints = Configuration.EARTH_POPULATION
+    }
+
     // set when loading resources on game start
     var earthRenderable: ModelRenderable? = null
+
+
+    fun resetHitPoints(){
+        hitPoints = Configuration.EARTH_POPULATION
+    }
 
     fun renderInArSpace(anchorNode: AnchorNode) {
 
