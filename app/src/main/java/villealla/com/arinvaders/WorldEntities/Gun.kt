@@ -3,12 +3,15 @@ package villealla.com.arinvaders.WorldEntities
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.BounceInterpolator
 import android.view.animation.LinearInterpolator
 import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.math.Quaternion
 import com.google.ar.sceneform.math.Vector3
+import com.google.ar.sceneform.rendering.Color
+import com.google.ar.sceneform.rendering.Light
 import com.google.ar.sceneform.rendering.ModelRenderable
 import villealla.com.arinvaders.Movement.AnimatableNode
 import villealla.com.arinvaders.Sound.SoundEffectPlayer
@@ -26,6 +29,12 @@ class Gun(private val cameraNode: Node) : AnimatableNode() {
     private var muzzleFlashFire: Fire
     private var scalingAnim: ObjectAnimator
     private var rotationAnim: ObjectAnimator
+    private var muzzleFlashLightNode1 = AnimatableNode()
+    private var muzzleFlashLightNode2 = AnimatableNode()
+    private var muzzleFlashLightAnimator1: ValueAnimator
+    private var muzzleFlashLightAnimator2: ValueAnimator
+
+    private val flashDuration = 250L
 
     init {
         renderable = gunRenderable
@@ -35,22 +44,62 @@ class Gun(private val cameraNode: Node) : AnimatableNode() {
         name = "gun"
         setupKickbackAnimation() // must be called last due to needing the updated localPosition!
 
+        val muzzleFlashLight1 = Light.builder(Light.Type.POINT)
+                .setIntensity(0f)
+                .setFalloffRadius(0.05f)
+                .setShadowCastingEnabled(false)
+                .setColorTemperature(10000f)
+                .setColor(Color(1f, 1f, 0f))
+                .build()
+
+        val muzzleFlashLight2 = Light.builder(Light.Type.POINT)
+                .setIntensity(0f)
+                .setFalloffRadius(0.05f)
+                .setShadowCastingEnabled(false)
+                .setColorTemperature(10000f)
+                .setColor(Color(1f, 1f, 1f))
+                .build()
+
         muzzleFlashFire = Fire(null).apply {
 
+            renderable = fireRenderable
             setParent(this@Gun)
-            localPosition = Vector3(-0.02f, 0.05f, 0f)
-            localRotation = Quaternion.axisAngle(Vector3(-1f, 0f, 0f), 40f)
+            localPosition = Vector3(-0.0159f, 0.05f, -0.0165f)
+            localRotation = Quaternion.axisAngle(Vector3(-1f, 0f, 0f), 160f)
             localScale = this.localScale.scaled(0.001f)
         }
+
+        muzzleFlashLightNode1.apply {
+
+            light = muzzleFlashLight1
+            setParent(muzzleFlashFire)
+            localPosition = Vector3(0f, 0.02f, 0f)
+        }
+
+        muzzleFlashLightNode2.apply {
+            light = muzzleFlashLight2
+            setParent(muzzleFlashFire)
+            localPosition = Vector3(0f, 0.02f, 0f)
+        }
+
+        muzzleFlashLightAnimator1 = ObjectAnimator.ofFloat(
+                muzzleFlashLightNode1.light, "intensity",  50000f, 0f).apply {
+            duration = flashDuration
+        }
+        muzzleFlashLightAnimator2 = ObjectAnimator.ofFloat(
+                muzzleFlashLightNode2.light, "intensity", 50000f, 0f).apply {
+            duration = flashDuration
+        }
+
         val spinQuaternion = Quaternion.axisAngle(Vector3(0f, 0f, 1f), -360f)
         scalingAnim = muzzleFlashFire.createVector3Animator(
-                        200,
+                        flashDuration,
                         "localScale",
                         BounceInterpolator(),
-                        muzzleFlashFire.localScale.scaled(1100f),
+                        muzzleFlashFire.localScale.scaled(1000f),
                         muzzleFlashFire.localScale)
         rotationAnim = muzzleFlashFire.createQuaternionAnimator(
-                200,
+                flashDuration,
                 "localRotation",
                 LinearInterpolator(),
                 muzzleFlashFire.localRotation,
@@ -59,6 +108,7 @@ class Gun(private val cameraNode: Node) : AnimatableNode() {
 
     companion object {
         lateinit var gunRenderable: ModelRenderable
+        lateinit var fireRenderable: ModelRenderable
     }
 
     // note: the passed callback is an object that contains a call to playerAttack in MainActivity
@@ -116,6 +166,8 @@ class Gun(private val cameraNode: Node) : AnimatableNode() {
             animation = rotationAnim
             animation.start()
         }
+        muzzleFlashLightAnimator1.start()
+        muzzleFlashLightAnimator2.start()
     }
 
 } // end class

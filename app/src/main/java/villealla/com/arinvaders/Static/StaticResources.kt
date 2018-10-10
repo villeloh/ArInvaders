@@ -28,7 +28,7 @@ object StaticResources {
     lateinit var explosionRenderable: ModelRenderable
     lateinit var explosionTexture: Texture
 
-    const val TOTAL_NUMBER_OF_RENDERABLES = 9
+    const val TOTAL_NUMBER_OF_RENDERABLES = 10
 
     var loadedRenderablesCount = 0
 
@@ -42,7 +42,7 @@ object StaticResources {
             loadLaserResources(context)
             loadExplosionGraphics(context)
             loadShipRenderables(context)
-            loadFireModel(context)
+            loadFireModels(context)
             loadEarthRenderable(context)
         }
     } // end loadResources
@@ -62,8 +62,8 @@ object StaticResources {
     private fun loadLaserResources(context: Context) {
 
         redLaserLight = Light.builder(Light.Type.POINT)
-                .setIntensity(4000f)
-                .setFalloffRadius(200f)
+                .setIntensity(120000f)
+                .setFalloffRadius(0.1f)
                 .setShadowCastingEnabled(false)
                 .setColorTemperature(10000f)
                 .setColor(Color(1f, 0f, 0f))
@@ -134,12 +134,19 @@ object StaticResources {
         }
     } // end loadShipRenderables
 
-    private fun loadFireModel(context: Context) {
+    private fun loadFireModels(context: Context) {
         ModelRenderable.builder()
                 .setSource(context, Uri.parse("fire.sfb"))
                 .build()
                 .thenAccept { it ->
                     Fire.model = it
+                    loadedRenderablesCount++
+                }
+        ModelRenderable.builder()
+                .setSource(context, Uri.parse("fire2.sfb"))
+                .build()
+                .thenAccept { it ->
+                    Gun.fireRenderable = it
                     loadedRenderablesCount++
                 }
     }

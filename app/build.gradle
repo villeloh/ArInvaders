@@ -97,3 +97,9 @@ sceneform.asset('sampledata/laser_yellow.obj',
         'default',
         'sampledata/laser_yellow.sfa',
         'src/main/assets/laser_yellow')
+
+
+sceneform.asset('sampledata/fire2.obj',
+        'default',
+        'sampledata/fire2.sfa',
+        'src/main/assets/fire2')
