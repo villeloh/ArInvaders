@@ -209,7 +209,7 @@ class MainActivity : AppCompatActivity(), Speedometer.SpeedometerListener {
                         waveNumberTextView.text = "WAVE " + newValue
                     }
                     Configuration.MESSAGE_RESET -> {
-                        peopleTextView.text = Configuration.EARTH_POPULATION.toString()
+                        peopleTextView.text = Planet.instance.people()
                         killTextView.text = "0"
                     }
                     Configuration.MESSAGE_VIBRATE -> {
