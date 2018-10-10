@@ -27,8 +27,8 @@ import kotlin.math.absoluteValue
 * @author Sinan Sakaoğlu, Ville Lohkovuori
 * */
 
-private const val DEFAULT_UNSCALED_MIN_DMG = 100000000L
-private const val DEFAULT_UNSCALED_MAX_DMG = 200000000L
+private const val DEFAULT_UNSCALED_MIN_DMG = 300000000L
+private const val DEFAULT_UNSCALED_MAX_DMG = 400000000L
 
 open class Ship(
         val type: ShipType = ShipType.UFO,
