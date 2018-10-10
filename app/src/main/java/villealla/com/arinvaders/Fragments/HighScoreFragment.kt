@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ListAdapter
 import android.widget.ListView
+import android.widget.Toast
 import kotlinx.android.synthetic.main.fragment_highscore.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -91,6 +92,7 @@ class HighScoreFragment : Fragment() {
             override fun onFailure(call: Call<List<List<ScoreEntry>>>, t: Throwable) {
                 Log.d(Configuration.DEBUG_TAG, "Leaderboard request failed.")
                 t.printStackTrace()
+                Toast.makeText(activity, "Please check your internet connection.", Toast.LENGTH_LONG).show()
             }
 
             override fun onResponse(call: Call<List<List<ScoreEntry>>>, response: Response<List<List<ScoreEntry>>>) {
