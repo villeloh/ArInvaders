@@ -213,7 +213,7 @@ class MainActivity : AppCompatActivity(), Speedometer.SpeedometerListener {
                     }
                     Configuration.MESSAGE_VIBRATE -> {
 
-                        vibrator.vibrate(1000)
+                        vibrator.vibrate(700)
 
                     }
                     Configuration.MESSAGE_GAME_OVER -> {
@@ -224,18 +224,23 @@ class MainActivity : AppCompatActivity(), Speedometer.SpeedometerListener {
 
                         val totalScore = calculateTotalScore()
 
-                        Leaderboard.service.postScore(playerName, difficulty, totalScore).enqueue(object : retrofit2.Callback<List<List<ScoreEntry>>> {
-                            override fun onFailure(call: Call<List<List<ScoreEntry>>>, t: Throwable) {
-                                Log.d(Configuration.DEBUG_TAG, "Score post failed.")
-                                t.printStackTrace()
-                                startMenuActivity()
-                            }
+                        Thread(Runnable {
+                            Thread.sleep(500)
 
-                            override fun onResponse(call: Call<List<List<ScoreEntry>>>, response: Response<List<List<ScoreEntry>>>) {
-                                Log.d(Configuration.DEBUG_TAG, "Score post successful.")
-                                startMenuActivity()
-                            }
+                            Leaderboard.service.postScore(playerName, difficulty, totalScore).enqueue(object : retrofit2.Callback<List<List<ScoreEntry>>> {
+                                override fun onFailure(call: Call<List<List<ScoreEntry>>>, t: Throwable) {
+                                    Log.d(Configuration.DEBUG_TAG, "Score post failed.")
+                                    t.printStackTrace()
+                                    startMenuActivity()
+                                }
+
+                                override fun onResponse(call: Call<List<List<ScoreEntry>>>, response: Response<List<List<ScoreEntry>>>) {
+                                    Log.d(Configuration.DEBUG_TAG, "Score post successful.")
+                                    startMenuActivity()
+                                }
+                            })
                         })
+
 
                     }
 
