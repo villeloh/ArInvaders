@@ -228,7 +228,10 @@ class MainActivity : AppCompatActivity(), Speedometer.SpeedometerListener {
 
                         //save score locally
 
-                        AsyncTask.execute { LibDB.get(this@MainActivity).scoreEntryDAO().insert(ScoreEntry(username = playerName, difficulty = difficulty, score = totalScore, id = 0)) }
+                        AsyncTask.execute {
+                            LibDB.get(this@MainActivity).scoreEntryDAO().insert(ScoreEntry(username = playerName, difficulty = difficulty, score = totalScore, id = 0))
+                            Log.d(Configuration.DEBUG_TAG, "Local score saved to db.")
+                        }
 
 
                         //save score to server
@@ -247,7 +250,7 @@ class MainActivity : AppCompatActivity(), Speedometer.SpeedometerListener {
                                     startMenuActivity()
                                 }
                             })
-                        })
+                        }).start()
 
 
                     }

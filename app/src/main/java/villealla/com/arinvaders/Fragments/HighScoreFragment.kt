@@ -94,6 +94,11 @@ class HighScoreFragment : Fragment() {
             scoresList.add(LibDB.get(activity).scoreEntryDAO().getTopScoresWithDifficulty(username, "normal"))
             scoresList.add(LibDB.get(activity).scoreEntryDAO().getTopScoresWithDifficulty(username, "hard"))
 
+            Log.d(Configuration.DEBUG_TAG, "Local scores retrieved")
+
+            scoresList[1].forEach {
+                Log.d(Configuration.DEBUG_TAG, "score: ${it.score}")
+            }
 
             var listIndex = 0
             scoresList.forEach {
