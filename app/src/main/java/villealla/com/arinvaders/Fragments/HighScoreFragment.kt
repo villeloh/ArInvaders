@@ -2,6 +2,7 @@ package villealla.com.arinvaders.Fragments
 
 import android.app.Activity
 import android.content.Context
+import android.os.AsyncTask
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.v4.app.Fragment
@@ -88,24 +89,28 @@ class HighScoreFragment : Fragment() {
 
         val scoresList = arrayListOf<List<ScoreEntry>>()
 
-        scoresList.add(LibDB.get(activity).scoreEntryDAO().getTopScoresWithDifficulty(username, "easy"))
-        scoresList.add(LibDB.get(activity).scoreEntryDAO().getTopScoresWithDifficulty(username, "normal"))
-        scoresList.add(LibDB.get(activity).scoreEntryDAO().getTopScoresWithDifficulty(username, "hard"))
+        AsyncTask.execute {
+            scoresList.add(LibDB.get(activity).scoreEntryDAO().getTopScoresWithDifficulty(username, "easy"))
+            scoresList.add(LibDB.get(activity).scoreEntryDAO().getTopScoresWithDifficulty(username, "normal"))
+            scoresList.add(LibDB.get(activity).scoreEntryDAO().getTopScoresWithDifficulty(username, "hard"))
 
 
-        var listIndex = 0
-        scoresList.forEach {
-            val indexedDataArray = ArrayList<HighScore>()
-            for (i in 0..(it.size - 1)) {
-                indexedDataArray.add(HighScore(i + 1, it[i].username, it[i].score))
+            var listIndex = 0
+            scoresList.forEach {
+                val indexedDataArray = ArrayList<HighScore>()
+                for (i in 0..(it.size - 1)) {
+                    indexedDataArray.add(HighScore(i + 1, it[i].username, it[i].score))
+                }
+                val adapter = ArrayAdapter(activity as Context, R.layout.scorelist_item, indexedDataArray)
+
+                activity.runOnUiThread { listViewArray[listIndex].adapter = adapter }
+
+                // Do not save global scores since they can change between each refresh
+                personalBestAdapters.add(adapter)
+                listIndex++
             }
-            val adapter = ArrayAdapter(activity as Context, R.layout.scorelist_item, indexedDataArray)
-            listViewArray[listIndex].adapter = adapter
-
-            // Do not save global scores since they can change between each refresh
-            personalBestAdapters.add(adapter)
-            listIndex++
         }
+
 
     }
 

@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity(), Speedometer.SpeedometerListener {
 
         gameManager = GameManager.instance
         earth = Planet.instance
-        
+
         setFragmentListeners()
 
         // monitor acceleration for the ship's speedometer
@@ -228,7 +228,7 @@ class MainActivity : AppCompatActivity(), Speedometer.SpeedometerListener {
 
                         //save score locally
 
-                        LibDB.get(this@MainActivity).scoreEntryDAO().insert(ScoreEntry(username = playerName, difficulty = difficulty, score = totalScore, id = 0))
+                        AsyncTask.execute { LibDB.get(this@MainActivity).scoreEntryDAO().insert(ScoreEntry(username = playerName, difficulty = difficulty, score = totalScore, id = 0)) }
 
 
                         //save score to server
