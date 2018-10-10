@@ -16,7 +16,7 @@ enum class SoundEffects(val effectName: Int, val volumeLevel: Float = 1f, var id
     EARTH_HIT_1(R.raw.scream_1, 0.05f, 0, "planetEffect"),
     EARTH_HIT_2(R.raw.scream_2, 0.2f, 0, "planetEffect"),
     EARTH_HIT_3(R.raw.scream_3, 0.2f, 0, "planetEffect"),
-    EARTH_HIT_4(R.raw.nuke, 0.18f, 0, "planetEffect"),
+    NUKE(R.raw.nuke, 0.18f, 0 ),
     EXPLOSION(R.raw.bomb, 0.25f),
     SHIP_HIT(R.raw.ship_hit, 0.25f),
     SHIP_LASER(R.raw.ship_laser, 0.25f)

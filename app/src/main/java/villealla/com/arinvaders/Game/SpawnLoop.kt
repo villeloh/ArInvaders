@@ -11,6 +11,7 @@ import com.google.ar.sceneform.rendering.Color
 import com.google.ar.sceneform.rendering.Light
 import villealla.com.arinvaders.Movement.AnimatableNode
 import villealla.com.arinvaders.Sound.SoundEffectPlayer
+import villealla.com.arinvaders.Sound.SoundEffects
 import villealla.com.arinvaders.Static.Configuration
 import villealla.com.arinvaders.Static.ShipType
 import villealla.com.arinvaders.WorldEntities.IMinionSpawner
@@ -206,6 +207,7 @@ class SpawnLoop(val difficultyMultiplier: Float, var waveNumber: Int = 0, val ea
                     message.what = Configuration.MESSAGE_VIBRATE
                     mainHandler.sendMessage(message)
                     playNukeAnim(ship.directionalUnitVector3)
+                    SoundEffectPlayer.playEffect(SoundEffects.NUKE)
                 }
 
             } else {

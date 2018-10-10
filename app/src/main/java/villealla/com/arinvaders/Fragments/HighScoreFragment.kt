@@ -53,7 +53,7 @@ class HighScoreFragment : Fragment() {
         //create an array of ListViews to be used in requests
         listViewArray = arrayOf(easyListView, normalListView, hardListView)
 
-        getScoreboardData(false, menuActivity)
+        getLocalScores(menuActivity)
 
         val personalBestText = menuActivity.resources.getString(R.string.personal_best)
         val globalBestText = menuActivity.resources.getString(R.string.global_best)
@@ -108,11 +108,10 @@ class HighScoreFragment : Fragment() {
                 }
                 val adapter = ArrayAdapter(activity as Context, R.layout.scorelist_item, indexedDataArray)
 
-                activity.runOnUiThread { listViewArray[listIndex].adapter = adapter }
+                activity.runOnUiThread { listViewArray[listIndex++].adapter = adapter }
 
-                // Do not save global scores since they can change between each refresh
+                // Save local scores to save bandwidth
                 personalBestAdapters.add(adapter)
-                listIndex++
             }
         }
 
@@ -146,9 +145,6 @@ class HighScoreFragment : Fragment() {
                     val adapter = ArrayAdapter(activity as Context, R.layout.scorelist_item, indexedDataArray)
                     listViewArray[listIndex].adapter = adapter
 
-                    // Do not save global scores since they can change between each refresh
-                    if (!globalScores)
-                        personalBestAdapters.add(adapter)
                     listIndex++
                 }
             }
