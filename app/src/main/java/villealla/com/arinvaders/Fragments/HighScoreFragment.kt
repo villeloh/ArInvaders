@@ -145,6 +145,9 @@ class HighScoreFragment : Fragment() {
                     val adapter = ArrayAdapter(activity as Context, R.layout.scorelist_item, indexedDataArray)
                     listViewArray[listIndex].adapter = adapter
 
+                    // Do not save global scores since they can change between each refresh
+                    if (!globalScores)
+                        personalBestAdapters.add(adapter)
                     listIndex++
                 }
             }

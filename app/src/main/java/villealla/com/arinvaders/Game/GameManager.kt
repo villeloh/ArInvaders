@@ -49,6 +49,7 @@ class GameManager private constructor() {
         Planet.instance.resetHitPoints()
         resetUI()
 
+
         gameLoop.start()
         gameState = GameState.RUNNING
     }
