@@ -6,6 +6,7 @@ import com.google.ar.sceneform.AnchorNode
 import com.google.ar.sceneform.Node
 import villealla.com.arinvaders.Sound.Maestro
 import villealla.com.arinvaders.Static.Configuration
+import villealla.com.arinvaders.WorldEntities.Planet
 
 /*
 * Class for managing the player and game-related operations.
@@ -45,7 +46,9 @@ class GameManager private constructor() {
 
         gameLoop = SpawnLoop(multiplier, earthNode = earthNode, mainHandler = mainHandler, anchorNode = anchorNode)
 
+        Planet.instance.resetHitPoints()
         resetUI()
+
 
         gameLoop.start()
         gameState = GameState.RUNNING

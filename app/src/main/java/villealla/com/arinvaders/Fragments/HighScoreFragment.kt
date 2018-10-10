@@ -53,7 +53,7 @@ class HighScoreFragment : Fragment() {
         //create an array of ListViews to be used in requests
         listViewArray = arrayOf(easyListView, normalListView, hardListView)
 
-        getScoreboardData(false, menuActivity)
+        getLocalScores(menuActivity)
 
         val personalBestText = menuActivity.resources.getString(R.string.personal_best)
         val globalBestText = menuActivity.resources.getString(R.string.global_best)
@@ -87,32 +87,30 @@ class HighScoreFragment : Fragment() {
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
         val username = preferences.getString("player_name", "")!!
 
-        val scoresList = arrayListOf<List<ScoreEntry>>()
+        val scoresList = ArrayList<List<ScoreEntry>>()
 
         AsyncTask.execute {
             scoresList.add(LibDB.get(activity).scoreEntryDAO().getTopScoresWithDifficulty(username, "easy"))
             scoresList.add(LibDB.get(activity).scoreEntryDAO().getTopScoresWithDifficulty(username, "normal"))
             scoresList.add(LibDB.get(activity).scoreEntryDAO().getTopScoresWithDifficulty(username, "hard"))
 
-            Log.d(Configuration.DEBUG_TAG, "Local scores retrieved")
 
-            scoresList[1].forEach {
-                Log.d(Configuration.DEBUG_TAG, "score: ${it.score}")
-            }
+            personalBestAdapters.clear()
 
             var listIndex = 0
             scoresList.forEach {
+
                 val indexedDataArray = ArrayList<HighScore>()
                 for (i in 0..(it.size - 1)) {
                     indexedDataArray.add(HighScore(i + 1, it[i].username, it[i].score))
                 }
-                val adapter = ArrayAdapter(activity as Context, R.layout.scorelist_item, indexedDataArray)
+                val adapter = ArrayAdapter(activity, R.layout.scorelist_item, indexedDataArray)
+                activity.runOnUiThread {
+                    listViewArray[listIndex++].adapter = adapter
+                }
 
-                activity.runOnUiThread { listViewArray[listIndex].adapter = adapter }
-
-                // Do not save global scores since they can change between each refresh
+                // Save the local score adapters to save bandwidth
                 personalBestAdapters.add(adapter)
-                listIndex++
             }
         }
 
@@ -146,9 +144,6 @@ class HighScoreFragment : Fragment() {
                     val adapter = ArrayAdapter(activity as Context, R.layout.scorelist_item, indexedDataArray)
                     listViewArray[listIndex].adapter = adapter
 
-                    // Do not save global scores since they can change between each refresh
-                    if (!globalScores)
-                        personalBestAdapters.add(adapter)
                     listIndex++
                 }
             }
