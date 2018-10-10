@@ -2,7 +2,6 @@ package villealla.com.arinvaders.Fragments
 
 import android.app.Activity
 import android.content.Context
-import android.os.AsyncTask
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.v4.app.Fragment
@@ -20,7 +19,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import villealla.com.arinvaders.API.Leaderboard
 import villealla.com.arinvaders.API.ScoreEntry
-import villealla.com.arinvaders.Database.LibDB
 import villealla.com.arinvaders.Game.HighScore
 import villealla.com.arinvaders.R
 import villealla.com.arinvaders.Static.Configuration
@@ -66,7 +64,7 @@ class HighScoreFragment : Fragment() {
                 // Check if the personal scores are loaded, if yes use the loaded adapter
                 if (personalBestAdapters.isEmpty()) {
                     //getScoreboardData(false, menuActivity)
-                    getLocalScores(menuActivity)
+                    getScoreboardData(false, menuActivity)
                 } else {
                     for (i in 0..2) {
                         listViewArray[i].adapter = personalBestAdapters[i]
@@ -81,44 +79,6 @@ class HighScoreFragment : Fragment() {
 
         }
     } // end onActivityCreated
-
-    private fun getLocalScores(activity: Activity) {
-
-        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-        val username = preferences.getString("player_name", "")!!
-
-        val scoresList = arrayListOf<List<ScoreEntry>>()
-
-        AsyncTask.execute {
-            scoresList.add(LibDB.get(activity).scoreEntryDAO().getTopScoresWithDifficulty(username, "easy"))
-            scoresList.add(LibDB.get(activity).scoreEntryDAO().getTopScoresWithDifficulty(username, "normal"))
-            scoresList.add(LibDB.get(activity).scoreEntryDAO().getTopScoresWithDifficulty(username, "hard"))
-
-            Log.d(Configuration.DEBUG_TAG, "Local scores retrieved")
-
-            scoresList[1].forEach {
-                Log.d(Configuration.DEBUG_TAG, "score: ${it.score}")
-            }
-
-            var listIndex = 0
-            scoresList.forEach {
-                val indexedDataArray = ArrayList<HighScore>()
-                for (i in 0..(it.size - 1)) {
-                    indexedDataArray.add(HighScore(i + 1, it[i].username, it[i].score))
-                }
-                val adapter = ArrayAdapter(activity as Context, R.layout.scorelist_item, indexedDataArray)
-
-                activity.runOnUiThread { listViewArray[listIndex].adapter = adapter }
-
-                // Do not save global scores since they can change between each refresh
-                personalBestAdapters.add(adapter)
-                listIndex++
-            }
-        }
-
-
-    }
-
 
     private fun getScoreboardData(globalScores: Boolean, activity: Activity) {
         var queryString = ""

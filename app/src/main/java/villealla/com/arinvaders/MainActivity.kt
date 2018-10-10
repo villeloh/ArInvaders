@@ -17,7 +17,6 @@ import retrofit2.Call
 import retrofit2.Response
 import villealla.com.arinvaders.API.Leaderboard
 import villealla.com.arinvaders.API.ScoreEntry
-import villealla.com.arinvaders.Database.LibDB
 import villealla.com.arinvaders.Fragments.CustomArFragment
 import villealla.com.arinvaders.Fragments.GameOverFragment
 import villealla.com.arinvaders.Fragments.HudFragment
@@ -224,15 +223,6 @@ class MainActivity : AppCompatActivity(), Speedometer.SpeedometerListener {
                         score = killTextView.text.toString().toInt()
 
                         val totalScore = calculateTotalScore()
-
-
-                        //save score locally
-
-                        AsyncTask.execute {
-                            LibDB.get(this@MainActivity).scoreEntryDAO().insert(ScoreEntry(username = playerName, difficulty = difficulty, score = totalScore, id = 0))
-                            Log.d(Configuration.DEBUG_TAG, "Local score saved to db.")
-                        }
-
 
                         //save score to server
                         Thread(Runnable {
