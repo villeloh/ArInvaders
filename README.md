@@ -6,8 +6,11 @@ AR Invaders is a mobile AR (Augmented Reality) game, after the old classic Space
 space ships as they attack the Earth.
 
 ## Trailer
-[![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/0LUd9UVPwFw/0.jpg)](http://www.youtube.com/watch?v=0LUd9UVPwFw)
+[![AR Invaders Trailer](http://img.youtube.com/vi/0LUd9UVPwFw/0.jpg)](http://www.youtube.com/watch?v=0LUd9UVPwFw)
 
+## Try it out!
+
+[Download](https://drive.google.com/file/d/1w-eyyfeGCdSPjv_E-lcNkc6vY948xMxp/view?usp=sharing)
 
 ## Gameplay
 
