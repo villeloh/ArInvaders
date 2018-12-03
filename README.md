@@ -1,7 +1,13 @@
+# NOTE: The published version has been moved to a private repository.
+
 # AR Invaders
 
 AR Invaders is a mobile AR (Augmented Reality) game, after the old classic Space Invaders, where you shoot down 
 space ships as they attack the Earth.
+
+## Trailer
+[![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/0LUd9UVPwFw/0.jpg)](http://www.youtube.com/watch?v=0LUd9UVPwFw)
+
 
 ## Gameplay
 
